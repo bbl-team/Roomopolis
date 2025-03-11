@@ -10,6 +10,7 @@ public class KeyItemBuilder extends ItemBuilder {
 
     private String templateId;
     private int heightAdjustment;
+    private int frontAdjustment = 0;
     private String keyBlock;
     private boolean consumeKey = true;
 
@@ -26,6 +27,12 @@ public class KeyItemBuilder extends ItemBuilder {
     @Info("The height adjustment for the template to be placed")
     public KeyItemBuilder heightAdjustment(int heightAdjustment) {
         this.heightAdjustment = heightAdjustment;
+        return this;
+    }
+
+    @Info("The front adjustment for the template to be placed in front or behind the player -2 should be center of the player")
+    public KeyItemBuilder frontAdjustment(int frontAdjustment) {
+        this.frontAdjustment = frontAdjustment;
         return this;
     }
 
@@ -47,6 +54,6 @@ public class KeyItemBuilder extends ItemBuilder {
 
     @Override
     public Item createObject() {
-        return new KeyItem(createItemProperties(), templateId, heightAdjustment, keyBlock, consumeKey);
+        return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock, consumeKey);
     }
 }

@@ -47,16 +47,18 @@ public class KeyItem extends Item {
 
     public ResourceLocation templateId;
     public int heightAdjustment;
+    public int frontAdjustment;
     public Optional<Block> keyBlock;
     public boolean isPlaced;
     public boolean consumeKey;
     public Vec3i templateSize;
 
-    public KeyItem(Properties properties, String templateId, int heightAdjustment, String keyBlock, boolean consumeKey) {
+    public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey) {
         super(properties);
         this.templateId = ResourceLocation.parse(templateId);
         this.heightAdjustment = heightAdjustment;
         this.consumeKey = consumeKey;
+        this.frontAdjustment = frontAdjustment;
 
         if (keyBlock == null || keyBlock.isEmpty()) {
             this.keyBlock = Optional.empty();
@@ -186,7 +188,9 @@ public class KeyItem extends Item {
             // Position Adjustments to make the template spawn a block in front of the player and adjust the height of the template
             BlockPos centerOffset = new BlockPos(-templateSize.getX() / 2, -templateSize.getY() / 2, -templateSize.getZ() / 2);
             BlockPos adjustedOffset = StructureTemplate.calculateRelativePosition(placementSettings, centerOffset);
-            int forwardShift = (rotation == Rotation.NONE || rotation == Rotation.CLOCKWISE_180) ? templateSize.getZ() / 2 + 1 : templateSize.getX() / 2 + 1;
+            int forwardShift = (rotation == Rotation.NONE || rotation == Rotation.CLOCKWISE_180)
+                    ? templateSize.getZ() / 2 + 1 + frontAdjustment
+                    : templateSize.getX() / 2 + 1 + frontAdjustment;
             BlockPos forwardOffset = pos.relative(facing, forwardShift);
             BlockPos placementPos = forwardOffset.offset(adjustedOffset);
             placementPos = placementPos.above(heightAdjustment);

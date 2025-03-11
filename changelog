@@ -2,6 +2,14 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
+2.2.7
+Added Logo
+
+2.2.6
+Added .frontAdjustment() allows the position of the structure to be adjusted relative to the player
+frontAdjustment() is optional and if not present the structure will be placed 2 blocks in front the player as before
+example (.frontAdjustment(10)) will place the structure 10 blocks in front of the player + 2 blocks so 12 total (roomopolis default)
+
 2.2.5
 Added size check to prevent large structures (bigger than 48x48x48) from being placed
 
