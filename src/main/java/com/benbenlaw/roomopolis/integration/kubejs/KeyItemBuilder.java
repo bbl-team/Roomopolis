@@ -36,7 +36,7 @@ public class KeyItemBuilder extends ItemBuilder {
         return this;
     }
 
-    @Info("The block to use as the key eg minecraft:iron_block, this is not required")
+    @Info("The block to use as the key eg minecraft:iron_block or #minecraft:logs for block tags, this is not required")
     public KeyItemBuilder keyBlock(String keyBlock) {
         if (keyBlock.isEmpty()) {
             this.keyBlock = null;

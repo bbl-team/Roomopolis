@@ -13,10 +13,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -49,6 +52,7 @@ public class KeyItem extends Item {
     public int heightAdjustment;
     public int frontAdjustment;
     public Optional<Block> keyBlock;
+    public Optional<TagKey<Block>> keyBlockTag;
     public boolean isPlaced;
     public boolean consumeKey;
     public Vec3i templateSize;
@@ -62,8 +66,16 @@ public class KeyItem extends Item {
 
         if (keyBlock == null || keyBlock.isEmpty()) {
             this.keyBlock = Optional.empty();
-        } else {
+            this.keyBlockTag = Optional.empty();
+        }
+        assert keyBlock != null;
+        if (keyBlock.startsWith("#")) {
+            this.keyBlock = Optional.empty();
+            this.keyBlockTag = Optional.of(TagKey.create(Registries.BLOCK, ResourceLocation.parse(keyBlock.substring(1))));
+        }
+        else {
             this.keyBlock = Optional.of(BuiltInRegistries.BLOCK.get(ResourceLocation.parse(keyBlock)));
+            this.keyBlockTag = Optional.empty();
         }
 
     }
@@ -84,8 +96,11 @@ public class KeyItem extends Item {
             assert player != null;
             if (player.getItemInHand(hand).is(this)) {
 
-                if (keyBlock.isPresent()) {
-                    if (state.is(keyBlock.get())) {
+                if (keyBlock.isPresent() || keyBlockTag.isPresent()) {
+                    if ((keyBlock.isPresent() && state.is(keyBlock.get()))
+                            || (keyBlockTag.isPresent() && state.is(keyBlockTag.get()))) {
+
+                        System.out.println("Tag Found: " + keyBlockTag.orElse(null)); // Debug statement
 
                         if (context.getClickedFace() == Direction.DOWN) {
                             player.sendSystemMessage(Component.translatable("item.key.invalid_placement").withStyle(ChatFormatting.RED));
@@ -100,7 +115,6 @@ public class KeyItem extends Item {
                             removeDoorArea = false;
                         }
 
-                        // Check if structure exceeds size limits before creating template
                         if (isStructureTooLarge()) {
                             player.sendSystemMessage(Component.translatable("item.key.too_large").withStyle(ChatFormatting.RED));
                             return InteractionResult.FAIL;
@@ -123,10 +137,10 @@ public class KeyItem extends Item {
                             player.sendSystemMessage(Component.translatable("item.key.area_not_empty").withStyle(ChatFormatting.RED));
                         }
                     } else {
-                        player.sendSystemMessage(Component.translatable("item.key.requires_key_block", keyBlock.get().getName()).withStyle(ChatFormatting.RED));
+                        player.sendSystemMessage(Component.translatable("item.key.requires_key_block",
+                                keyBlock.map(Block::getName).orElse(Component.literal("Unknown Block"))).withStyle(ChatFormatting.RED));
                     }
                 } else {
-
                     if (context.getClickedFace() == Direction.DOWN) {
                         player.sendSystemMessage(Component.translatable("item.key.invalid_placement").withStyle(ChatFormatting.RED));
                         return InteractionResult.FAIL;
@@ -139,7 +153,6 @@ public class KeyItem extends Item {
                         rotation = DirectionUtil.getRotationFromDirection(context.getHorizontalDirection().getOpposite());
                     }
 
-                    // Check if structure exceeds size limits before creating template
                     if (isStructureTooLarge()) {
                         player.sendSystemMessage(Component.translatable("item.key.too_large").withStyle(ChatFormatting.RED));
                         return InteractionResult.FAIL;
@@ -264,8 +277,12 @@ public class KeyItem extends Item {
             tooltipComponents.add(templateSizeText);
         }
 
-        keyBlock.ifPresent(block ->
-                tooltipComponents.add(Component.translatable("tooltips.key.requires_key_block", block.getName()).withStyle(ChatFormatting.RED)));
+        keyBlock.ifPresent(block -> tooltipComponents.add(Component.translatable("tooltips.key.requires_key_block", block.getName()).withStyle(ChatFormatting.RED)));
+
+        if (keyBlockTag.isPresent()) {
+            String tag = keyBlockTag.get().location().toString();
+            tooltipComponents.add(Component.translatable("tooltips.key.requires_key_block", tag).withStyle(ChatFormatting.RED));
+        }
     }
 
 

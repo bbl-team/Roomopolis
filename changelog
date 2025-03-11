@@ -4,6 +4,8 @@ Changelog Roomopolis
 
 2.2.7
 Added Logo
+Key block can now be a block tag in kubejs use # eg ("#minecraft:logs")
+Improved null checks for block information on keys
 
 2.2.6
 Added .frontAdjustment() allows the position of the structure to be adjusted relative to the player
