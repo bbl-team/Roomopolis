@@ -67,15 +67,14 @@ public class KeyItem extends Item {
         if (keyBlock == null || keyBlock.isEmpty()) {
             this.keyBlock = Optional.empty();
             this.keyBlockTag = Optional.empty();
-        }
-        assert keyBlock != null;
-        if (keyBlock.startsWith("#")) {
-            this.keyBlock = Optional.empty();
-            this.keyBlockTag = Optional.of(TagKey.create(Registries.BLOCK, ResourceLocation.parse(keyBlock.substring(1))));
-        }
-        else {
-            this.keyBlock = Optional.of(BuiltInRegistries.BLOCK.get(ResourceLocation.parse(keyBlock)));
-            this.keyBlockTag = Optional.empty();
+        } else {
+            if (keyBlock.startsWith("#")) {
+                this.keyBlock = Optional.empty();
+                this.keyBlockTag = Optional.of(TagKey.create(Registries.BLOCK, ResourceLocation.parse(keyBlock.substring(1))));
+            } else {
+                this.keyBlock = Optional.of(BuiltInRegistries.BLOCK.get(ResourceLocation.parse(keyBlock)));
+                this.keyBlockTag = Optional.empty();
+            }
         }
 
     }

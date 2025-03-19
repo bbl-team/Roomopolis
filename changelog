@@ -2,6 +2,12 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
+2.2.9
+Removed legacy shrine spawning
+
+2.2.8
+Fixed crashing with no key blocks
+
 2.2.7
 Added Logo
 Key block can now be a block tag in kubejs use # eg ("#minecraft:logs")
