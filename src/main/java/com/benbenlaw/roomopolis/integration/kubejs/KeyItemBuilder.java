@@ -13,6 +13,7 @@ public class KeyItemBuilder extends ItemBuilder {
     private int frontAdjustment = 0;
     private String keyBlock;
     private boolean consumeKey = true;
+    private boolean removeDoor = true;
 
     public KeyItemBuilder(ResourceLocation i) {
         super(i);
@@ -46,14 +47,20 @@ public class KeyItemBuilder extends ItemBuilder {
         return this;
     }
 
-    @Info("Is the key consumed when used")
+    @Info("Is the key consumed when used, default true")
     public KeyItemBuilder consumeKey(boolean consumeKey) {
         this.consumeKey = consumeKey;
         return this;
     }
 
+    @Info("If using the key removes a 2 high door, default true")
+    public KeyItemBuilder removeDoor(boolean removeDoor) {
+        this.removeDoor = removeDoor;
+        return this;
+    }
+
     @Override
     public Item createObject() {
-        return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock, consumeKey);
+        return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock, consumeKey, removeDoor);
     }
 }

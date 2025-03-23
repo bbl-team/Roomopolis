@@ -2,6 +2,13 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
+2.2.11
+Now ignore the room block in placement
+Added .removeDoor default true set to false to prevent
+
+2.2.10
+Kinda fixed servers not working with keys, key dimensions are currently not showing on the key item tooltip on servers
+
 2.2.9
 Removed legacy shrine spawning
 

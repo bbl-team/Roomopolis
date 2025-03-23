@@ -27,18 +27,9 @@ public class GetStructureSizePacket {
 
     public void handle(final GetStructureSizePayload payload, IPayloadContext context) {
 
-        ResourceLocation templateId = ResourceLocation.parse(payload.templateID());
-        Level level = context.player().level();
-        StructureTemplateManager structureManager = Objects.requireNonNull(level.getServer()).getStructureManager();
-        Optional<StructureTemplate> optionalTemplate = structureManager.get(templateId);
-
-        if (optionalTemplate.isPresent()) {
-            StructureTemplate template = optionalTemplate.get();
-            Vec3i size = template.getSize();
-            //Set the size in the cache for keys to read client side
-            KeyItemSizeCache.setTemplateSize(templateId, size);
-        }
+        Vec3i size = payload.size();
+        ResourceLocation templateID = ResourceLocation.parse(payload.templateID());
+        KeyItemSizeCache.setTemplateSize(templateID, size);
+        System.out.println("added template size to cache client: " + templateID + " " + size);
     }
-
-
 }

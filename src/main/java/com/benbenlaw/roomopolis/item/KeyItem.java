@@ -56,13 +56,15 @@ public class KeyItem extends Item {
     public boolean isPlaced;
     public boolean consumeKey;
     public Vec3i templateSize;
+    boolean removeDoorArea;
 
-    public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey) {
+    public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey, boolean removeDoorArea) {
         super(properties);
         this.templateId = ResourceLocation.parse(templateId);
         this.heightAdjustment = heightAdjustment;
         this.consumeKey = consumeKey;
         this.frontAdjustment = frontAdjustment;
+        this.removeDoorArea = removeDoorArea;
 
         if (keyBlock == null || keyBlock.isEmpty()) {
             this.keyBlock = Optional.empty();
@@ -76,7 +78,6 @@ public class KeyItem extends Item {
                 this.keyBlockTag = Optional.empty();
             }
         }
-
     }
 
 
@@ -89,9 +90,11 @@ public class KeyItem extends Item {
         Rotation rotation = DirectionUtil.getRotationFromDirection(context.getClickedFace());
         Direction facing = context.getHorizontalDirection();
         InteractionHand hand = context.getHand();
-        boolean removeDoorArea = true;
 
         if (!level.isClientSide()) {
+
+            templateSize = KeyItemSizeCache.getTemplateSize(templateId);
+
             assert player != null;
             if (player.getItemInHand(hand).is(this)) {
 
@@ -195,7 +198,6 @@ public class KeyItem extends Item {
         if (optionalTemplate.isPresent()) {
             // Template Information
             StructureTemplate template = optionalTemplate.get();
-            templateSize = template.getSize();
 
             // Position Adjustments to make the template spawn a block in front of the player and adjust the height of the template
             BlockPos centerOffset = new BlockPos(-templateSize.getX() / 2, -templateSize.getY() / 2, -templateSize.getZ() / 2);
@@ -217,7 +219,7 @@ public class KeyItem extends Item {
                         BlockPos worldPos = placementPos.offset(rotatedPos);
 
                         // Check if the block at the world position is not air
-                        if (!level.getBlockState(worldPos).isAir()) {
+                        if (!level.getBlockState(worldPos).isAir() && !worldPos.equals(pos)) {
                             isEmpty = false;
                             break;
                         }
@@ -260,7 +262,6 @@ public class KeyItem extends Item {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         if (templateSize == null && Minecraft.getInstance().player != null) {
-            PacketDistributor.sendToServer(new GetStructureSizePayload(templateId.toString()));
             templateSize = KeyItemSizeCache.getTemplateSize(templateId);
         }
 

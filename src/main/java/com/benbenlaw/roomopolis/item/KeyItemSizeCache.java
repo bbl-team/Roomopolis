@@ -7,10 +7,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class KeyItemSizeCache {
-    private static final Map<ResourceLocation, Vec3i> templateSizes = new ConcurrentHashMap<>();
+    public static final Map<ResourceLocation, Vec3i> templateSizes = new ConcurrentHashMap<>();
+
     public static Vec3i getTemplateSize(ResourceLocation templateId) {
+        System.out.println("templateSizes: " + templateSizes);
         return templateSizes.get(templateId);
+
     }
+
     public static void setTemplateSize(ResourceLocation templateId, Vec3i size) {
         templateSizes.put(templateId, size);
     }

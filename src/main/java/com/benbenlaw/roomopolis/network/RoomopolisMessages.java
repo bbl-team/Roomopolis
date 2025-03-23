@@ -12,6 +12,6 @@ public class RoomopolisMessages {
         final PayloadRegistrar registrar = event.registrar(Caveopolis.MOD_ID);
 
         //To Client From Server
-        registrar.playToServer(GetStructureSizePayload.TYPE, GetStructureSizePayload.STREAM_CODEC, GetStructureSizePacket.get()::handle);
+        registrar.playToClient(GetStructureSizePayload.TYPE, GetStructureSizePayload.STREAM_CODEC, GetStructureSizePacket.get()::handle);
     }
 }

@@ -12,6 +12,7 @@
   "item.key.area_not_empty": "Area not clear!",
   "item.key.requires_key_block": "This Key requires a %s to be interacted with!",
   "item.key.too_large": "This Structure is too big to be placed!",
+  "tooltips.key.loading_size": "Loading Information",
 
   "tooltips.key.shift_held": "Shift held: Place a Key Block",
   "tooltips.key.template_size": "Template Size: %s, %s, %s",
