@@ -26,7 +26,6 @@ public class GetStructureSizePacket {
     }
 
     public void handle(final GetStructureSizePayload payload, IPayloadContext context) {
-
         Vec3i size = payload.size();
         ResourceLocation templateID = ResourceLocation.parse(payload.templateID());
         KeyItemSizeCache.setTemplateSize(templateID, size);
