@@ -14,6 +14,7 @@ public class KeyItemBuilder extends ItemBuilder {
     private String keyBlock;
     private boolean consumeKey = true;
     private boolean removeDoor = true;
+    private boolean sideOnlyPlacement = true;
 
     public KeyItemBuilder(ResourceLocation i) {
         super(i);
@@ -59,8 +60,14 @@ public class KeyItemBuilder extends ItemBuilder {
         return this;
     }
 
+    @Info("If the template can only be placed on the side of a block, default true")
+    public KeyItemBuilder sideOnlyPlacement(boolean sideOnlyPlacement) {
+        this.sideOnlyPlacement = sideOnlyPlacement;
+        return this;
+    }
+
     @Override
     public Item createObject() {
-        return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock, consumeKey, removeDoor);
+        return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock, consumeKey, removeDoor, sideOnlyPlacement);
     }
 }

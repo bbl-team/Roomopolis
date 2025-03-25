@@ -57,14 +57,16 @@ public class KeyItem extends Item {
     public boolean consumeKey;
     public Vec3i templateSize;
     boolean removeDoorArea;
+    boolean sideOnlyPlacement;
 
-    public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey, boolean removeDoorArea) {
+    public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey, boolean removeDoorArea, boolean sideOnlyPlacement) {
         super(properties);
         this.templateId = ResourceLocation.parse(templateId);
         this.heightAdjustment = heightAdjustment;
         this.consumeKey = consumeKey;
         this.frontAdjustment = frontAdjustment;
         this.removeDoorArea = removeDoorArea;
+        this.sideOnlyPlacement = sideOnlyPlacement;
 
         if (keyBlock == null || keyBlock.isEmpty()) {
             this.keyBlock = Optional.empty();
@@ -99,13 +101,12 @@ public class KeyItem extends Item {
             if (player.getItemInHand(hand).is(this)) {
 
                 if (keyBlock.isPresent() || keyBlockTag.isPresent()) {
-                    if ((keyBlock.isPresent() && state.is(keyBlock.get()))
-                            || (keyBlockTag.isPresent() && state.is(keyBlockTag.get()))) {
+                    if ((keyBlock.isPresent() && state.is(keyBlock.get())) || (keyBlockTag.isPresent() && state.is(keyBlockTag.get()))) {
 
                         System.out.println("Tag Found: " + keyBlockTag.orElse(null)); // Debug statement
 
-                        if (context.getClickedFace() == Direction.DOWN) {
-                            player.sendSystemMessage(Component.translatable("item.key.invalid_placement").withStyle(ChatFormatting.RED));
+                        if (sideOnlyPlacement && (context.getClickedFace() == Direction.UP || context.getClickedFace() == Direction.DOWN)) {
+                            player.sendSystemMessage(Component.translatable("item.key.side_only").withStyle(ChatFormatting.RED));
                             return InteractionResult.FAIL;
                         }
 
@@ -202,9 +203,7 @@ public class KeyItem extends Item {
             // Position Adjustments to make the template spawn a block in front of the player and adjust the height of the template
             BlockPos centerOffset = new BlockPos(-templateSize.getX() / 2, -templateSize.getY() / 2, -templateSize.getZ() / 2);
             BlockPos adjustedOffset = StructureTemplate.calculateRelativePosition(placementSettings, centerOffset);
-            int forwardShift = (rotation == Rotation.NONE || rotation == Rotation.CLOCKWISE_180)
-                    ? templateSize.getZ() / 2 + 1 + frontAdjustment
-                    : templateSize.getX() / 2 + 1 + frontAdjustment;
+            int forwardShift = Math.max(templateSize.getX() / 2, 1) + 1 + frontAdjustment;
             BlockPos forwardOffset = pos.relative(facing, forwardShift);
             BlockPos placementPos = forwardOffset.offset(adjustedOffset);
             placementPos = placementPos.above(heightAdjustment);

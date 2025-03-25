@@ -12,6 +12,9 @@
   "item.key.area_not_empty": "Area not clear!",
   "item.key.requires_key_block": "This Key requires a %s to be interacted with!",
   "item.key.too_large": "This Structure is too big to be placed!",
+  "item.key.side_only": "This can only be used on the side of a block!",
+  "item.key.invalid_placement": "Invalid placement",
+
   "tooltips.key.loading_size": "Loading Information",
 
   "tooltips.key.shift_held": "Shift held: Place a Key Block",
@@ -22,4 +25,5 @@
   "tooltips.key.wall_remover": "Remove the 2 connecting blocks between rooms!",
 
   "itemGroup.roomopolis": "Roomopolis"
+
 }
