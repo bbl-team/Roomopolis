@@ -103,7 +103,7 @@ public class KeyItem extends Item {
                 if (keyBlock.isPresent() || keyBlockTag.isPresent()) {
                     if ((keyBlock.isPresent() && state.is(keyBlock.get())) || (keyBlockTag.isPresent() && state.is(keyBlockTag.get()))) {
 
-                        System.out.println("Tag Found: " + keyBlockTag.orElse(null)); // Debug statement
+                        // System.out.println("Tag Found: " + keyBlockTag.orElse(null)); // Debug statement
 
                         if (sideOnlyPlacement && (context.getClickedFace() == Direction.UP || context.getClickedFace() == Direction.DOWN)) {
                             player.sendSystemMessage(Component.translatable("item.key.side_only").withStyle(ChatFormatting.RED));

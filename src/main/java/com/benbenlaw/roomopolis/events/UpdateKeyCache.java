@@ -51,7 +51,7 @@ public class UpdateKeyCache {
             StructureTemplateManager structureManager = level.getStructureManager();
             for (Item item : BuiltInRegistries.ITEM) {
 
-                System.out.println("item: " + item);
+               // System.out.println("item: " + item);
                 if (item instanceof KeyItem keyItem) {
                     ResourceLocation templateId = keyItem.templateId;
                     Optional<StructureTemplate> optionalTemplate = structureManager.get(templateId);
@@ -59,7 +59,7 @@ public class UpdateKeyCache {
                     optionalTemplate.ifPresent(template -> {
                         Vec3i size = template.getSize();
                         KeyItemSizeCache.setTemplateSize(templateId, size);
-                        System.out.println("added template size to cache server: " + templateId + " " + size);
+                        //System.out.println("added template size to cache server: " + templateId + " " + size);
 
                         PacketDistributor.sendToPlayer(serverPlayer, new GetStructureSizePayload(templateId.toString(), size));
                     });

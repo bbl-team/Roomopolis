@@ -10,7 +10,7 @@ public class KeyItemSizeCache {
     public static final Map<ResourceLocation, Vec3i> templateSizes = new ConcurrentHashMap<>();
 
     public static Vec3i getTemplateSize(ResourceLocation templateId) {
-        System.out.println("templateSizes: " + templateSizes);
+     //   System.out.println("templateSizes: " + templateSizes);
         return templateSizes.get(templateId);
 
     }
