@@ -1,6 +1,7 @@
 package com.benbenlaw.roomopolis.block;
 
 import com.benbenlaw.Roomopolis;
+import com.benbenlaw.roomopolis.block.custom.KeyCrafterBlock;
 import com.benbenlaw.roomopolis.block.custom.RoomBlock;
 import com.benbenlaw.roomopolis.block.custom.RoomKeyBlock;
 import com.benbenlaw.roomopolis.item.RoomopolisItems;
@@ -20,6 +21,8 @@ public class RoomopolisBlocks {
     public static final DeferredRegister.Blocks BLOCKS =
             DeferredRegister.createBlocks(Roomopolis.MOD_ID);
 
+    public static final DeferredBlock<Block> KEY_CRAFTER = registerBlock("key_crafter",
+            () -> new KeyCrafterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CRAFTING_TABLE)));
     public static final DeferredBlock<Block> ROOM_BLOCK = registerBlock("room_block",
             () -> new RoomBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK)));
     public static final DeferredBlock<Block> ROOM_KEY_BLOCK = registerBlock("room_key_block",

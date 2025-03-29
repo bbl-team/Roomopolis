@@ -15,6 +15,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.repository.Pack;
@@ -23,7 +24,9 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -38,13 +41,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class KeyItem extends Item {
 
@@ -58,8 +61,9 @@ public class KeyItem extends Item {
     public Vec3i templateSize;
     boolean removeDoorArea;
     boolean sideOnlyPlacement;
+    boolean blocksRequired;
 
-    public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey, boolean removeDoorArea, boolean sideOnlyPlacement) {
+    public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey, boolean removeDoorArea, boolean sideOnlyPlacement, boolean blocksRequired) {
         super(properties);
         this.templateId = ResourceLocation.parse(templateId);
         this.heightAdjustment = heightAdjustment;
@@ -67,6 +71,7 @@ public class KeyItem extends Item {
         this.frontAdjustment = frontAdjustment;
         this.removeDoorArea = removeDoorArea;
         this.sideOnlyPlacement = sideOnlyPlacement;
+        this.blocksRequired = blocksRequired;
 
         if (keyBlock == null || keyBlock.isEmpty()) {
             this.keyBlock = Optional.empty();
@@ -92,12 +97,17 @@ public class KeyItem extends Item {
         Rotation rotation = DirectionUtil.getRotationFromDirection(context.getClickedFace());
         Direction facing = context.getHorizontalDirection();
         InteractionHand hand = context.getHand();
+        assert player != null;
+        ItemStack stack = player.getItemInHand(hand);
 
         if (!level.isClientSide()) {
 
+            if (!hasEnoughBlocks(player, level)) {
+                return InteractionResult.FAIL;
+            }
+
             templateSize = KeyItemSizeCache.getTemplateSize(templateId);
 
-            assert player != null;
             if (player.getItemInHand(hand).is(this)) {
 
                 if (keyBlock.isPresent() || keyBlockTag.isPresent()) {
@@ -133,6 +143,7 @@ public class KeyItem extends Item {
                                 level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), Block.UPDATE_ALL);
                                 level.sendBlockUpdated(pos.below(), level.getBlockState(pos.below()), level.getBlockState(pos.below()), Block.UPDATE_ALL);
                             }
+                            consumeBlocks(player, level);
                             if (consumeKey) {
                                 player.getItemInHand(hand).shrink(1);
                             }
@@ -168,6 +179,7 @@ public class KeyItem extends Item {
                         if (consumeKey) {
                             player.getItemInHand(hand).shrink(1);
                         }
+                        consumeBlocks(player, level);
                     } else {
                         player.sendSystemMessage(Component.translatable("item.key.area_not_empty").withStyle(ChatFormatting.RED));
                     }
@@ -178,6 +190,132 @@ public class KeyItem extends Item {
         isPlaced = false;
         return super.useOn(context);
     }
+
+    public Map<Block, Integer> getRequiredBlocks(Level level) {
+        Map<Block, Integer> blockCounts = new HashMap<>();
+
+        StructureTemplateManager structureManager = Objects.requireNonNull(level.getServer()).getStructureManager();
+        Optional<StructureTemplate> optionalTemplate = structureManager.get(templateId);
+
+        if (optionalTemplate.isPresent()) {
+            StructureTemplate.Palette palette = optionalTemplate.get().palettes.getFirst();
+
+            for (StructureTemplate.StructureBlockInfo blockInfo : palette.blocks()) {
+                Block block = blockInfo.state().getBlock();
+                if (block == Blocks.AIR) continue;
+                blockCounts.put(block, blockCounts.getOrDefault(block, 0) + 1);
+            }
+        }
+
+        return blockCounts;
+    }
+
+    public void consumeBlocks(Player player, Level level) {
+
+        if (player.isCreative()) {
+            return;
+        }
+
+        if (blocksRequired) {
+
+            Map<Block, Integer> requiredBlocks = getRequiredBlocks(level);
+
+            for (Map.Entry<Block, Integer> entry : requiredBlocks.entrySet()) {
+                Block requiredBlock = entry.getKey();
+                int requiredAmount = entry.getValue();
+
+                for (int i = 0; i < player.getInventory().items.size(); i++) {
+                    ItemStack stack = player.getInventory().items.get(i);
+                    if (stack.getItem() instanceof BlockItem blockItem && blockItem.getBlock() == requiredBlock) {
+                        int availableAmount = stack.getCount();
+
+                        if (requiredAmount >= availableAmount) {
+                            player.getInventory().items.set(i, ItemStack.EMPTY);
+                            requiredAmount -= availableAmount;
+                        } else {
+                            stack.shrink(requiredAmount);
+                            requiredAmount = 0;
+                        }
+
+                        if (requiredAmount <= 0) break;
+                    }
+                }
+            }
+        }
+    }
+
+
+    public boolean hasEnoughBlocks(Player player, Level level) {
+
+        if (!blocksRequired) {
+            return true;
+        }
+
+        if (player.isCreative()) {
+            return true;
+        }
+
+        Map<Block, Integer> requiredBlocks = getRequiredBlocks(level);
+        Map<Block, Integer> playerBlocks = new HashMap<>();
+        Map<Block, Integer> missingBlocks = new HashMap<>();
+
+        // Player Inventory
+        for (ItemStack stack : player.getInventory().items) {
+            if (stack.getItem() instanceof BlockItem blockItem) {
+                Block block = blockItem.getBlock();
+                playerBlocks.put(block, playerBlocks.getOrDefault(block, 0) + stack.getCount());
+            }
+        }
+
+        // Player Block amount check
+        for (Map.Entry<Block, Integer> entry : requiredBlocks.entrySet()) {
+            Block block = entry.getKey();
+            int requiredAmount = entry.getValue();
+            int availableAmount = playerBlocks.getOrDefault(block, 0);
+
+            if (availableAmount < requiredAmount) {
+                int missingAmount = requiredAmount - availableAmount;
+                missingBlocks.put(block, missingAmount);
+            }
+        }
+
+        if (!missingBlocks.isEmpty()) {
+            player.sendSystemMessage(Component.translatable("item.key.missing_blocks").withStyle(ChatFormatting.RED));
+
+            for (Map.Entry<Block, Integer> entry : missingBlocks.entrySet()) {
+                Block block = entry.getKey();
+                int missingAmount = entry.getValue();
+
+                // Stack Size checks
+                int stacks = missingAmount / block.asItem().getDefaultInstance().getMaxStackSize();
+                int remaining = missingAmount % block.asItem().getDefaultInstance().getMaxStackSize();
+
+                // Construct the message
+                MutableComponent message = Component.literal("- ")
+                        .append(block.getName())
+                        .append(": ")
+                        .append(Component.literal(String.valueOf(missingAmount)));
+
+                // Only append stack information if there are stacks
+                if (stacks > 0) {
+                    message = message.append(Component.literal(" ("))
+                            .append(Component.literal(String.valueOf(stacks)))
+                            .append(Component.literal(" stack"))
+                            .append(stacks > 1 ? Component.literal("s") : Component.empty()) // Handle plural for stacks
+                            .append(remaining > 0 ? Component.literal(" + " + remaining) : Component.empty()) // Add remaining items if any
+                            .append(Component.literal(")"));
+                }
+
+                message = message.withStyle(ChatFormatting.YELLOW);
+
+                player.sendSystemMessage(message);
+            }
+
+            return false;
+        }
+        return true;
+    }
+
 
     private boolean isStructureTooLarge() {
         int sizeX = templateSize.getX();
@@ -258,31 +396,85 @@ public class KeyItem extends Item {
         }
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
-        if (templateSize == null && Minecraft.getInstance().player != null) {
-            templateSize = KeyItemSizeCache.getTemplateSize(templateId);
-        }
+        Map<Block, Integer> blockMap = KeyItemPaletteCache.getTemplatePalette(templateId);
+        Player player = Minecraft.getInstance().player;
 
-        if (consumeKey) {
-            tooltipComponents.add(Component.translatable("tooltips.key.consume_key").withStyle(ChatFormatting.GRAY));
+        if (Screen.hasShiftDown()) {
+
+            if (templateSize == null && Minecraft.getInstance().player != null) {
+                templateSize = KeyItemSizeCache.getTemplateSize(templateId);
+            }
+
+            if (consumeKey) {
+                tooltipComponents.add(Component.translatable("tooltips.key.consume_key").withStyle(ChatFormatting.GRAY));
+            } else {
+                tooltipComponents.add(Component.translatable("tooltips.key.retain_key").withStyle(ChatFormatting.GRAY));
+            }
+
+            if (templateSize != null) {
+                Component templateSizeText = Component.translatable("tooltips.key.template_size",
+                        templateSize.getX(), templateSize.getY(), templateSize.getZ()).withStyle(ChatFormatting.GRAY);
+                tooltipComponents.add(templateSizeText);
+            }
+
+            keyBlock.ifPresent(block -> tooltipComponents.add(Component.translatable("tooltips.key.requires_key_block", block.getName()).withStyle(ChatFormatting.RED)));
+
+            if (keyBlockTag.isPresent()) {
+                String tag = keyBlockTag.get().location().toString();
+                tooltipComponents.add(Component.translatable("tooltips.key.requires_key_block", tag).withStyle(ChatFormatting.RED));
+            }
+
         } else {
-            tooltipComponents.add(Component.translatable("tooltips.key.retain_key").withStyle(ChatFormatting.GRAY));
+            tooltipComponents.add(Component.translatable("tooltips.item.shift.not_held").withStyle(ChatFormatting.YELLOW));
         }
 
-        if (templateSize != null) {
-            Component templateSizeText = Component.translatable("tooltips.key.template_size",
-                    templateSize.getX(), templateSize.getY(), templateSize.getZ()).withStyle(ChatFormatting.GRAY);
-            tooltipComponents.add(templateSizeText);
-        }
+        // Add List
 
-        keyBlock.ifPresent(block -> tooltipComponents.add(Component.translatable("tooltips.key.requires_key_block", block.getName()).withStyle(ChatFormatting.RED)));
+        if (blocksRequired) {
+            if (Screen.hasAltDown()) {
+                if (blockMap != null && player != null) {
+                    Map<Block, Integer> playerBlocks = new HashMap<>();
 
-        if (keyBlockTag.isPresent()) {
-            String tag = keyBlockTag.get().location().toString();
-            tooltipComponents.add(Component.translatable("tooltips.key.requires_key_block", tag).withStyle(ChatFormatting.RED));
+                    // Count blocks in the player's inventory
+                    for (ItemStack itemStack : player.getInventory().items) {
+                        if (itemStack.getItem() instanceof BlockItem blockItem) {
+                            Block block = blockItem.getBlock();
+                            playerBlocks.put(block, playerBlocks.getOrDefault(block, 0) + itemStack.getCount());
+                        }
+                    }
+
+                    tooltipComponents.add(Component.translatable("tooltips.key.required_blocks").withStyle(ChatFormatting.GRAY));
+
+                    for (Map.Entry<Block, Integer> entry : blockMap.entrySet()) {
+                        Block block = entry.getKey();
+                        int requiredCount = entry.getValue();
+                        int playerCount = playerBlocks.getOrDefault(block, 0);
+
+                        ChatFormatting color = (playerCount >= requiredCount) ? ChatFormatting.GREEN : ChatFormatting.RED;
+
+                        String tooltipText = requiredCount + "x " + block.getName().getString();
+
+                        if (playerCount >= requiredCount) {
+                            tooltipText = "(✔) " + tooltipText;
+                        } else {
+                            tooltipText = "(❌) " + tooltipText;
+                        }
+
+                        tooltipComponents.add(Component.literal(tooltipText)
+                                .withStyle(color));
+                    }
+
+                }
+
+            } else {
+                tooltipComponents.add(Component.translatable("tooltips.item.alt.not_held").withStyle(ChatFormatting.YELLOW));
+            }
         }
     }
+
 
 
 

@@ -2,6 +2,15 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
+2.3.0
+Added .blocksRequired(), boolean, default false optional
+If true the key can only be placed if the players inventory contains the required blocks
+Reworked tooltips
+    - holding shift shows general key information
+    - holding alt shows the required blocks for the key if the key requires blocks
+Added KeyItemPaletteCache, this store the palette of the structure templates, for the keys
+Using a key will show what items you are missing if you try and place
+
 2.2.16
 Disabled debug messages
 

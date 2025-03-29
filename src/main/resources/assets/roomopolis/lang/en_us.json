@@ -23,7 +23,11 @@
   "tooltips.key.retain_key": "Key is not consumed on use!",
   "tooltips.key.requires_key_block": "Requires: %s to use the key on!",
   "tooltips.key.wall_remover": "Remove the 2 connecting blocks between rooms!",
+  "tooltips.key.required_blocks": "Required Blocks;",
 
-  "itemGroup.roomopolis": "Roomopolis"
+  "itemGroup.roomopolis": "Roomopolis",
+  "item.key.not_enough_blocks": "Not enough blocks to use this key!",
+  "item.key.missing_blocks": "Missing blocks"
+
 
 }

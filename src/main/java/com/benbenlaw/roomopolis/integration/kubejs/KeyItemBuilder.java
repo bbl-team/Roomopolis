@@ -15,6 +15,7 @@ public class KeyItemBuilder extends ItemBuilder {
     private boolean consumeKey = true;
     private boolean removeDoor = true;
     private boolean sideOnlyPlacement = true;
+    private boolean blocksRequired = false;
 
     public KeyItemBuilder(ResourceLocation i) {
         super(i);
@@ -66,8 +67,14 @@ public class KeyItemBuilder extends ItemBuilder {
         return this;
     }
 
+    @Info("If the template requires blocks to be placed, default false")
+    public KeyItemBuilder blocksRequired(boolean blocksRequired) {
+        this.blocksRequired = blocksRequired;
+        return this;
+    }
+
     @Override
     public Item createObject() {
-        return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock, consumeKey, removeDoor, sideOnlyPlacement);
+        return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock, consumeKey, removeDoor, sideOnlyPlacement, blocksRequired);
     }
 }
