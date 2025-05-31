@@ -17,6 +17,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.tags.BlockTags;
@@ -33,10 +34,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -95,7 +93,13 @@ public class KeyItem extends Item {
         BlockPos pos = context.getClickedPos();
         BlockState state = level.getBlockState(pos);
         Rotation rotation = DirectionUtil.getRotationFromDirection(context.getClickedFace());
-        Direction facing = context.getHorizontalDirection();
+
+        System.out.println("Rotation: " + rotation);
+
+        Direction facing = context.getClickedFace().getOpposite();// getHorizontalDirection();
+
+        System.out.println("Direction: " + facing);
+
         InteractionHand hand = context.getHand();
         assert player != null;
         ItemStack stack = player.getItemInHand(hand);
@@ -203,6 +207,7 @@ public class KeyItem extends Item {
             for (StructureTemplate.StructureBlockInfo blockInfo : palette.blocks()) {
                 Block block = blockInfo.state().getBlock();
                 if (block == Blocks.AIR) continue;
+
                 blockCounts.put(block, blockCounts.getOrDefault(block, 0) + 1);
             }
         }
@@ -428,7 +433,7 @@ public class KeyItem extends Item {
             }
 
         } else {
-            tooltipComponents.add(Component.translatable("tooltips.item.shift.not_held").withStyle(ChatFormatting.YELLOW));
+            tooltipComponents.add(Component.translatable("tooltips.bblcore.shift").withStyle(ChatFormatting.YELLOW));
         }
 
         // Add List
@@ -470,7 +475,7 @@ public class KeyItem extends Item {
                 }
 
             } else {
-                tooltipComponents.add(Component.translatable("tooltips.item.alt.not_held").withStyle(ChatFormatting.YELLOW));
+                tooltipComponents.add(Component.translatable("tooltips.bblcore.alt").withStyle(ChatFormatting.YELLOW));
             }
         }
     }

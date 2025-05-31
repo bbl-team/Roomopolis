@@ -2,6 +2,14 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
+2.3.2
+Key usage now executes on the side on a block not the direction the player is facing, this allows for better placement of keys on blocks,
+    no changes required to mods/ kubejs keys this is a logic change
+
+2.3.1
+Update to bbl core 1.2.29
+Updated tooltips
+
 2.3.0
 Added .blocksRequired(), boolean, default false optional
 If true the key can only be placed if the players inventory contains the required blocks
