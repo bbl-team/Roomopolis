@@ -16,6 +16,7 @@ public class KeyItemBuilder extends ItemBuilder {
     private boolean removeDoor = true;
     private boolean sideOnlyPlacement = true;
     private boolean blocksRequired = false;
+    private boolean overrideExistingBlocks = false;
 
     public KeyItemBuilder(ResourceLocation i) {
         super(i);
@@ -73,8 +74,14 @@ public class KeyItemBuilder extends ItemBuilder {
         return this;
     }
 
+    @Info("If false normal checks for placement are done if true the template will be placed no matter the blocks in the world, default false")
+    public KeyItemBuilder overrideExistingBlocks(boolean overrideExistingBlocks) {
+        this.overrideExistingBlocks = overrideExistingBlocks;
+        return this;
+    }
+
     @Override
     public Item createObject() {
-        return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock, consumeKey, removeDoor, sideOnlyPlacement, blocksRequired);
+        return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock, consumeKey, removeDoor, sideOnlyPlacement, blocksRequired, overrideExistingBlocks);
     }
 }

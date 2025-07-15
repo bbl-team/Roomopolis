@@ -1,14 +1,9 @@
 package com.benbenlaw.roomopolis.item;
 
-import com.benbenlaw.core.item.TooltipUtil;
 import com.benbenlaw.core.util.DirectionUtil;
-import com.benbenlaw.roomopolis.block.RoomopolisBlocks;
-import com.benbenlaw.roomopolis.network.packet.GetStructureSizePacket;
-import com.benbenlaw.roomopolis.network.payload.GetStructureSizePayload;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -17,15 +12,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -41,8 +30,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -60,8 +47,9 @@ public class KeyItem extends Item {
     boolean removeDoorArea;
     boolean sideOnlyPlacement;
     boolean blocksRequired;
+    boolean overrideExistingBlocks;
 
-    public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey, boolean removeDoorArea, boolean sideOnlyPlacement, boolean blocksRequired) {
+    public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey, boolean removeDoorArea, boolean sideOnlyPlacement, boolean blocksRequired, boolean overrideExistingBlocks) {
         super(properties);
         this.templateId = ResourceLocation.parse(templateId);
         this.heightAdjustment = heightAdjustment;
@@ -70,6 +58,7 @@ public class KeyItem extends Item {
         this.removeDoorArea = removeDoorArea;
         this.sideOnlyPlacement = sideOnlyPlacement;
         this.blocksRequired = blocksRequired;
+        this.overrideExistingBlocks = overrideExistingBlocks;
 
         if (keyBlock == null || keyBlock.isEmpty()) {
             this.keyBlock = Optional.empty();
@@ -353,29 +342,28 @@ public class KeyItem extends Item {
 
             // Check if the location is empty (all air blocks)
             boolean isEmpty = true;
-            for (int x = 0; x < templateSize.getX(); x++) {
-                for (int y = 0; y < templateSize.getY(); y++) {
-                    for (int z = 0; z < templateSize.getZ(); z++) {
-                        BlockPos relPos = new BlockPos(x, y, z);
-                        BlockPos rotatedPos = StructureTemplate.calculateRelativePosition(placementSettings, relPos);
-                        BlockPos worldPos = placementPos.offset(rotatedPos);
 
-                        // Check if the block at the world position is not air
-                        if (!level.getBlockState(worldPos).isAir() && !worldPos.equals(pos)) {
-                            isEmpty = false;
-                            break;
+
+            if (!overrideExistingBlocks) {
+                for (int x = 0; x < templateSize.getX(); x++) {
+                    for (int y = 0; y < templateSize.getY(); y++) {
+                        for (int z = 0; z < templateSize.getZ(); z++) {
+                            BlockPos relPos = new BlockPos(x, y, z);
+                            BlockPos rotatedPos = StructureTemplate.calculateRelativePosition(placementSettings, relPos);
+                            BlockPos worldPos = placementPos.offset(rotatedPos);
+
+                            if (!level.getBlockState(worldPos).isAir() && !worldPos.equals(pos)) {
+                                isEmpty = false;
+                                break;
+                            }
                         }
+                        if (!isEmpty) break;
                     }
-                    if (!isEmpty) {
-                        break;
-                    }
-                }
-                if (!isEmpty) {
-                    break;
+                    if (!isEmpty) break;
                 }
             }
 
-            if (isEmpty) {
+            if (isEmpty || overrideExistingBlocks) {
                 // Place the template if the location is empty
                 template.placeInWorld((ServerLevelAccessor) level, placementPos, placementPos, placementSettings, level.getRandom(), Block.UPDATE_ALL);
                 isPlaced = true;
@@ -417,6 +405,12 @@ public class KeyItem extends Item {
                 tooltipComponents.add(Component.translatable("tooltips.key.consume_key").withStyle(ChatFormatting.GRAY));
             } else {
                 tooltipComponents.add(Component.translatable("tooltips.key.retain_key").withStyle(ChatFormatting.GRAY));
+            }
+
+            if (overrideExistingBlocks) {
+                tooltipComponents.add(Component.translatable("tooltips.key.override_existing_blocks").withStyle(ChatFormatting.GRAY));
+            } else {
+                tooltipComponents.add(Component.translatable("tooltips.key.normal_checks").withStyle(ChatFormatting.GRAY));
             }
 
             if (templateSize != null) {

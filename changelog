@@ -2,7 +2,9 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
-//Double block issues
+2.4.0
+Added overrideExistingBlocks boolean, allows the key to skip the usual placement checks and place the structure regardless of existing blocks
+Keys now show a new tooltip is the overrideExistingBlocks is true or false
 
 2.3.2
 Key usage now executes on the side on a block not the direction the player is facing, this allows for better placement of keys on blocks,

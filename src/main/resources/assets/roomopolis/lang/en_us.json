@@ -22,6 +22,8 @@
   "tooltips.key.consume_key": "Key will be consumed on use!",
   "tooltips.key.retain_key": "Key is not consumed on use!",
   "tooltips.key.requires_key_block": "Requires: %s to use the key on!",
+  "tooltips.key.override_existing_blocks": "Override existing blocks in the area! Use with caution!",
+  "tooltips.key.normal_checks": "Requires a clear area to place the room",
   "tooltips.key.wall_remover": "Remove the 2 connecting blocks between rooms!",
   "tooltips.key.required_blocks": "Required Blocks;",
 
