@@ -407,6 +407,8 @@ public class KeyItem extends Item {
                 tooltipComponents.add(Component.translatable("tooltips.key.retain_key").withStyle(ChatFormatting.GRAY));
             }
 
+
+
             if (overrideExistingBlocks) {
                 tooltipComponents.add(Component.translatable("tooltips.key.override_existing_blocks").withStyle(ChatFormatting.GRAY));
             } else {
