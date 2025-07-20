@@ -17,6 +17,10 @@ public class KeyItemBuilder extends ItemBuilder {
     private boolean sideOnlyPlacement = true;
     private boolean blocksRequired = false;
     private boolean overrideExistingBlocks = false;
+    public int doorLeft;
+    public int doorRight;
+    public int doorUp;
+    public int doorDown;
 
     public KeyItemBuilder(ResourceLocation i) {
         super(i);
@@ -80,8 +84,34 @@ public class KeyItemBuilder extends ItemBuilder {
         return this;
     }
 
+    @Info("How many block to the left of the key block an opening should be created, default 0")
+    public KeyItemBuilder doorLeft(int doorLeft) {
+        this.doorLeft = doorLeft;
+        return this;
+    }
+
+    @Info("How many block to the right of the key block an opening should be created, default 0")
+    public KeyItemBuilder doorRight(int doorRight) {
+        this.doorRight = doorRight;
+        return this;
+    }
+
+    @Info("How many block above the key block an opening should be created, default 0")
+    public KeyItemBuilder doorUp(int doorUp) {
+        this.doorUp = doorUp;
+        return this;
+    }
+
+    @Info("How many block below the key block an opening should be created, default 0")
+    public KeyItemBuilder doorDown(int doorDown) {
+        this.doorDown = doorDown;
+        return this;
+    }
+
     @Override
     public Item createObject() {
-        return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock, consumeKey, removeDoor, sideOnlyPlacement, blocksRequired, overrideExistingBlocks);
+        return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock,
+                consumeKey, removeDoor, sideOnlyPlacement, blocksRequired, overrideExistingBlocks,
+                doorLeft, doorRight, doorUp, doorDown);
     }
 }

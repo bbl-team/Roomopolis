@@ -48,8 +48,14 @@ public class KeyItem extends Item {
     boolean sideOnlyPlacement;
     boolean blocksRequired;
     boolean overrideExistingBlocks;
+    public int doorLeft;
+    public int doorRight;
+    public int doorUp;
+    public int doorDown;
 
-    public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey, boolean removeDoorArea, boolean sideOnlyPlacement, boolean blocksRequired, boolean overrideExistingBlocks) {
+    public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey,
+                   boolean removeDoorArea, boolean sideOnlyPlacement, boolean blocksRequired, boolean overrideExistingBlocks,
+                   int doorLeft, int doorRight, int doorUp, int doorDown) {
         super(properties);
         this.templateId = ResourceLocation.parse(templateId);
         this.heightAdjustment = heightAdjustment;
@@ -59,6 +65,11 @@ public class KeyItem extends Item {
         this.sideOnlyPlacement = sideOnlyPlacement;
         this.blocksRequired = blocksRequired;
         this.overrideExistingBlocks = overrideExistingBlocks;
+
+        this.doorLeft = doorLeft;
+        this.doorRight = doorRight;
+        this.doorUp = doorUp;
+        this.doorDown = doorDown;
 
         if (keyBlock == null || keyBlock.isEmpty()) {
             this.keyBlock = Optional.empty();
@@ -131,10 +142,11 @@ public class KeyItem extends Item {
                         if (isPlaced) {
                             player.sendSystemMessage(Component.translatable("item.key.placed").withStyle(ChatFormatting.GREEN));
                             if (removeDoorArea) {
-                                level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
-                                level.setBlockAndUpdate(pos.below(), Blocks.AIR.defaultBlockState());
-                                level.sendBlockUpdated(pos, level.getBlockState(pos), level.getBlockState(pos), Block.UPDATE_ALL);
-                                level.sendBlockUpdated(pos.below(), level.getBlockState(pos.below()), level.getBlockState(pos.below()), Block.UPDATE_ALL);
+                                Direction placementFacing = (context.getClickedFace().getAxis().isVertical())
+                                        ? context.getHorizontalDirection().getOpposite()
+                                        : context.getClickedFace().getOpposite();
+
+                                removeDoor(level, pos, placementFacing);
                             }
                             consumeBlocks(player, level);
                             if (consumeKey) {
@@ -475,6 +487,27 @@ public class KeyItem extends Item {
             }
         }
     }
+
+    private void removeDoor(Level level, BlockPos centerPos, Direction horizontalFacing) {
+        if (!horizontalFacing.getAxis().isHorizontal()) {
+            // Fallback: assume NORTH if invalid
+            horizontalFacing = Direction.NORTH;
+        }
+
+        Direction leftDir = horizontalFacing.getCounterClockWise().getOpposite();
+
+        for (int x = -doorLeft; x <= doorRight; x++) {
+            for (int y = -doorDown; y <= doorUp; y++) {
+                BlockPos offset = centerPos.relative(leftDir, x).above(y);
+                BlockState current = level.getBlockState(offset);
+                if (!current.isAir()) {
+                    level.setBlockAndUpdate(offset, Blocks.AIR.defaultBlockState());
+                    level.sendBlockUpdated(offset, current, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+                }
+            }
+        }
+    }
+
 
 
 

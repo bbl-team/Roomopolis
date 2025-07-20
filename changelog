@@ -2,7 +2,13 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
-2.4.1
+2.5.0
+Can now create custom door sizes, using doorLeft, doorRight, doorTop, doorBottom,  example in RoomopolisItems, kubejs use
+        .doorLeft(1)
+        .doorRight(2)
+        .doorUp(4)
+        .doorDown(2) in your builder
+must have removeDoor set to true if false values will be ignored
 
 2.4.0
 Added overrideExistingBlocks boolean, allows the key to skip the usual placement checks and place the structure regardless of existing blocks
