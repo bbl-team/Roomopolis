@@ -17,10 +17,10 @@ public class KeyItemBuilder extends ItemBuilder {
     private boolean sideOnlyPlacement = true;
     private boolean blocksRequired = false;
     private boolean overrideExistingBlocks = false;
-    public int doorLeft;
-    public int doorRight;
-    public int doorUp;
-    public int doorDown;
+    public int doorLeft = 0;
+    public int doorRight = 0;
+    public int doorUp = 0;
+    public int doorDown = 0;
 
     public KeyItemBuilder(ResourceLocation i) {
         super(i);

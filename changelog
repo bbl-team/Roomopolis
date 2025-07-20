@@ -2,6 +2,9 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
+2.5.1
+Fixed KubeJS for keys
+
 2.5.0
 Can now create custom door sizes, using doorLeft, doorRight, doorTop, doorBottom,  example in RoomopolisItems, kubejs use
         .doorLeft(1)
