@@ -1,6 +1,7 @@
 package com.benbenlaw.roomopolis.item;
 
 import com.benbenlaw.core.util.DirectionUtil;
+import com.benbenlaw.roomopolis.util.RoomopolisTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
@@ -198,6 +199,7 @@ public class KeyItem extends Item {
 
     public Map<Block, Integer> getRequiredBlocks(Level level) {
         Map<Block, Integer> blockCounts = new HashMap<>();
+        Map<Block, Integer> halfCountMap = new HashMap<>();
 
         StructureTemplateManager structureManager = Objects.requireNonNull(level.getServer()).getStructureManager();
         Optional<StructureTemplate> optionalTemplate = structureManager.get(templateId);
@@ -209,7 +211,17 @@ public class KeyItem extends Item {
                 Block block = blockInfo.state().getBlock();
                 if (block == Blocks.AIR) continue;
 
+                if (block.builtInRegistryHolder().is(RoomopolisTags.Blocks.DOUBLE_BLOCKS)) {
+                    halfCountMap.put(block, halfCountMap.getOrDefault(block, 0) + 1);
+                    continue;
+                }
+
                 blockCounts.put(block, blockCounts.getOrDefault(block, 0) + 1);
+            }
+
+            for (Map.Entry<Block, Integer> entry : halfCountMap.entrySet()) {
+                int adjusted = (entry.getValue() + 1) / 2;
+                blockCounts.put(entry.getKey(), adjusted);
             }
         }
 

@@ -1,0 +1,11 @@
+{
+    "replace": false,
+    "values": [
+        "#minecraft:doors",
+        "#minecraft:beds",
+        {
+            "id": "immersiveengineering:fluid_pump",
+            "required": false
+        }
+    ]
+}
