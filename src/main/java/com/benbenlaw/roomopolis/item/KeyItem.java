@@ -1,6 +1,6 @@
 package com.benbenlaw.roomopolis.item;
 
-import com.benbenlaw.core.util.DirectionUtil;
+import com.benbenlaw.roomopolis.util.DirectionUtil;
 import com.benbenlaw.roomopolis.util.RoomopolisTags;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

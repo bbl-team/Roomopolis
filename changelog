@@ -2,6 +2,9 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
+2.6.0
+Removed Core as a dependency
+
 2.5.3
 Re added 2.3.3 changes that were lost in 2.4.0
 Moved tags to the correct location

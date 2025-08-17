@@ -1,16 +1,21 @@
 package com.benbenlaw.roomopolis.util;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.core.util.CoreTags;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 
 public class RoomopolisTags {
 
-    public static class Blocks extends CoreTags.Blocks {
+    public static class Blocks {
 
         // Blocks
-        public static final TagKey<Block> DOUBLE_BLOCKS = tag(Roomopolis.MOD_ID, "double_blocks");
+        public static final TagKey<Block> DOUBLE_BLOCKS = tag("double_blocks");
+
+        private static TagKey<Block> tag(String name) {
+            return BlockTags.create(ResourceLocation.fromNamespaceAndPath(Roomopolis.MOD_ID, name));
+        }
     }
 
 

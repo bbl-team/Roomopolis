@@ -74,16 +74,12 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
 
     //BBL Core
-    compileOnly "curse.maven:bbl-core-1135181:6486837"
-    runtimeOnly "curse.maven:bbl-core-1135181:6486837"
+    //compileOnly "curse.maven:bbl-core-1135181:6486837"
+    //runtimeOnly "curse.maven:bbl-core-1135181:6486837"
 
     //JEI
     compileOnly "curse.maven:jei-238222:5846880"
     runtimeOnly "curse.maven:jei-238222:5846880"
-
-    //Caveopolis 5.0.20
-    compileOnly "curse.maven:caveopolis-mod-639186:5982032"
-    runtimeOnly "curse.maven:caveopolis-mod-639186:5982032"
 
     //KubeJS
     compileOnly "curse.maven:kubejs-238086:5631423"
