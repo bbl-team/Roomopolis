@@ -1,7 +1,5 @@
 package com.benbenlaw.roomopolis.network.packet;
 
-import com.benbenlaw.caveopolis.screen.WorktableMenu;
-import com.benbenlaw.roomopolis.item.KeyItem;
 import com.benbenlaw.roomopolis.item.KeyItemSizeCache;
 import com.benbenlaw.roomopolis.network.payload.GetStructureSizePayload;
 import net.minecraft.core.Vec3i;

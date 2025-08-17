@@ -1,9 +1,6 @@
 package com.benbenlaw.roomopolis.network.payload;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.caveopolis.Caveopolis;
-import com.benbenlaw.roomopolis.item.KeyItemSizeCache;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
