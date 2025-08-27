@@ -95,11 +95,7 @@ public class KeyItem extends Item {
         BlockState state = level.getBlockState(pos);
         Rotation rotation = DirectionUtil.getRotationFromDirection(context.getClickedFace());
 
-        System.out.println("Rotation: " + rotation);
-
         Direction facing = context.getClickedFace().getOpposite();// getHorizontalDirection();
-
-        System.out.println("Direction: " + facing);
 
         InteractionHand hand = context.getHand();
         assert player != null;
