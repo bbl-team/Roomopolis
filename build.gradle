@@ -73,10 +73,6 @@ dependencies {
 
     implementation "net.neoforged:neoforge:${neo_version}"
 
-    //BBL Core
-    //compileOnly "curse.maven:bbl-core-1135181:6486837"
-    //runtimeOnly "curse.maven:bbl-core-1135181:6486837"
-
     //JEI
     compileOnly "curse.maven:jei-238222:5846880"
     runtimeOnly "curse.maven:jei-238222:5846880"
@@ -162,7 +158,6 @@ tasks.register('publishCurseForge', TaskPublishCurseForge) {
     def mainFile = upload(projectId, jar)
 
     mainFile.changelog = changelog
-    mainFile.addRequirement("bbl-core")
     mainFile.releaseType = "release"
     mainFile.gameVersions.addAll("1.21", "1.21.1")
     mainFile.addEnvironment("server", "client")
@@ -184,7 +179,6 @@ modrinth {
     changelog = project.changelog
     dependencies {
         optional.project "jei"
-        required.project "bbl-core"
     }
 }
 
