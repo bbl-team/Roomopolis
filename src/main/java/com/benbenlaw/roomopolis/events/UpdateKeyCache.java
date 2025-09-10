@@ -64,6 +64,10 @@ public class UpdateKeyCache {
                             Block block = blockInfo.state().getBlock();
                             if (block == Blocks.AIR) continue;
 
+                            if (block.builtInRegistryHolder().is(RoomopolisTags.Blocks.NOT_NEEDED_FOR_BLOCK_REQUIREMENTS)) {
+                                continue;
+                            }
+
                             if (block.builtInRegistryHolder().is(RoomopolisTags.Blocks.DOUBLE_BLOCKS)) {
                                 halfCountMap.put(block, halfCountMap.getOrDefault(block, 0) + 1);
                                 continue;

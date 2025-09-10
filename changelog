@@ -2,6 +2,9 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
+2.6.6
+Added "roomopolis:not_needed_for_block_requirements" block tag, blocks in this tag will not be counted when checking for required blocks for keys with blocksRequired set to true
+
 2.6.5
 Keys that override existing blocks now show warning above the xp bar when holding the key
 Fixed some tooltips not working without bblcore installed

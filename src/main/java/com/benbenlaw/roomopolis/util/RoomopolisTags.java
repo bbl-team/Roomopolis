@@ -12,6 +12,7 @@ public class RoomopolisTags {
 
         // Blocks
         public static final TagKey<Block> DOUBLE_BLOCKS = tag("double_blocks");
+        public static final TagKey<Block> NOT_NEEDED_FOR_BLOCK_REQUIREMENTS = tag("not_needed_for_block_requirements");
 
         private static TagKey<Block> tag(String name) {
             return BlockTags.create(ResourceLocation.fromNamespaceAndPath(Roomopolis.MOD_ID, name));
