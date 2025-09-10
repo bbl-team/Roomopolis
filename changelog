@@ -2,6 +2,14 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
+2.6.5
+Keys that override existing blocks now show warning above the xp bar when holding the key
+Fixed some tooltips not working without bblcore installed
+Added option to make keys only work on top of blocks default is false
+    .topOnlyPlacement(true) in kubejs keys to make the key only work on top of blocks
+Optimized imports
+Updated Wiki
+
 2.6.4
 Removed Core from dependencies list
 

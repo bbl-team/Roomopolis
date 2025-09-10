@@ -1,7 +1,6 @@
 package com.benbenlaw.roomopolis.data;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.caveopolis.Caveopolis;
 import com.benbenlaw.roomopolis.block.RoomopolisBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;

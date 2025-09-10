@@ -1,7 +1,5 @@
 package com.benbenlaw.roomopolis.integration.kubejs;
 
-import com.benbenlaw.Roomopolis;
-import com.benbenlaw.roomopolis.item.KeyItem;
 import dev.latvian.mods.kubejs.plugin.KubeJSPlugin;
 import dev.latvian.mods.kubejs.registry.BuilderTypeRegistry;
 import net.minecraft.core.registries.Registries;

@@ -1,8 +1,6 @@
 package com.benbenlaw.roomopolis.data;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.caveopolis.data.CaveopolisBlockStatesProvider;
-import com.benbenlaw.caveopolis.data.CaveopolisItemModelProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;

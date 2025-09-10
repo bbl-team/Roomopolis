@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -24,7 +25,10 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -47,15 +51,16 @@ public class KeyItem extends Item {
     public Vec3i templateSize;
     boolean removeDoorArea;
     boolean sideOnlyPlacement;
+    boolean topOnlyPlacement;
     boolean blocksRequired;
-    boolean overrideExistingBlocks;
+    public boolean overrideExistingBlocks;
     public int doorLeft;
     public int doorRight;
     public int doorUp;
     public int doorDown;
 
     public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey,
-                   boolean removeDoorArea, boolean sideOnlyPlacement, boolean blocksRequired, boolean overrideExistingBlocks,
+                   boolean removeDoorArea, boolean sideOnlyPlacement, boolean topOnlyPlacement, boolean blocksRequired, boolean overrideExistingBlocks,
                    int doorLeft, int doorRight, int doorUp, int doorDown) {
         super(properties);
         this.templateId = ResourceLocation.parse(templateId);
@@ -64,6 +69,7 @@ public class KeyItem extends Item {
         this.frontAdjustment = frontAdjustment;
         this.removeDoorArea = removeDoorArea;
         this.sideOnlyPlacement = sideOnlyPlacement;
+        this.topOnlyPlacement = topOnlyPlacement;
         this.blocksRequired = blocksRequired;
         this.overrideExistingBlocks = overrideExistingBlocks;
 
@@ -115,6 +121,11 @@ public class KeyItem extends Item {
                     if ((keyBlock.isPresent() && state.is(keyBlock.get())) || (keyBlockTag.isPresent() && state.is(keyBlockTag.get()))) {
 
                         // System.out.println("Tag Found: " + keyBlockTag.orElse(null)); // Debug statement
+
+                        if (topOnlyPlacement && context.getClickedFace() != Direction.UP) {
+                            player.sendSystemMessage(Component.translatable("item.key.top_only").withStyle(ChatFormatting.RED));
+                            return InteractionResult.FAIL;
+                        }
 
                         if (sideOnlyPlacement && (context.getClickedFace() == Direction.UP || context.getClickedFace() == Direction.DOWN)) {
                             player.sendSystemMessage(Component.translatable("item.key.side_only").withStyle(ChatFormatting.RED));
@@ -427,12 +438,23 @@ public class KeyItem extends Item {
                 tooltipComponents.add(Component.translatable("tooltips.key.retain_key").withStyle(ChatFormatting.GRAY));
             }
 
-
-
             if (overrideExistingBlocks) {
                 tooltipComponents.add(Component.translatable("tooltips.key.override_existing_blocks").withStyle(ChatFormatting.GRAY));
             } else {
                 tooltipComponents.add(Component.translatable("tooltips.key.normal_checks").withStyle(ChatFormatting.GRAY));
+            }
+
+            if (removeDoorArea) {
+                tooltipComponents.add(Component.translatable("tooltips.key.remove_door_area",
+                        doorLeft, doorRight, doorUp, doorDown).withStyle(ChatFormatting.GRAY));
+            }
+
+            if (sideOnlyPlacement) {
+                tooltipComponents.add(Component.translatable("tooltips.key.side_only").withStyle(ChatFormatting.GRAY));
+            }
+
+            if (topOnlyPlacement) {
+                tooltipComponents.add(Component.translatable("tooltips.key.top_only").withStyle(ChatFormatting.GRAY));
             }
 
             if (templateSize != null) {
@@ -449,11 +471,10 @@ public class KeyItem extends Item {
             }
 
         } else {
-            tooltipComponents.add(Component.translatable("tooltips.bblcore.shift").withStyle(ChatFormatting.YELLOW));
+            tooltipComponents.add(Component.translatable("tooltips.roomopolis.shift").withStyle(ChatFormatting.YELLOW));
         }
 
         // Add List
-
         if (blocksRequired) {
             if (Screen.hasAltDown()) {
                 if (blockMap != null && player != null) {
@@ -491,7 +512,7 @@ public class KeyItem extends Item {
                 }
 
             } else {
-                tooltipComponents.add(Component.translatable("tooltips.bblcore.alt").withStyle(ChatFormatting.YELLOW));
+                tooltipComponents.add(Component.translatable("tooltips.roomopolis.alt").withStyle(ChatFormatting.YELLOW));
             }
         }
     }
@@ -516,10 +537,15 @@ public class KeyItem extends Item {
         }
     }
 
+    @Override
+    public void inventoryTick(ItemStack stack, Level level, Entity entity, int p_41407_, boolean p_41408_) {
 
-
-
-
-
-
+        Player player = (Player) entity;
+        if (player.getMainHandItem().getItem() instanceof KeyItem keyItem) {
+            if (keyItem.overrideExistingBlocks) {
+                player.displayClientMessage(Component.translatable("message.key.overrides_blocks")
+                        .withStyle(ChatFormatting.RED), true);
+            }
+        }
+    }
 }

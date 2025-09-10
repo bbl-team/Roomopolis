@@ -1,7 +1,6 @@
 package com.benbenlaw.roomopolis.data;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.caveopolis.Caveopolis;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;

@@ -13,6 +13,8 @@
   "item.key.requires_key_block": "This Key requires a %s to be interacted with!",
   "item.key.too_large": "This Structure is too big to be placed!",
   "item.key.side_only": "This can only be used on the side of a block!",
+  "item.key.top_only": "This can only be used on the top of a block!",
+  "item.key.top_only": "This can only be used on the top of a block!",
   "item.key.invalid_placement": "Invalid placement",
 
   "tooltips.key.loading_size": "Loading Information",
@@ -26,6 +28,16 @@
   "tooltips.key.normal_checks": "Requires a clear area to place the room",
   "tooltips.key.wall_remover": "Remove the 2 connecting blocks between rooms!",
   "tooltips.key.required_blocks": "Required Blocks;",
+  "tooltips.key.remove_door_area": "Removes Door;",
+  "tooltips.key.side_only": "Used on side of a block",
+  "tooltips.key.top_only": "Used on top of a block",
+
+  "tooltips.roomopolis.shift": "Press SHIFT for more info",
+  "tooltips.roomopolis.alt": "Press ALT for more info",
+  "tooltips.roomopolis.ctrl": "Press CTRL for more info",
+
+
+  "message.key.overrides_blocks": "Using this key will override existing blocks in the area!",
 
   "itemGroup.roomopolis": "Roomopolis",
   "item.key.not_enough_blocks": "Not enough blocks to use this key!",

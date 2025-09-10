@@ -15,6 +15,7 @@ public class KeyItemBuilder extends ItemBuilder {
     private boolean consumeKey = true;
     private boolean removeDoor = true;
     private boolean sideOnlyPlacement = true;
+    private boolean topOnlyPlacement = false;
     private boolean blocksRequired = false;
     private boolean overrideExistingBlocks = false;
     public int doorLeft = 0;
@@ -72,6 +73,12 @@ public class KeyItemBuilder extends ItemBuilder {
         return this;
     }
 
+    @Info("If the template can only be placed on top of a block, default false")
+    public KeyItemBuilder topOnlyPlacement(boolean topOnlyPlacement) {
+        this.topOnlyPlacement = topOnlyPlacement;
+        return this;
+    }
+
     @Info("If the template requires blocks to be placed, default false")
     public KeyItemBuilder blocksRequired(boolean blocksRequired) {
         this.blocksRequired = blocksRequired;
@@ -111,7 +118,7 @@ public class KeyItemBuilder extends ItemBuilder {
     @Override
     public Item createObject() {
         return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock,
-                consumeKey, removeDoor, sideOnlyPlacement, blocksRequired, overrideExistingBlocks,
+                consumeKey, removeDoor, sideOnlyPlacement, topOnlyPlacement, blocksRequired, overrideExistingBlocks,
                 doorLeft, doorRight, doorUp, doorDown);
     }
 }
