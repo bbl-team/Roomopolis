@@ -22,10 +22,10 @@ public class RoomopolisCreativeTab {
 
                 output.accept(RoomopolisBlocks.ROOM_KEY_BLOCK.get());
                 output.accept(RoomopolisBlocks.ROOM_BLOCK.get());
-                output.accept(RoomopolisItems.TINY_ROOM_KEY.get());
-                output.accept(RoomopolisItems.SMALL_ROOM_KEY.get());
-                output.accept(RoomopolisItems.MEDIUM_ROOM_KEY.get());
-                output.accept(RoomopolisItems.LARGE_ROOM_KEY.get());
+                //output.accept(RoomopolisItems.TINY_ROOM_KEY.get());
+                //output.accept(RoomopolisItems.SMALL_ROOM_KEY.get());
+                //output.accept(RoomopolisItems.MEDIUM_ROOM_KEY.get());
+                //output.accept(RoomopolisItems.LARGE_ROOM_KEY.get());
             }).build()
     );
 

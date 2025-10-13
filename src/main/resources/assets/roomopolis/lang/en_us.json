@@ -14,7 +14,7 @@
   "item.key.too_large": "This Structure is too big to be placed!",
   "item.key.side_only": "This can only be used on the side of a block!",
   "item.key.top_only": "This can only be used on the top of a block!",
-  "item.key.top_only": "This can only be used on the top of a block!",
+  "item.key.too_high": "This can not be used at this height try going lower!",
   "item.key.invalid_placement": "Invalid placement",
 
   "tooltips.key.loading_size": "Loading Information",
@@ -38,6 +38,10 @@
 
 
   "message.key.overrides_blocks": "Using this key will override existing blocks in the area!",
+
+  "roomopolis.jei.tooltip.rotate": "Template Size: %s, %s, %s",
+
+  "category.roomopolis.room_category": "Rooms",
 
   "itemGroup.roomopolis": "Roomopolis",
   "item.key.not_enough_blocks": "Not enough blocks to use this key!",

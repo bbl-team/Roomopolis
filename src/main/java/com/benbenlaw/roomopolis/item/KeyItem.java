@@ -49,19 +49,20 @@ public class KeyItem extends Item {
     public boolean isPlaced;
     public boolean consumeKey;
     public Vec3i templateSize;
-    boolean removeDoorArea;
-    boolean sideOnlyPlacement;
-    boolean topOnlyPlacement;
-    boolean blocksRequired;
+    public boolean removeDoorArea;
+    public boolean sideOnlyPlacement;
+    public boolean topOnlyPlacement;
+    public boolean blocksRequired;
     public boolean overrideExistingBlocks;
     public int doorLeft;
     public int doorRight;
     public int doorUp;
     public int doorDown;
+    public int maxHeight;
 
     public KeyItem(Properties properties, String templateId, int heightAdjustment, int frontAdjustment, String keyBlock, boolean consumeKey,
                    boolean removeDoorArea, boolean sideOnlyPlacement, boolean topOnlyPlacement, boolean blocksRequired, boolean overrideExistingBlocks,
-                   int doorLeft, int doorRight, int doorUp, int doorDown) {
+                   int doorLeft, int doorRight, int doorUp, int doorDown, int requiresHeight) {
         super(properties);
         this.templateId = ResourceLocation.parse(templateId);
         this.heightAdjustment = heightAdjustment;
@@ -77,6 +78,8 @@ public class KeyItem extends Item {
         this.doorRight = doorRight;
         this.doorUp = doorUp;
         this.doorDown = doorDown;
+
+        this.maxHeight = requiresHeight;
 
         if (keyBlock == null || keyBlock.isEmpty()) {
             this.keyBlock = Optional.empty();
@@ -120,7 +123,11 @@ public class KeyItem extends Item {
                 if (keyBlock.isPresent() || keyBlockTag.isPresent()) {
                     if ((keyBlock.isPresent() && state.is(keyBlock.get())) || (keyBlockTag.isPresent() && state.is(keyBlockTag.get()))) {
 
-                        // System.out.println("Tag Found: " + keyBlockTag.orElse(null)); // Debug statement
+                        int clickedOnY = pos.getY();
+                        if (maxHeight <= clickedOnY) {
+                            player.sendSystemMessage(Component.translatable("item.key.too_high", maxHeight).withStyle(ChatFormatting.RED));
+                            return InteractionResult.FAIL;
+                        }
 
                         if (topOnlyPlacement && context.getClickedFace() != Direction.UP) {
                             player.sendSystemMessage(Component.translatable("item.key.top_only").withStyle(ChatFormatting.RED));

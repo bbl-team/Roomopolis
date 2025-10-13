@@ -22,6 +22,7 @@ public class KeyItemBuilder extends ItemBuilder {
     public int doorRight = 0;
     public int doorUp = 0;
     public int doorDown = 0;
+    public int maxHeight = 256;
 
     public KeyItemBuilder(ResourceLocation i) {
         super(i);
@@ -115,10 +116,16 @@ public class KeyItemBuilder extends ItemBuilder {
         return this;
     }
 
+    @Info("The maximum height the template can be placed, default 256")
+    public KeyItemBuilder maxHeight(int maxHeight) {
+        this.maxHeight = maxHeight;
+        return this;
+    }
+
     @Override
     public Item createObject() {
         return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock,
                 consumeKey, removeDoor, sideOnlyPlacement, topOnlyPlacement, blocksRequired, overrideExistingBlocks,
-                doorLeft, doorRight, doorUp, doorDown);
+                doorLeft, doorRight, doorUp, doorDown, maxHeight);
     }
 }
