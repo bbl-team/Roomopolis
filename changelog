@@ -2,6 +2,10 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
+2.7.1
+- Fixed crashing on server when trying to view structure render in jei
+- Added FakeStructureTemplateManager to prevent crashes when trying to load structure templates on server side
+
 2.7.0
 - Removed Roomopolis own keys, plenty of examples can be found in the kubejs files for Submerged 2, Techopolis 3, and Contained as well as the wiki found here: https://github.com/bbl-team/Roomopolis/wiki
 - Added structure rendering in jei, press "U" on the key item in jei to see a render of the structure

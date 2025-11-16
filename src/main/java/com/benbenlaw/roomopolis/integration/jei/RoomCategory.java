@@ -2,7 +2,7 @@ package com.benbenlaw.roomopolis.integration.jei;
 
 import com.benbenlaw.Roomopolis;
 import com.benbenlaw.roomopolis.block.RoomopolisBlocks;
-import com.benbenlaw.roomopolis.util.RoomopolisTags;
+import com.benbenlaw.roomopolis.item.FakeStructureTemplateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -21,7 +21,6 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -29,21 +28,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.neoforged.neoforge.client.model.data.ModelData;
-import net.neoforged.neoforge.common.Tags;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -137,8 +128,7 @@ public class RoomCategory implements IRecipeCategory<RoomRecipe> {
 
             Minecraft mc = Minecraft.getInstance();
             Level level = mc.level;
-            StructureTemplateManager structureManager = mc.getSingleplayerServer().getStructureManager();
-            Optional<StructureTemplate> optionalTemplate = structureManager.get(recipe.templateId());
+            Optional<StructureTemplate> optionalTemplate = FakeStructureTemplateManager.INSTANCE.get(recipe.templateId());
 
             if (optionalTemplate.isPresent()) {
                 StructureTemplate template = optionalTemplate.get();
@@ -159,8 +149,7 @@ public class RoomCategory implements IRecipeCategory<RoomRecipe> {
 
         assert level != null;
         assert mc.getSingleplayerServer() != null;
-        StructureTemplateManager structureManager = mc.getSingleplayerServer().getStructureManager();
-        Optional<StructureTemplate> optionalTemplate = structureManager.get(recipe.templateId());
+        Optional<StructureTemplate> optionalTemplate = FakeStructureTemplateManager.INSTANCE.get(recipe.templateId());
 
         if (optionalTemplate.isEmpty()) {
             guiGraphics.drawString(mc.font, Component.literal("BROKEN" + recipe.templateId().toString()), 5, 5, 0x404040, false);

@@ -20,8 +20,5 @@ public class GetStructurePalettePacket {
         ResourceLocation templateID = ResourceLocation.parse(payload.templateID());
 
         KeyItemPaletteCache.setTemplatePalette(templateID, blockCounts);
-        System.out.println("added palette to cache client: " + templateID + " ");
-
-
     }
 }

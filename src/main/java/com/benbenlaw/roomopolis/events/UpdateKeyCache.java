@@ -6,9 +6,12 @@ import com.benbenlaw.roomopolis.item.KeyItemPaletteCache;
 import com.benbenlaw.roomopolis.item.KeyItemSizeCache;
 import com.benbenlaw.roomopolis.network.payload.GetStructurePalettePayload;
 import com.benbenlaw.roomopolis.network.payload.GetStructureSizePayload;
+import com.benbenlaw.roomopolis.network.payload.StructureTemplatePayload;
+import com.benbenlaw.roomopolis.item.FakeStructureTemplateManager;
 import com.benbenlaw.roomopolis.util.RoomopolisTags;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -84,6 +87,17 @@ public class UpdateKeyCache {
 
                         KeyItemPaletteCache.setTemplatePalette(templateId, blockCounts);
                         PacketDistributor.sendToPlayer(serverPlayer, new GetStructurePalettePayload(templateId.toString(), blockCounts));
+                        FakeStructureTemplateManager.INSTANCE.addTemplate(templateId, optionalTemplate.get());
+
+
+
+                        CompoundTag nbt = optionalTemplate.get().save(new CompoundTag());
+                        PacketDistributor.sendToPlayer(
+                                serverPlayer,
+                                new StructureTemplatePayload(templateId.toString(), nbt)
+                        );
+
+
                     }
 
 

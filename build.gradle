@@ -74,20 +74,16 @@ dependencies {
     implementation "net.neoforged:neoforge:${neo_version}"
 
     //JEI
-    compileOnly "curse.maven:jei-238222:5846880"
-    runtimeOnly "curse.maven:jei-238222:5846880"
+    compileOnly "curse.maven:jei-238222:7057366"
+    runtimeOnly "curse.maven:jei-238222:7057366"
 
     //KubeJS
-    compileOnly "curse.maven:kubejs-238086:5631423"
-    runtimeOnly "curse.maven:kubejs-238086:5631423"
+    compileOnly "curse.maven:kubejs-238086:7107528"
+    runtimeOnly "curse.maven:kubejs-238086:7107528"
 
     //Rhino
-    compileOnly "curse.maven:rhino-416294:5650008"
-    runtimeOnly "curse.maven:rhino-416294:5650008"
-
-    //Modern Industrialization
-    compileOnly "curse.maven:modern-industrialization-405388:6161932"
-    runtimeOnly "curse.maven:modern-industrialization-405388:6161932"
+    compileOnly "curse.maven:rhino-416294:7104526"
+    runtimeOnly "curse.maven:rhino-416294:7104526"
 
     //Cloth Config
     compileOnly "curse.maven:cloth-config-348521:5729127"
