@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public class FakeStructureTemplateManager {
 
-    // 🔥 THIS is the INSTANCE you were missing
     public static final FakeStructureTemplateManager INSTANCE = new FakeStructureTemplateManager();
 
     private final Map<ResourceLocation, StructureTemplate> templates = new HashMap<>();

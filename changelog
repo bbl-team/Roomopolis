@@ -2,6 +2,13 @@ Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
 
+2.8.0
+- Added Structure Rendering in world, if the key can be placed/used when looking at the block a render of the structure will appear showing where the structure will be placed
+- After a valid structure is rendered it will remain in world until the player changes the item held or the structure can be applied to the new place location
+
+2.7.2
+- Fixed blocks in the "not_needed_for_block_requirements" tag not being ignored when checking for required blocks on the key use
+
 2.7.1
 - Fixed crashing on server when trying to view structure render in jei
 - Added FakeStructureTemplateManager to prevent crashes when trying to load structure templates on server side
