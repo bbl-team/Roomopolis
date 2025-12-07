@@ -60,7 +60,7 @@ public class KeyPreviewRenderer {
             } else {
                 lastKeyItem = null;
             }
-            lastValidPos = null;  // Reset placement when item changes
+            lastValidPos = null;
             lastValidFace = null;
         }
 
@@ -76,19 +76,16 @@ public class KeyPreviewRenderer {
             face = blockHit.getDirection();
 
             if (canPreviewPlace(lastKeyItem, player, clickedPos, face)) {
-                // Update last valid placement if current is valid
                 lastValidPos = clickedPos;
                 lastValidFace = face;
             }
         }
 
-        // If we never found a valid placement yet, exit
         if (lastValidPos == null || lastValidFace == null) return;
 
         Rotation rotation = DirectionUtil.getRotationFromDirection(lastValidFace);
         Direction facing = lastValidFace.getOpposite();
 
-        // Placement anchor matches block player is looking at
         BlockPos placePosition = lastValidPos;
         if (lastValidFace == Direction.UP) {
             placePosition = lastValidPos.above(3);
@@ -104,7 +101,6 @@ public class KeyPreviewRenderer {
         StructureTemplate template = optionalTemplate.get();
         StructurePlaceSettings settings = new StructurePlaceSettings().setRotation(rotation).setMirror(Mirror.NONE);
 
-        // Center + forward offset
         BlockPos centerOffset = new BlockPos(-templateSize.getX() / 2, -templateSize.getY() / 2, -templateSize.getZ() / 2);
         BlockPos adjustedOffset = StructureTemplate.calculateRelativePosition(settings, centerOffset);
         int forwardShift = Math.max(templateSize.getX() / 2, 1) + 1 + lastKeyItem.frontAdjustment;
@@ -147,9 +143,11 @@ public class KeyPreviewRenderer {
             blockRenderer.renderSingleBlock(rotatedState, poseStack, translucentBuffer, 0xF000F0, OverlayTexture.NO_OVERLAY);
             poseStack.popPose();
 
-            // Update min/max bounds for the entire structure
-            AABB shapeBounds = rotatedState.getShape(level, placementPos.offset(rotatedPos)).bounds();
-            if (shapeBounds.getXsize() > 0 && shapeBounds.getYsize() > 0 && shapeBounds.getZsize() > 0) {
+            // Safe bounds calculation
+            var shape = rotatedState.getShape(level, placementPos.offset(rotatedPos));
+            if (!shape.isEmpty()) {
+                AABB shapeBounds = shape.bounds();
+
                 BlockPos blockMin = new BlockPos(
                         rotatedPos.getX() + (int) Math.floor(shapeBounds.minX),
                         rotatedPos.getY() + (int) Math.floor(shapeBounds.minY),
@@ -177,7 +175,7 @@ public class KeyPreviewRenderer {
             }
         }
 
-        // Draw single bounding box around the whole structure
+        // Draw bounding box
         if (min != null && max != null) {
             Vec3 minVec = new Vec3(min.getX(), min.getY(), min.getZ());
             Vec3 maxVec = new Vec3(max.getX(), max.getY(), max.getZ());
@@ -189,6 +187,7 @@ public class KeyPreviewRenderer {
         translucentBuffer.endBatch();
         lineBufferSource.endBatch();
     }
+
 
     @OnlyIn(Dist.CLIENT)
     private static boolean canPreviewPlace(KeyItem key, Player player, BlockPos lookPos, Direction face) {
