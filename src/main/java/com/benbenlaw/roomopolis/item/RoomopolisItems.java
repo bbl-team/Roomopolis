@@ -13,6 +13,18 @@ public class RoomopolisItems {
             DeferredRegister.createItems(Roomopolis.MOD_ID);
 
     /*
+    public static final DeferredItem<Item> WATER = ITEMS.register("water",
+            () -> new KeyItem(new Item.Properties(), "minecraft:water", 0, 0, "minecraft:terracotta", true, false, true, false,  false, true, 0, 0, 0, 1, 256).replaceWaterLoggedBlocks());
+
+
+    public static final DeferredItem<Item> WATERLOGGED = ITEMS.register("waterlogged",
+            () -> new KeyItem(new Item.Properties(), "minecraft:water", 0, 0, "minecraft:terracotta", true, false, true, false,  false, true, 0, 0, 0, 1, 256));
+
+
+
+     */
+
+    /*
     public static final DeferredItem<Item> TINY_ROOM_KEY = ITEMS.register("tiny_room_key",
             () -> new KeyItem(new Item.Properties(), "roomopolis:tiny_room", 0, 0, "roomopolis:room_key_block", true, true, true, false,  false, true, 0, 0, 0, 1, 256));
     public static final DeferredItem<Item> SMALL_ROOM_KEY = ITEMS.register("small_room_key",

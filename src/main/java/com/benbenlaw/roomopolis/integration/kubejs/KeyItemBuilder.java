@@ -18,6 +18,7 @@ public class KeyItemBuilder extends ItemBuilder {
     private boolean topOnlyPlacement = false;
     private boolean blocksRequired = false;
     private boolean overrideExistingBlocks = false;
+    private boolean replaceWaterLoggedBlocks = false;
     public int doorLeft = 0;
     public int doorRight = 0;
     public int doorUp = 0;
@@ -92,6 +93,12 @@ public class KeyItemBuilder extends ItemBuilder {
         return this;
     }
 
+    @Info("If true block placed by the template that become water logged will have there water logged state turned back to false, default false")
+    public KeyItemBuilder replaceWaterLoggedBlocks(boolean replaceWaterLoggedBlocks) {
+        this.replaceWaterLoggedBlocks = replaceWaterLoggedBlocks;
+        return this;
+    }
+
     @Info("How many block to the left of the key block an opening should be created, default 0")
     public KeyItemBuilder doorLeft(int doorLeft) {
         this.doorLeft = doorLeft;
@@ -126,6 +133,6 @@ public class KeyItemBuilder extends ItemBuilder {
     public Item createObject() {
         return new KeyItem(createItemProperties(), templateId, heightAdjustment, frontAdjustment, keyBlock,
                 consumeKey, removeDoor, sideOnlyPlacement, topOnlyPlacement, blocksRequired, overrideExistingBlocks,
-                doorLeft, doorRight, doorUp, doorDown, maxHeight);
+                doorLeft, doorRight, doorUp, doorDown, maxHeight).replaceWaterLoggedBlocks(replaceWaterLoggedBlocks);
     }
 }

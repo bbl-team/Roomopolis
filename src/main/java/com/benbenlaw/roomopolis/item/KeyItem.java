@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
@@ -54,6 +55,7 @@ public class KeyItem extends Item {
     public boolean topOnlyPlacement;
     public boolean blocksRequired;
     public boolean overrideExistingBlocks;
+    public boolean replaceWaterLoggedBlocks = false;
     public int doorLeft;
     public int doorRight;
     public int doorUp;
@@ -95,6 +97,10 @@ public class KeyItem extends Item {
         }
     }
 
+    public KeyItem replaceWaterLoggedBlocks(boolean replaceWaterLoggedBlocks) {
+        this.replaceWaterLoggedBlocks = true;
+        return this;
+    }
 
     @Override
     public @NotNull InteractionResult useOn(UseOnContext context) {
@@ -410,6 +416,11 @@ public class KeyItem extends Item {
                 template.placeInWorld((ServerLevelAccessor) level, placementPos, placementPos, placementSettings, level.getRandom(), Block.UPDATE_ALL);
                 isPlaced = true;
 
+                // Un-waterlog blocks if option is enabled
+                if (replaceWaterLoggedBlocks) {
+                    unWaterLogPlacedBlocks(level, placementPos, placementSettings);
+                }
+
                 // Update all placed blocks
                 for (int x = 0; x < templateSize.getX(); x++) {
                     for (int y = 0; y < templateSize.getY(); y++) {
@@ -428,6 +439,32 @@ public class KeyItem extends Item {
 
         } else {
             System.out.println("Structure not found: " + templateId);
+        }
+    }
+
+    private void unWaterLogPlacedBlocks(Level level, BlockPos placementPos, StructurePlaceSettings settings) {
+        for (int x = 0; x < templateSize.getX(); x++) {
+            for (int y = 0; y < templateSize.getY(); y++) {
+                for (int z = 0; z < templateSize.getZ(); z++) {
+
+                    BlockPos relPos = new BlockPos(x, y, z);
+                    BlockPos rotatedPos =
+                            StructureTemplate.calculateRelativePosition(settings, relPos);
+                    BlockPos worldPos = placementPos.offset(rotatedPos);
+
+                    BlockState state = level.getBlockState(worldPos);
+
+                    if (state.hasProperty(BlockStateProperties.WATERLOGGED)
+                            && state.getValue(BlockStateProperties.WATERLOGGED)) {
+
+                        level.setBlock(
+                                worldPos,
+                                state.setValue(BlockStateProperties.WATERLOGGED, false),
+                                Block.UPDATE_ALL
+                        );
+                    }
+                }
+            }
         }
     }
 
