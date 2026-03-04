@@ -153,10 +153,10 @@ public class KeyItem extends Item {
                             removeDoorArea = false;
                         }
 
-                        if (isStructureTooLarge()) {
-                            player.sendSystemMessage(Component.translatable("item.key.too_large").withStyle(ChatFormatting.RED));
-                            return InteractionResult.FAIL;
-                        }
+                        //if (isStructureTooLarge()) {
+                        //    player.sendSystemMessage(Component.translatable("item.key.too_large").withStyle(ChatFormatting.RED));
+                        //    return InteractionResult.FAIL;
+                        //}
 
                         createTemplate(level, rotation, facing, placePosition);
 
@@ -193,10 +193,10 @@ public class KeyItem extends Item {
                         rotation = DirectionUtil.getRotationFromDirection(context.getHorizontalDirection().getOpposite());
                     }
 
-                    if (isStructureTooLarge()) {
-                        player.sendSystemMessage(Component.translatable("item.key.too_large").withStyle(ChatFormatting.RED));
-                        return InteractionResult.FAIL;
-                    }
+                    //if (isStructureTooLarge()) {
+                    //    player.sendSystemMessage(Component.translatable("item.key.too_large").withStyle(ChatFormatting.RED));
+                    //    return InteractionResult.FAIL;
+                    //}
 
                     createTemplate(level, rotation, facing, placePosition);
 
@@ -357,7 +357,6 @@ public class KeyItem extends Item {
         }
         return true;
     }
-
 
     private boolean isStructureTooLarge() {
         int sizeX = templateSize.getX();

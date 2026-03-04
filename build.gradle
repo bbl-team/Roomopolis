@@ -88,6 +88,10 @@ dependencies {
     //Cloth Config
     compileOnly "curse.maven:cloth-config-348521:5729127"
     runtimeOnly "curse.maven:cloth-config-348521:5729127"
+
+    //Packet Fixer
+    compileOnly "curse.maven:packet-fixer-689467:7221528"
+    runtimeOnly "curse.maven:packet-fixer-689467:7221528"
 }
 
 tasks.withType(ProcessResources).configureEach {

@@ -12,6 +12,12 @@ public class RoomopolisItems {
     public static final DeferredRegister.Items ITEMS =
             DeferredRegister.createItems(Roomopolis.MOD_ID);
 
+
+    public static final DeferredItem<Item> TEST = ITEMS.register("test", () -> new KeyItem(new Item.Properties(),
+            "roomopolis:plank", 2, 0, "minecraft:diamond_block",
+            false, false, true, false, true, false, 0, 0, 0, 0, 256));
+
+
     /*
     public static final DeferredItem<Item> WATER = ITEMS.register("water",
             () -> new KeyItem(new Item.Properties(), "minecraft:water", 0, 0, "minecraft:terracotta", true, false, true, false,  false, true, 0, 0, 0, 1, 256).replaceWaterLoggedBlocks());
