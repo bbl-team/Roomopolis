@@ -1,9 +1,11 @@
 package com.benbenlaw.roomopolis.integration.kubejs;
 
+/*
+
 import com.benbenlaw.roomopolis.item.KeyItem;
 import dev.latvian.mods.kubejs.item.ItemBuilder;
 import dev.latvian.mods.kubejs.typings.Info;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 
 public class KeyItemBuilder extends ItemBuilder {
@@ -25,7 +27,7 @@ public class KeyItemBuilder extends ItemBuilder {
     public int doorDown = 0;
     public int maxHeight = 256;
 
-    public KeyItemBuilder(ResourceLocation i) {
+    public KeyItemBuilder(Identifier i) {
         super(i);
     }
 
@@ -136,3 +138,6 @@ public class KeyItemBuilder extends ItemBuilder {
                 doorLeft, doorRight, doorUp, doorDown, maxHeight).replaceWaterLoggedBlocks(replaceWaterLoggedBlocks);
     }
 }
+
+
+ */

@@ -2,7 +2,7 @@ package com.benbenlaw.roomopolis.network.packet;
 
 import com.benbenlaw.roomopolis.item.KeyItemPaletteCache;
 import com.benbenlaw.roomopolis.network.payload.GetStructurePalettePayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -17,7 +17,7 @@ public class GetStructurePalettePacket {
 
     public void handle(final GetStructurePalettePayload payload, IPayloadContext context) {
         Map<Block, Integer> blockCounts = payload.blockAmount();
-        ResourceLocation templateID = ResourceLocation.parse(payload.templateID());
+        Identifier templateID = Identifier.parse(payload.templateID());
 
         KeyItemPaletteCache.setTemplatePalette(templateID, blockCounts);
     }

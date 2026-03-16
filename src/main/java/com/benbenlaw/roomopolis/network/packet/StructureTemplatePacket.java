@@ -5,7 +5,7 @@ import com.benbenlaw.roomopolis.item.FakeStructureTemplateManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -30,7 +30,7 @@ public class StructureTemplatePacket {
             template.load(blocks, msg.structureTemplate());
 
             FakeStructureTemplateManager.INSTANCE.addTemplate(
-                    ResourceLocation.parse(msg.templateID()),
+                    Identifier.parse(msg.templateID()),
                     template
             );
 

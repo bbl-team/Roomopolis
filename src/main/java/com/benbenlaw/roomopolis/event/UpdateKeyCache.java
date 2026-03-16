@@ -1,4 +1,4 @@
-package com.benbenlaw.roomopolis.events;
+package com.benbenlaw.roomopolis.event;
 
 import com.benbenlaw.Roomopolis;
 import com.benbenlaw.roomopolis.item.KeyItem;
@@ -12,7 +12,7 @@ import com.benbenlaw.roomopolis.util.RoomopolisTags;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
@@ -40,14 +40,14 @@ public class UpdateKeyCache {
             return;
         }
 
-        Objects.requireNonNull(serverPlayer.getServer()).execute(() -> {
-            ServerLevel level = (ServerLevel) serverPlayer.level();
+        Objects.requireNonNull(serverPlayer.level().getServer()).execute(() -> {
+            ServerLevel level = serverPlayer.level();
             StructureTemplateManager structureManager = level.getStructureManager();
             for (Item item : BuiltInRegistries.ITEM) {
 
                 // System.out.println("item: " + item);
                 if (item instanceof KeyItem keyItem) {
-                    ResourceLocation templateId = keyItem.templateId;
+                    Identifier templateId = keyItem.definition().templateId();
                     Optional<StructureTemplate> optionalTemplate = structureManager.get(templateId);
 
                     optionalTemplate.ifPresent(template -> {

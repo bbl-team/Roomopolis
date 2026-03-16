@@ -1,6 +1,15 @@
 Changelog Roomopolis
 
 //Structure templates should have "doors" facing north if inside the structure for correct rotations to apply
+//Rendering still needs to be done in JEI
+
+# 3.0.0
+- Updated to minecraft 26.1 snapshots
+- Reworked Key Item basically a lot easier to create custom keys for mods
+- Most key fields are optional now
+- Added API for the KeyItemBuilder
+- Added .rotation, this allow structures to be rotated in any direction respecting the rotation of the direction of the player when placing the key, this is optional and defaults to none
+- Deprecated all blocks for removal in official 26.1 update
 
 # 2.8.3
 - Disabled structure size checks when using keys, this allows for bigger structures above 48 blocks in any dimension to be placed
@@ -216,11 +225,11 @@ Using The KeyItem Class
 console.info('Hello, World! (Loaded startup example script)')
 
 const ItemProperties = Java.loadClass("net.minecraft.world.item.Item$Properties");
-const ResourceLocation = Java.loadClass("net.minecraft.resources.ResourceLocation");
+const Identifier = Java.loadClass("net.minecraft.resources.Identifier");
 const $keyItem = Java.loadClass('com.benbenlaw.roomopolis.item.KeyItem')
 
 StartupEvents.registry('item', event => {
-    event.createCustom("tes1s", () => new $keyItem(new ItemProperties(), ResourceLocation.parse("roomopolis:tiny_room"), 0, true));
+    event.createCustom("tes1s", () => new $keyItem(new ItemProperties(), Identifier.parse("roomopolis:tiny_room"), 0, true));
 })
 ```
 

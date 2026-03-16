@@ -15,7 +15,7 @@ public class RoomopolisCreativeTab {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Roomopolis.MOD_ID);
 
-    public static final Supplier<CreativeModeTab> OPOLIS_UTILITIES_TAB = CREATIVE_MODE_TABS.register("roomopolis", () -> CreativeModeTab.builder()
+    public static final Supplier<CreativeModeTab> ROOMS_TAB = CREATIVE_MODE_TABS.register(Roomopolis.MOD_ID, () -> CreativeModeTab.builder()
             .icon(() -> RoomopolisBlocks.ROOM_BLOCK.get().asItem().getDefaultInstance())
             .title(Component.translatable("itemGroup.roomopolis"))
             .displayItems((parameters, output) -> {

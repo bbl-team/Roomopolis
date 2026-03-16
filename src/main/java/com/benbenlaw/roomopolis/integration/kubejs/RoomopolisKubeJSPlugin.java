@@ -1,5 +1,7 @@
 package com.benbenlaw.roomopolis.integration.kubejs;
 
+/*
+
 import dev.latvian.mods.kubejs.plugin.KubeJSPlugin;
 import dev.latvian.mods.kubejs.registry.BuilderTypeRegistry;
 import net.minecraft.core.registries.Registries;
@@ -16,3 +18,6 @@ public class RoomopolisKubeJSPlugin implements KubeJSPlugin {
         KubeJSPlugin.super.registerBuilderTypes(registry);
     }
 }
+
+ */
+

@@ -1,9 +1,6 @@
 package com.benbenlaw.roomopolis.block;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.roomopolis.block.custom.KeyCrafterBlock;
-import com.benbenlaw.roomopolis.block.custom.RoomBlock;
-import com.benbenlaw.roomopolis.block.custom.RoomKeyBlock;
 import com.benbenlaw.roomopolis.item.RoomopolisItems;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -14,37 +11,32 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import java.util.function.Supplier;
+import java.util.function.Function;
 
 public class RoomopolisBlocks {
 
-    public static final DeferredRegister.Blocks BLOCKS =
-            DeferredRegister.createBlocks(Roomopolis.MOD_ID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Roomopolis.MOD_ID);
 
-    public static final DeferredBlock<Block> KEY_CRAFTER = registerBlock("key_crafter",
-            () -> new KeyCrafterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CRAFTING_TABLE)));
+    @Deprecated(since = "3.0.0", forRemoval = true)
     public static final DeferredBlock<Block> ROOM_BLOCK = registerBlock("room_block",
-            () -> new RoomBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK)));
+            properties -> new Block(properties
+                    .strength(1.0F, 10000f)));
+
+    @Deprecated(since = "3.0.0", forRemoval = true)
     public static final DeferredBlock<Block> ROOM_KEY_BLOCK = registerBlock("room_key_block",
-            () -> new RoomKeyBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.BEDROCK)));
+            properties -> new Block(properties
+                    .strength(1.0F, 10000f)));
 
 
 
-    private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
-        DeferredBlock<T> toReturn = BLOCKS.register(name, block);
+    private static <T extends Block> DeferredBlock<T> registerBlock(String name, Function<BlockBehaviour.Properties, T> function) {
+        DeferredBlock<T> toReturn = BLOCKS.registerBlock(name, function);
         registerBlockItem(name, toReturn);
         return toReturn;
     }
 
-
-
-
     private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block) {
-        RoomopolisItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
-    }
-
-    public static void register(IEventBus eventBus) {
-        BLOCKS.register(eventBus);
+        RoomopolisItems.ITEMS.registerItem(name, properties -> new BlockItem(block.get(), properties.useBlockDescriptionPrefix()));
     }
 
 }

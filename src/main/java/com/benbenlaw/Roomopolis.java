@@ -4,9 +4,8 @@ import com.benbenlaw.roomopolis.block.RoomopolisBlocks;
 import com.benbenlaw.roomopolis.item.RoomopolisCreativeTab;
 import com.benbenlaw.roomopolis.item.RoomopolisItems;
 import com.benbenlaw.roomopolis.network.RoomopolisMessages;
-import com.benbenlaw.roomopolis.screen.KeyCrafterScreen;
-import com.benbenlaw.roomopolis.screen.RoomopolisMenuTypes;
 import com.mojang.logging.LogUtils;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -31,8 +30,6 @@ public class Roomopolis {
         RoomopolisBlocks.BLOCKS.register(eventBus);
         RoomopolisCreativeTab.CREATIVE_MODE_TABS.register(eventBus);
 
-        RoomopolisMenuTypes.MENUS.register(eventBus);
-
         eventBus.addListener(this::networkingSetup);
     }
 
@@ -40,6 +37,9 @@ public class Roomopolis {
         RoomopolisMessages.registerNetworking(event);
     }
 
+    public static Identifier identifier(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
+    }
 
     @EventBusSubscriber(modid = Roomopolis.MOD_ID, value = Dist.CLIENT)
     public static class ClientModEvents {
@@ -48,13 +48,6 @@ public class Roomopolis {
             event.enqueueWork(() -> {
             });
         }
-
-        @SubscribeEvent
-        public static void registerScreens(RegisterMenuScreensEvent event) {
-            event.register(RoomopolisMenuTypes.KEY_CRAFTER_MENU.get(), KeyCrafterScreen::new);
-        }
     }
-
-
 }
 

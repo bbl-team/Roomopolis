@@ -11,9 +11,10 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
@@ -24,23 +25,15 @@ import java.util.Map;
 @JeiPlugin
 public class JEIRoomopolisPlugin implements IModPlugin {
     @Override
-    public ResourceLocation getPluginUid() {
-        return ResourceLocation.fromNamespaceAndPath(Roomopolis.MOD_ID, "jei_plugin");
+    public Identifier getPluginUid() {
+        return Identifier.fromNamespaceAndPath(Roomopolis.MOD_ID, "jei_plugin");
     }
-
-    @Override
-    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(new ItemStack(RoomopolisBlocks.ROOM_BLOCK.get()), RoomCategory.RECIPE_TYPE);
-    }
-
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
-
         registration.addRecipeCategories(new RoomCategory(guiHelper));
     }
-
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
@@ -49,7 +42,7 @@ public class JEIRoomopolisPlugin implements IModPlugin {
 
         for (Item item : BuiltInRegistries.ITEM) {
             if (item instanceof KeyItem keyItem) {
-                Map<Block, Integer> palette = KeyItemPaletteCache.getTemplatePalette(keyItem.templateId);
+                Map<Block, Integer> palette = KeyItemPaletteCache.getTemplatePalette(keyItem.definition().templateId());
                 if (palette != null) {
 
                     Map<ItemStack, Integer> requiredItems = new HashMap<>();
@@ -59,12 +52,11 @@ public class JEIRoomopolisPlugin implements IModPlugin {
                     }
 
                     recipes.add(new RoomRecipe(
-                            keyItem.templateId,
+                            keyItem.definition().templateId(),
                             keyItem.asItem().getDefaultInstance(),
                             requiredItems,
-                            keyItem.blocksRequired,
-                            keyItem.keyBlock,
-                            keyItem.keyBlockTag));
+                            keyItem.definition().blocksRequired(),
+                            keyItem.definition().blockTarget()));
                 }
             }
         }

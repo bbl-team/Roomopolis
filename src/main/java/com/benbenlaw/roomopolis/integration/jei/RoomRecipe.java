@@ -1,6 +1,7 @@
 package com.benbenlaw.roomopolis.integration.jei;
 
-import net.minecraft.resources.ResourceLocation;
+import com.benbenlaw.roomopolis.util.BlockTarget;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -9,11 +10,9 @@ import java.util.Map;
 import java.util.Optional;
 
 public record RoomRecipe(
-        ResourceLocation templateId,
+        Identifier templateId,
         ItemStack keyItem,
         Map<ItemStack, Integer> requiredItems,
         boolean requiresBlocks,
-        Optional<Block> keyBlock,
-        Optional<TagKey<Block>> keyBlockTag
-
+        BlockTarget blockTarget
 ) {}

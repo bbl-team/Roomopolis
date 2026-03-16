@@ -6,12 +6,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public record GetStructureSizePayload(String templateID, Vec3i size) implements CustomPacketPayload {
 
 
-    public static final Type<GetStructureSizePayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(Roomopolis.MOD_ID, "structure_size"));
+    public static final Type<GetStructureSizePayload> TYPE = new Type<>(Identifier.fromNamespaceAndPath(Roomopolis.MOD_ID, "structure_size"));
 
     @Override
     public Type<GetStructureSizePayload> type() {
