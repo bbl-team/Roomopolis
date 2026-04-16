@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 @Mod(Roomopolis.MOD_ID)
 public class Roomopolis {
 
-    public static final String MOD_ID = "roomopolis";
+    public static final String MOD_ID = "rooms";
     private static final Logger LOGGER = LogUtils.getLogger();
 
     public Roomopolis (final IEventBus eventBus, final ModContainer modContainer) {

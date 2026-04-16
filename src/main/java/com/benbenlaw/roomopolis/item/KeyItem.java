@@ -83,7 +83,7 @@ public class KeyItem extends Item {
         if (!hasEnoughBlocks(player, level)) {
             return InteractionResult.FAIL;
         }
-        
+
         if (!stack.is(this)) {
             return InteractionResult.PASS;
         }
@@ -93,10 +93,9 @@ public class KeyItem extends Item {
 
         if (target != null && !target.matches(state)) {
 
-            player.displayClientMessage(
+            player.sendOverlayMessage(
                     Component.translatable("item.key.requires_key_block")
-                            .withStyle(ChatFormatting.RED),
-                    false
+                            .withStyle(ChatFormatting.RED)
             );
 
             return InteractionResult.FAIL;
@@ -107,12 +106,11 @@ public class KeyItem extends Item {
 
         if (definition.maxHeight() > 0 && clickedY >= definition.maxHeight()) {
 
-            player.displayClientMessage(
+            player.sendOverlayMessage(
                     Component.translatable(
                             "item.key.too_high",
                             definition.maxHeight()
-                    ).withStyle(ChatFormatting.RED),
-                    false
+                    ).withStyle(ChatFormatting.RED)
             );
 
             return InteractionResult.FAIL;
@@ -121,10 +119,9 @@ public class KeyItem extends Item {
         //Face checks
         if (definition.topOnlyPlacement() && face != Direction.UP) {
 
-            player.displayClientMessage(
+            player.sendOverlayMessage(
                     Component.translatable("item.key.top_only")
-                            .withStyle(ChatFormatting.RED),
-                    false
+                            .withStyle(ChatFormatting.RED)
             );
 
             return InteractionResult.FAIL;
@@ -133,10 +130,9 @@ public class KeyItem extends Item {
         if (definition.sideOnlyPlacement() &&
                 (face == Direction.UP || face == Direction.DOWN)) {
 
-            player.displayClientMessage(
+            player.sendOverlayMessage(
                     Component.translatable("item.key.side_only")
-                            .withStyle(ChatFormatting.RED),
-                    false
+                            .withStyle(ChatFormatting.RED)
             );
 
             return InteractionResult.FAIL;
@@ -160,19 +156,17 @@ public class KeyItem extends Item {
 
         if (!isPlaced) {
 
-            player.displayClientMessage(
+            player.sendOverlayMessage(
                     Component.translatable("item.key.area_not_empty")
-                            .withStyle(ChatFormatting.RED),
-                    false
+                            .withStyle(ChatFormatting.RED)
             );
 
             return InteractionResult.FAIL;
         }
 
-        player.displayClientMessage(
+        player.sendOverlayMessage(
                 Component.translatable("item.key.placed")
-                        .withStyle(ChatFormatting.GREEN),
-                false
+                        .withStyle(ChatFormatting.GREEN)
         );
 
         if (definition.removeDoorArea()) {
@@ -229,7 +223,7 @@ public class KeyItem extends Item {
         }
 
         if (!missingBlocks.isEmpty()) {
-            player.displayClientMessage(Component.translatable("item.key.missing_blocks").withStyle(ChatFormatting.RED), false);
+            player.sendOverlayMessage(Component.translatable("item.key.missing_blocks").withStyle(ChatFormatting.RED));
 
             for (Map.Entry<Block, Integer> entry : missingBlocks.entrySet()) {
                 Block block = entry.getKey();
@@ -257,7 +251,7 @@ public class KeyItem extends Item {
 
                 message = message.withStyle(ChatFormatting.YELLOW);
 
-                player.displayClientMessage(message, false);
+                player.sendOverlayMessage(message);
             }
 
             return false;
@@ -355,85 +349,89 @@ public class KeyItem extends Item {
     }
 
     public void createTemplate(Level level, Rotation rotation, Direction facing, BlockPos pos) {
+
         StructureTemplateManager structureManager = Objects.requireNonNull(level.getServer()).getStructureManager();
         Optional<StructureTemplate> optionalTemplate = structureManager.get(definition.templateId());
+
+        if (optionalTemplate.isEmpty()) {
+            System.out.println("Structure not found: " + definition.templateId());
+            isPlaced = false;
+            return;
+        }
+
+        StructureTemplate template = optionalTemplate.get();
 
         StructurePlaceSettings placementSettings = new StructurePlaceSettings()
                 .setRotation(rotation)
                 .setMirror(Mirror.NONE)
                 .setIgnoreEntities(false);
 
-        if (optionalTemplate.isPresent()) {
-            // Template Information
-            StructureTemplate template = optionalTemplate.get();
+        Vec3i templateSize = KeyItemSizeCache.getTemplateSize(definition.templateId());
+        if (templateSize == null) {
+            System.err.println("Template size missing for " + definition.templateId());
+            isPlaced = false;
+            return;
+        }
 
-            Vec3i templateSize = KeyItemSizeCache.getTemplateSize(definition.templateId());
+        BlockPos centerOffset = new BlockPos(-templateSize.getX() / 2, -templateSize.getY() / 2, -templateSize.getZ() / 2);
+        BlockPos adjustedOffset = StructureTemplate.calculateRelativePosition(placementSettings, centerOffset);
 
-            if (templateSize == null) {
-                System.err.println("Template size missing for " + definition.templateId());
-                return;
-            }
+        int forwardShift = Math.max(templateSize.getX() / 2, 1) + 1 + definition.frontAdjustment();
+        BlockPos forwardOffset = pos.relative(facing, forwardShift);
 
-            // Position Adjustments to make the template spawn a block in front of the player and adjust the height of the template
-            BlockPos centerOffset = new BlockPos(-templateSize.getX() / 2, -templateSize.getY() / 2, -templateSize.getZ() / 2);
-            BlockPos adjustedOffset = StructureTemplate.calculateRelativePosition(placementSettings, centerOffset);
-            int forwardShift = Math.max(templateSize.getX() / 2, 1) + 1 + definition.frontAdjustment();
-            BlockPos forwardOffset = pos.relative(facing, forwardShift);
-            BlockPos placementPos = forwardOffset.offset(adjustedOffset);
-            placementPos = placementPos.above(definition.heightAdjustment());
+        BlockPos placementPos = forwardOffset.offset(adjustedOffset).above(definition.heightAdjustment());
 
-            // Check if the location is empty (all air blocks)
-            boolean isEmpty = true;
+        boolean canPlace = true;
 
 
-            if (!definition.overrideExistingBlocks()) {
-                for (int x = 0; x < templateSize.getX(); x++) {
-                    for (int y = 0; y < templateSize.getY(); y++) {
-                        for (int z = 0; z < templateSize.getZ(); z++) {
-                            BlockPos relPos = new BlockPos(x, y, z);
-                            BlockPos rotatedPos = StructureTemplate.calculateRelativePosition(placementSettings, relPos);
-                            BlockPos worldPos = placementPos.offset(rotatedPos);
+        if (!definition.overrideExistingBlocks()) {
+            for (int x = 0; x < templateSize.getX(); x++) {
+                for (int y = 0; y < templateSize.getY(); y++) {
+                    for (int z = 0; z < templateSize.getZ(); z++) {
 
-                            if (!level.getBlockState(worldPos).isAir() && !worldPos.equals(pos)) {
-                                isEmpty = false;
-                                break;
-                            }
-                        }
-                        if (!isEmpty) break;
-                    }
-                    if (!isEmpty) break;
-                }
-            }
+                        BlockPos relPos = new BlockPos(x, y, z);
+                        BlockPos rotatedPos = StructureTemplate.calculateRelativePosition(placementSettings, relPos);
+                        BlockPos worldPos = placementPos.offset(rotatedPos);
 
-            if (isEmpty || definition.overrideExistingBlocks()) {
-                // Place the template if the location is empty
-                template.placeInWorld((ServerLevelAccessor) level, placementPos, placementPos, placementSettings, level.getRandom(), Block.UPDATE_ALL);
-                isPlaced = true;
-
-                // Un-waterlog blocks if option is enabled
-                if (definition.replaceWaterLoggedBlocks()) {
-                    unWaterLogPlacedBlocks(level, placementPos, placementSettings);
-                }
-
-                // Update all placed blocks
-                for (int x = 0; x < templateSize.getX(); x++) {
-                    for (int y = 0; y < templateSize.getY(); y++) {
-                        for (int z = 0; z < templateSize.getZ(); z++) {
-                            BlockPos relPos = new BlockPos(x, y, z);
-                            BlockPos rotatedPos = StructureTemplate.calculateRelativePosition(placementSettings, relPos);
-                            BlockPos worldPos = placementPos.offset(rotatedPos);
-
-                            level.sendBlockUpdated(worldPos, level.getBlockState(worldPos), level.getBlockState(worldPos), Block.UPDATE_ALL);
+                        if (!level.getBlockState(worldPos).isAir() && !worldPos.equals(pos)) {
+                            canPlace = false;
+                            break;
                         }
                     }
+                    if (!canPlace) break;
                 }
-            } else {
-                System.out.println("Target location is not empty. Structure placement aborted.");
+                if (!canPlace) break;
+            }
+        }
+
+        if (canPlace) {
+
+            template.placeInWorld((ServerLevelAccessor) level, placementPos, placementPos, placementSettings, level.getRandom(), Block.UPDATE_ALL);
+
+            isPlaced = true;
+
+            if (definition.replaceWaterLoggedBlocks()) {
+                unWaterLogPlacedBlocks(level, placementPos, placementSettings);
+            }
+
+            for (int x = 0; x < templateSize.getX(); x++) {
+                for (int y = 0; y < templateSize.getY(); y++) {
+                    for (int z = 0; z < templateSize.getZ(); z++) {
+                        BlockPos relPos = new BlockPos(x, y, z);
+                        BlockPos rotatedPos = StructureTemplate.calculateRelativePosition(placementSettings, relPos);
+                        BlockPos worldPos = placementPos.offset(rotatedPos);
+
+                        level.sendBlockUpdated(worldPos, level.getBlockState(worldPos), level.getBlockState(worldPos), Block.UPDATE_ALL);
+                    }
+                }
             }
 
         } else {
-            System.out.println("Structure not found: " + definition.templateId());
+            System.out.println("Target location is not empty. Structure placement aborted.");
+            isPlaced = false;
         }
+
+
     }
 
     private void unWaterLogPlacedBlocks(Level level, BlockPos placementPos, StructurePlaceSettings settings) {
@@ -500,8 +498,8 @@ public class KeyItem extends Item {
         Player player = (Player) owner;
         if (player.getMainHandItem().getItem() instanceof KeyItem) {
             if (definition.overrideExistingBlocks()) {
-                player.displayClientMessage(Component.translatable("message.key.overrides_blocks")
-                        .withStyle(ChatFormatting.RED), true);
+                player.sendOverlayMessage(Component.translatable("message.key.overrides_blocks")
+                        .withStyle(ChatFormatting.RED));
             }
         }
     }

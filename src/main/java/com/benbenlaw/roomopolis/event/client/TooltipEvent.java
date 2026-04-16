@@ -1,14 +1,12 @@
 package com.benbenlaw.roomopolis.event.client;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.core.util.TooltipUtil;
 import com.benbenlaw.roomopolis.item.KeyItem;
 import com.benbenlaw.roomopolis.item.KeyItemPaletteCache;
 import com.benbenlaw.roomopolis.item.KeyItemSizeCache;
 import com.benbenlaw.roomopolis.util.BlockTarget;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
@@ -84,7 +82,7 @@ public class TooltipEvent {
                 tooltips.add(Component.translatable("tooltips.key.requires_key_block", blockTargetString).withStyle(ChatFormatting.RED));
 
             } else {
-                tooltips.add(Component.translatable("tooltips.roomopolis.shift").withStyle(ChatFormatting.YELLOW));
+                tooltips.add(Component.translatable("tooltips.rooms.shift").withStyle(ChatFormatting.YELLOW));
             }
 
             // Add List
@@ -125,7 +123,7 @@ public class TooltipEvent {
                     }
 
                 } else {
-                    tooltips.add(Component.translatable("tooltips.roomopolis.alt").withStyle(ChatFormatting.YELLOW));
+                    tooltips.add(Component.translatable("tooltips.rooms.alt").withStyle(ChatFormatting.YELLOW));
                 }
             }
 

@@ -1,12 +1,12 @@
 {
-  "block.roomopolis.room_block": "Room Block",
-  "block.roomopolis.room_key_block": "Room Key Block",
+  "block.rooms.room_block": "Room Block",
+  "block.rooms.room_key_block": "Room Key Block",
 
-  "item.roomopolis.tiny_room_key": "Tiny Room Key",
-  "item.roomopolis.small_room_key": "Small Room Key",
-  "item.roomopolis.medium_room_key": "Medium Room Key",
-  "item.roomopolis.large_room_key": "Large Room Key",
-  "item.roomopolis.interconnected_wall_removing_key": "INTERCONNECTED_WALL_REMOVING_KEY",
+  "item.rooms.tiny_room_key": "Tiny Room Key",
+  "item.rooms.small_room_key": "Small Room Key",
+  "item.rooms.medium_room_key": "Medium Room Key",
+  "item.rooms.large_room_key": "Large Room Key",
+  "item.rooms.interconnected_wall_removing_key": "INTERCONNECTED_WALL_REMOVING_KEY",
 
   "item.key.placed": "Placed Template",
   "item.key.area_not_empty": "Area not clear!",
@@ -32,18 +32,18 @@
   "tooltips.key.side_only": "Used on side of a block",
   "tooltips.key.top_only": "Used on top of a block",
 
-  "tooltips.roomopolis.shift": "Press SHIFT for more info",
-  "tooltips.roomopolis.alt": "Press ALT for more info",
-  "tooltips.roomopolis.ctrl": "Press CTRL for more info",
+  "tooltips.rooms.shift": "Press SHIFT for more info",
+  "tooltips.rooms.alt": "Press ALT for more info",
+  "tooltips.rooms.ctrl": "Press CTRL for more info",
 
 
   "message.key.overrides_blocks": "Using this key will override existing blocks in the area!",
 
-  "roomopolis.jei.tooltip.rotate": "Template Size: %s, %s, %s",
+  "jei.rooms.rotate": "Template Size: %s, %s, %s",
 
-  "category.roomopolis.room_category": "Rooms",
+  "jei.roomopolis.room_category": "Rooms",
 
-  "itemGroup.roomopolis": "Roomopolis",
+  "itemGroup.rooms": "rooms",
   "item.key.not_enough_blocks": "Not enough blocks to use this key!",
   "item.key.missing_blocks": "Missing blocks"
 

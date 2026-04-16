@@ -18,8 +18,8 @@ public class RoomopolisItems {
             properties -> new KeyItem(
                     properties.stacksTo(1),
                     KeyItemBuilder.create()
-                            .template("roomopolis:plank")
-                            .block("#minecraft:logs") // or Blocks.STONE
+                            .template("rooms:plank")
+                            .block("#minecraft:logs")
                             .door(1, 1, 2, 0)
                             .consumeKey(true)
                             .rotation(Rotation.CLOCKWISE_90)
@@ -31,7 +31,7 @@ public class RoomopolisItems {
             properties -> new KeyItem(
                     properties.stacksTo(1),
                     KeyItemBuilder.create()
-                            .template("roomopolis:world")
+                            .template("rooms:world")
                             .block(Blocks.COAL_BLOCK) // or Blocks.STONE
                             .door(1, 1, 2, 0)
                             .consumeKey(true)
