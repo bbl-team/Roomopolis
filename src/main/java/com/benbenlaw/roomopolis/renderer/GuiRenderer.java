@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
 
-public class GuiRenderer extends PictureInPictureRenderer<GuiRenderState> {
+public class GuiRenderer extends PictureInPictureRenderer<GuiStructureRenderState> {
 
     private final ModelBlockRenderer blockRenderer;
 
@@ -41,12 +41,12 @@ public class GuiRenderer extends PictureInPictureRenderer<GuiRenderState> {
     }
 
     @Override
-    public Class<GuiRenderState> getRenderStateClass() {
-        return GuiRenderState.class;
+    public Class<GuiStructureRenderState> getRenderStateClass() {
+        return GuiStructureRenderState.class;
     }
 
     @Override
-    protected void renderToTexture(GuiRenderState state, PoseStack poseStack) {
+    protected void renderToTexture(GuiStructureRenderState state, PoseStack poseStack) {
         Minecraft mc = Minecraft.getInstance();
 
         if (mc.level == null || state.templateId() == null) {
@@ -89,7 +89,7 @@ public class GuiRenderer extends PictureInPictureRenderer<GuiRenderState> {
                 Math.max(size.getY(), size.getZ())
         );
 
-        float scale = 35.0f / Math.max(1.0f, maxDim);
+        float scale = state.inViewScale() / Math.max(1.0f, maxDim);
 
         poseStack.pushPose();
 

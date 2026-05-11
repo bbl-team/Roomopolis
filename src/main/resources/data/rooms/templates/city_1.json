@@ -1,0 +1,25 @@
+{
+  "template_id": "minecraft:ancient_city/city/entrance/entrance_connector",
+  "name": "test.test.1",
+  "block_target": "#minecraft:logs",
+
+  "placement": {
+    "height_adjustment": 2,
+    "front_adjustment": 2,
+    "max_height": 256,
+    "rotation": "none"
+  },
+  "door": {
+    "left": 2,
+    "right": 0,
+    "up": 0,
+    "down": 0
+  },
+  "flags": {
+    "side_only_placement": true,
+    "top_only_placement": true,
+    "blocks_required": true,
+    "override_existing_blocks": true,
+    "replace_waterlogged_blocks": true
+  }
+}

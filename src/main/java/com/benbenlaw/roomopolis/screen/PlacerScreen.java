@@ -2,25 +2,22 @@ package com.benbenlaw.roomopolis.screen;
 
 import com.benbenlaw.Roomopolis;
 import com.benbenlaw.roomopolis.loader.TemplateDefinition;
-import com.benbenlaw.roomopolis.compoment.RoomsDataComponents;
 import com.benbenlaw.roomopolis.item.FakeStructureTemplateManager;
 import com.benbenlaw.roomopolis.loader.TemplateData;
 import com.benbenlaw.roomopolis.mixin.GuiGraphicsExtractorAccessor;
-import com.benbenlaw.roomopolis.network.packet.SyncPlacerStack;
-import com.benbenlaw.roomopolis.renderer.GuiRenderState;
+import com.benbenlaw.roomopolis.renderer.GuiStructureRenderState;
 import com.benbenlaw.roomopolis.renderer.GuiRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.*;
 
@@ -30,12 +27,32 @@ public class PlacerScreen extends Screen {
 
     private final int imageWidth = 176;
     private final int imageHeight = 166;
+
     private Identifier selectedTemplateId = null;
+
+    private int page = 0;
+    private static final int ITEMS_PER_PAGE = 6;
+    private String searchQuery = "";
 
     private final Map<Identifier, GuiRenderer> renderers = new HashMap<>();
 
     public PlacerScreen(Component title) {
         super(title);
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
+
+        addRenderableWidget(Button.builder(Component.literal("<"), b -> page = Math.max(0, page - 1)).bounds(x + 6, y + 140, 20, 20).build());
+        addRenderableWidget(Button.builder(Component.literal(">"), b -> page++).bounds(x + 150, y + 140, 20, 20).build());
+        EditBox searchBox = new EditBox(Minecraft.getInstance().font, x + 28, y + 140, 120, 20, Component.literal("Search"));
+        searchBox.setTooltip(Tooltip.create(Component.translatable("tooptip.rooms.placer.search_bar")));
+        searchBox.setResponder(text -> { searchQuery = text.toLowerCase(); page = 0; });
+        addRenderableWidget(searchBox);
     }
 
     @Override
@@ -53,57 +70,56 @@ public class PlacerScreen extends Screen {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        graphics.text(Minecraft.getInstance().font, Component.translatable("menu.placer.name"), x + 8, y + 6, 0xFFFFFFFF, true);
+        graphics.text(Minecraft.getInstance().font, Component.translatable("item.rooms.placer"), x + 8, y + 6, 0xFFFFFFFF, true);
 
         int startX = x + 8;
         int startY = y + 18;
 
-        List<Map.Entry<Identifier, StructureTemplate>> templates = FakeStructureTemplateManager.INSTANCE.templates.entrySet()
-                .stream()
-                .toList();
+        List<Map.Entry<Identifier, StructureTemplate>> allTemplates = getFilteredTemplates();
+
+        int maxPage = Math.max(0, (allTemplates.size() - 1) / ITEMS_PER_PAGE);
+        page = Math.min(page, maxPage);
+
+        int startIndex = page * ITEMS_PER_PAGE;
+
+        List<Map.Entry<Identifier, StructureTemplate>> templates =
+                allTemplates.stream().skip(startIndex).limit(ITEMS_PER_PAGE).toList();
 
         float rotationTime = (System.currentTimeMillis() % 36000) / 10.0f;
         int guiScale = (int) Minecraft.getInstance().getWindow().getGuiScale();
 
         int index = 0;
+
         for (int row = 0; row < 2; row++) {
             for (int col = 0; col < 3; col++) {
+
                 int areaX = startX + col * 54;
                 int areaY = startY + row * 54;
 
-                graphics.fill(areaX, areaY, areaX + 52, areaY + 52, 0xFF2B2B2B);
-
                 if (index < templates.size()) {
+
                     var entry = templates.get(index);
                     Identifier id = entry.getKey();
                     StructureTemplate template = entry.getValue();
 
-                    GuiRenderState state = new GuiRenderState(
+                    GuiStructureRenderState state = GuiStructureRenderState.simpleGuiRenderState(
                             template.getSize(),
                             rotationTime,
-                            Rotation.NONE,
-                            null,
-                            Map.of(),
-                            Set.of(),
-                            RandomSource.create(),
-                            areaX + 2,   // x0
-                            areaY + 2,   // y0
-                            areaX + 50,  // x1 (50 - 2 = 48px wide)
-                            areaY + 50,  // y1 (50 - 2 = 48px high)
+                            areaX + 2,
+                            areaY + 2,
+                            areaX + 50,
+                            areaY + 50,
                             1.0f,
-                            null,
-                            id
+                            id,
+                            35.0f
                     );
 
-                    // 2. Call prepare using the GuiRenderState from the extractor
-                    // This triggers the renderToTexture and subsequent blit
-                    net.minecraft.client.renderer.state.gui.GuiRenderState stateObject = ((GuiGraphicsExtractorAccessor) graphics).getGuiRenderState();
+                    net.minecraft.client.renderer.state.gui.GuiRenderState stateObject =
+                            ((GuiGraphicsExtractorAccessor) graphics).getGuiRenderState();
 
                     GuiRenderer renderer = renderers.computeIfAbsent(
                             id,
-                            key -> new GuiRenderer(
-                                    Minecraft.getInstance().renderBuffers().bufferSource()
-                            )
+                            key -> new GuiRenderer(Minecraft.getInstance().renderBuffers().bufferSource())
                     );
 
                     renderer.prepare(state, stateObject, guiScale);
@@ -112,6 +128,7 @@ public class PlacerScreen extends Screen {
                         graphics.fill(areaX, areaY, areaX + 52, areaY + 52, 0x55FFFF00);
                     }
                 }
+
                 index++;
             }
         }
@@ -122,6 +139,7 @@ public class PlacerScreen extends Screen {
     }
 
     private void renderSelectedTemplateInfo(GuiGraphicsExtractor graphics, int x, int y) {
+
         TemplateDefinition def = TemplateData.DATA.get(selectedTemplateId);
         if (def == null) return;
 
@@ -129,8 +147,10 @@ public class PlacerScreen extends Screen {
         int panelY = y + 130;
 
         graphics.text(Minecraft.getInstance().font, Component.literal("Selected: " + selectedTemplateId.getPath()), panelX, panelY, 0xFFFFFFFF, false);
+
         var placement = def.placement();
         graphics.text(Minecraft.getInstance().font, Component.literal("Max Height: " + placement.maxHeight()), panelX, panelY + 12, 0xFFFFFFFF, false);
+
         var door = def.door();
         graphics.text(Minecraft.getInstance().font, Component.literal("Door: L:" + door.left() + " R:" + door.right()), panelX + 90, panelY + 12, 0xFFFFFFFF, false);
     }
@@ -138,43 +158,55 @@ public class PlacerScreen extends Screen {
     @Override
     public void onClose() {
         super.onClose();
-
         for (GuiRenderer renderer : renderers.values()) {
             renderer.close();
         }
-
         renderers.clear();
     }
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
         int startX = x + 8;
         int startY = y + 18;
 
-        var templates = FakeStructureTemplateManager.INSTANCE.templates.entrySet().stream().toList();
+        List<Map.Entry<Identifier, StructureTemplate>> allTemplates = getFilteredTemplates();
+        int startIndex = page * ITEMS_PER_PAGE;
+        List<Map.Entry<Identifier, StructureTemplate>> templates = allTemplates.stream().skip(startIndex).limit(ITEMS_PER_PAGE).toList();
 
         int index = 0;
+
         for (int row = 0; row < 2; row++) {
             for (int col = 0; col < 3; col++) {
+
                 int areaX = startX + col * 54;
                 int areaY = startY + row * 54;
 
                 if (event.x() >= areaX && event.x() < areaX + 52 && event.y() >= areaY && event.y() < areaY + 52) {
-                    if (index < templates.size()) {
-                        var entry = templates.get(index);
-                        selectedTemplateId = entry.getKey();
 
-                        ItemStack stack = Minecraft.getInstance().player.getMainHandItem();
-                        stack.set(RoomsDataComponents.TEMPLATE_ID, selectedTemplateId);
-                        ClientPacketDistributor.sendToServer(new SyncPlacerStack(stack));
+                    if (index < templates.size()) {
+
+                        var entry = templates.get(index);
+
+                        Minecraft.getInstance().setScreen(new TemplateScreen(entry.getKey(), this));
                     }
+
                     return true;
                 }
+
                 index++;
             }
         }
+
         return super.mouseClicked(event, doubleClick);
+    }
+
+    private List<Map.Entry<Identifier, StructureTemplate>> getFilteredTemplates() {
+        return FakeStructureTemplateManager.INSTANCE.templates.entrySet()
+                .stream()
+                .filter(e -> e.getKey().getPath().toLowerCase().contains(searchQuery))
+                .toList();
     }
 }

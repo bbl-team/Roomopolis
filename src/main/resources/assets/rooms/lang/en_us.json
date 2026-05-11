@@ -1,6 +1,25 @@
 {
-  "block.rooms.room_block": "Room Block",
-  "block.rooms.room_key_block": "Room Key Block",
+  "tooptip.rooms.placer.search_bar": "Search for a room template",
+
+  "tooptip.rooms.template.settings": "Settings",
+  "tooptip.rooms.template.door": "Creates Door",
+  "tooptip.rooms.template.block": "Target Block",
+  "tooptip.rooms.template.blocks_required": "Requires ALL Blocks",
+  "tooptip.rooms.template.top_only": "Use on TOp",
+  "tooptip.rooms.template.side_only": "Use on Side",
+  "tooptip.rooms.template.override_existing": "Overrides all blocks",
+  "tooptip.rooms.template.un_waterlog": "Un Waterlog blocks",
+
+  "tooptip.rooms.blocklist.blocklist": "Block List",
+
+  "item.rooms.placer": "Placer",
+
+
+  "test.test.w": "WATER TEST NAME",
+
+
+
+
 
   "item.rooms.tiny_room_key": "Tiny Room Key",
   "item.rooms.small_room_key": "Small Room Key",

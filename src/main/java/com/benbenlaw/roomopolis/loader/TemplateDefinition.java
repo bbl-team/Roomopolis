@@ -4,14 +4,17 @@ import com.benbenlaw.roomopolis.loader.options.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Rotation;
 
-public record TemplateDefinition(Identifier templateId, BlockTarget blockTarget, TemplatePlacementOptions placement, TemplateDoorOptions door, TemplateRestrictionOptions flags) {
+public record TemplateDefinition(Identifier templateId, String translatableName, BlockTarget blockTarget, TemplatePlacementOptions placement, TemplateDoorOptions door, TemplateRestrictionOptions flags) {
 
     public static final Codec<TemplateDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Identifier.CODEC.fieldOf("template_id").forGetter(TemplateDefinition::templateId),
+            Codec.STRING.fieldOf("name").forGetter(TemplateDefinition::translatableName),
             BlockTargetCodec.CODEC.optionalFieldOf("block_target", BlockTarget.fromString("minecraft:air")).forGetter(TemplateDefinition::blockTarget),
             TemplatePlacementOptions.CODEC.optionalFieldOf("placement",
                     new TemplatePlacementOptions(0, 0, 256, Rotation.NONE)).forGetter(TemplateDefinition::placement),
@@ -24,6 +27,7 @@ public record TemplateDefinition(Identifier templateId, BlockTarget blockTarget,
 
     public static final StreamCodec<RegistryFriendlyByteBuf, TemplateDefinition> STREAM_CODEC = StreamCodec.composite(
             Identifier.STREAM_CODEC, TemplateDefinition::templateId,
+            ByteBufCodecs.STRING_UTF8, TemplateDefinition::translatableName,
             BlockTargetCodec.STREAM_CODEC, TemplateDefinition::blockTarget,
             TemplatePlacementOptions.STREAM_CODEC, TemplateDefinition::placement,
             TemplateDoorOptions.STREAM_CODEC, TemplateDefinition::door,

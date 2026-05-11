@@ -1,6 +1,6 @@
 {
   "template_id": "rooms:plank",
-
+  "name": "test.test.7",
   "block_target": {
     "Name": "minecraft:oak_planks"
   },

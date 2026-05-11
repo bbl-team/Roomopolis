@@ -1,6 +1,6 @@
 {
-  "template_id": "rooms:water",
-  "name": "test.test.w",
+  "template_id": "minecraft:ancient_city/city/entrance/entrance_path_1",
+  "name": "test.test.2",
   "block_target": {
     "Name": "minecraft:oak_planks"
   },

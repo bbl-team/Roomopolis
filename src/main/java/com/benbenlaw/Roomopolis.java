@@ -5,7 +5,7 @@ import com.benbenlaw.roomopolis.item.RoomopolisCreativeTab;
 import com.benbenlaw.roomopolis.item.RoomopolisItems;
 import com.benbenlaw.roomopolis.loader.TemplateData;
 import com.benbenlaw.roomopolis.network.RoomopolisMessages;
-import com.benbenlaw.roomopolis.renderer.GuiRenderState;
+import com.benbenlaw.roomopolis.renderer.GuiStructureRenderState;
 import com.benbenlaw.roomopolis.renderer.GuiRenderer;
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.Identifier;
@@ -76,7 +76,7 @@ public class Roomopolis {
 
     public void onRegisterPipRenderers(RegisterPictureInPictureRenderersEvent event) {
         event.register(
-                GuiRenderState.class,
+                GuiStructureRenderState.class,
                 GuiRenderer::new
         );
     }

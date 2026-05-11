@@ -19,4 +19,13 @@ public class RoomsDataComponents {
                             .networkSynchronized(Identifier.STREAM_CODEC)
                             .cacheEncoding()
                             .build());
+
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<TemplateDataDataComponent>> TEMPLATE_DATA =
+            COMPONENTS.register("template_data", () ->
+                    DataComponentType.<TemplateDataDataComponent>builder()
+                            .persistent(TemplateDataDataComponent.CODEC)
+                            .networkSynchronized(TemplateDataDataComponent.STREAM_CODEC)
+                            .cacheEncoding()
+                            .build());
 }
