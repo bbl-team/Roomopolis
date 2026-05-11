@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class KeyItemPaletteCache {
+public class TemplatePaletteCache {
 
     // Existing cache for counts (used in JEI scroll/grid)
     public static final Map<Identifier, Map<Block, Integer>> templatePalettes = new ConcurrentHashMap<>();
@@ -53,5 +53,10 @@ public class KeyItemPaletteCache {
 
         setTemplatePalette(templateId, countPalette);
         setRenderPalette(templateId, renderPalette);
+    }
+
+    public static void clear() {
+        templatePalettes.clear();
+        renderPalettes.clear();
     }
 }

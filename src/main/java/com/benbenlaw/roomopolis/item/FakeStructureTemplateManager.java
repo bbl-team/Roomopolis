@@ -10,10 +10,10 @@ import java.util.Optional;
 public class FakeStructureTemplateManager {
 
     public static final FakeStructureTemplateManager INSTANCE = new FakeStructureTemplateManager();
+    public final Map<Identifier, StructureTemplate> templates = new HashMap<>();
 
-    private final Map<Identifier, StructureTemplate> templates = new HashMap<>();
-
-    private FakeStructureTemplateManager() {}
+    private FakeStructureTemplateManager() {
+    }
 
     public void addTemplate(Identifier id, StructureTemplate template) {
         templates.put(id, template);
@@ -21,5 +21,17 @@ public class FakeStructureTemplateManager {
 
     public Optional<StructureTemplate> get(Identifier id) {
         return Optional.ofNullable(templates.get(id));
+    }
+
+    public boolean contains(Identifier id) {
+        return templates.containsKey(id);
+    }
+
+    public void clear() {
+        templates.clear();
+    }
+
+    public Map<Identifier, StructureTemplate> getAll() {
+        return Map.copyOf(templates);
     }
 }

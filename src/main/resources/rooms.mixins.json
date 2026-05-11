@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.benbenlaw.roomopolis.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "GuiGraphicsExtractorAccessor"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

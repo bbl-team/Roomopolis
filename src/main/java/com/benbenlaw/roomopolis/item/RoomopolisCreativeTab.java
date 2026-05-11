@@ -1,7 +1,6 @@
 package com.benbenlaw.roomopolis.item;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.roomopolis.block.RoomopolisBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -16,16 +15,11 @@ public class RoomopolisCreativeTab {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Roomopolis.MOD_ID);
 
     public static final Supplier<CreativeModeTab> ROOMS_TAB = CREATIVE_MODE_TABS.register(Roomopolis.MOD_ID, () -> CreativeModeTab.builder()
-            .icon(() -> RoomopolisBlocks.ROOM_BLOCK.get().asItem().getDefaultInstance())
+            .icon(() -> RoomopolisItems.PLACER.get().asItem().getDefaultInstance())
             .title(Component.translatable("itemGroup.roomopolis"))
             .displayItems((parameters, output) -> {
 
-                output.accept(RoomopolisBlocks.ROOM_KEY_BLOCK.get());
-                output.accept(RoomopolisBlocks.ROOM_BLOCK.get());
-                //output.accept(RoomopolisItems.TINY_ROOM_KEY.get());
-                //output.accept(RoomopolisItems.SMALL_ROOM_KEY.get());
-                //output.accept(RoomopolisItems.MEDIUM_ROOM_KEY.get());
-                //output.accept(RoomopolisItems.LARGE_ROOM_KEY.get());
+                output.accept(RoomopolisItems.PLACER.get());
             }).build()
     );
 

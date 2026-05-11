@@ -1,9 +1,12 @@
 package com.benbenlaw;
 
-import com.benbenlaw.roomopolis.block.RoomopolisBlocks;
+import com.benbenlaw.roomopolis.compoment.RoomsDataComponents;
 import com.benbenlaw.roomopolis.item.RoomopolisCreativeTab;
 import com.benbenlaw.roomopolis.item.RoomopolisItems;
+import com.benbenlaw.roomopolis.loader.TemplateData;
 import com.benbenlaw.roomopolis.network.RoomopolisMessages;
+import com.benbenlaw.roomopolis.renderer.GuiRenderState;
+import com.benbenlaw.roomopolis.renderer.GuiRenderer;
 import com.mojang.logging.LogUtils;
 import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
@@ -13,7 +16,10 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.client.event.RegisterPictureInPictureRenderersEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import org.slf4j.Logger;
 
@@ -27,8 +33,15 @@ public class Roomopolis {
     public Roomopolis (final IEventBus eventBus, final ModContainer modContainer) {
 
         RoomopolisItems.ITEMS.register(eventBus);
-        RoomopolisBlocks.BLOCKS.register(eventBus);
         RoomopolisCreativeTab.CREATIVE_MODE_TABS.register(eventBus);
+        RoomsDataComponents.COMPONENTS.register(eventBus);
+
+        NeoForge.EVENT_BUS.addListener(Roomopolis::onAddReloadListener);
+
+
+        if (FMLEnvironment.getDist() == Dist.CLIENT) {
+            eventBus.addListener(this::onRegisterPipRenderers);
+        }
 
         eventBus.addListener(this::networkingSetup);
     }
@@ -48,6 +61,24 @@ public class Roomopolis {
             event.enqueueWork(() -> {
             });
         }
+
+
+        //@SubscribeEvent
+        //public static void registerScreens(RegisterMenuScreensEvent event) {
+        //    event.register(RoomsMenuTypes.PLACER_MENU.get(), PlacerScreen::new);
+        //}
+    }
+
+    @SubscribeEvent
+    public static void onAddReloadListener(AddServerReloadListenersEvent event) {
+        event.addListener(Roomopolis.identifier("templates"), new TemplateData());
+    }
+
+    public void onRegisterPipRenderers(RegisterPictureInPictureRenderersEvent event) {
+        event.register(
+                GuiRenderState.class,
+                GuiRenderer::new
+        );
     }
 }
 

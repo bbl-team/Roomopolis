@@ -1,12 +1,7 @@
 package com.benbenlaw.roomopolis.network;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.roomopolis.network.packet.GetStructurePalettePacket;
-import com.benbenlaw.roomopolis.network.packet.GetStructureSizePacket;
-import com.benbenlaw.roomopolis.network.packet.StructureTemplatePacket;
-import com.benbenlaw.roomopolis.network.payload.GetStructurePalettePayload;
-import com.benbenlaw.roomopolis.network.payload.GetStructureSizePayload;
-import com.benbenlaw.roomopolis.network.payload.StructureTemplatePayload;
+import com.benbenlaw.roomopolis.network.packet.*;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
@@ -15,9 +10,13 @@ public class RoomopolisMessages {
     public static void registerNetworking(final RegisterPayloadHandlersEvent event) {
         final PayloadRegistrar registrar = event.registrar(Roomopolis.MOD_ID);
 
-        //To Client From Server
-        registrar.playToClient(GetStructureSizePayload.TYPE, GetStructureSizePayload.STREAM_CODEC, GetStructureSizePacket.get()::handle);
-        registrar.playToClient(GetStructurePalettePayload.TYPE, GetStructurePalettePayload.STREAM_CODEC, GetStructurePalettePacket.get()::handle);
-        registrar.playToClient(StructureTemplatePayload.TYPE, StructureTemplatePayload.STREAM_CODEC, StructureTemplatePacket.get()::handle);
+        //Server -> Client
+        registrar.playToClient(GetStructureSizePacket.TYPE, GetStructureSizePacket.STREAM_CODEC, GetStructureSizePacket.HANDLER);
+        registrar.playToClient(GetStructurePalettePacket.TYPE, GetStructurePalettePacket.STREAM_CODEC, GetStructurePalettePacket.HANDLER);
+        registrar.playToClient(StructureTemplatePacket.TYPE, StructureTemplatePacket.STREAM_CODEC, StructureTemplatePacket.HANDLER);
+        registrar.playToClient(TemplateDefinitionPacket.TYPE, TemplateDefinitionPacket.STREAM_CODEC, TemplateDefinitionPacket.HANDLER);
+
+        //Client -> Server
+        registrar.playToServer(SyncPlacerStack.TYPE, SyncPlacerStack.STREAM_CODEC, SyncPlacerStack.HANDLER);
     }
 }

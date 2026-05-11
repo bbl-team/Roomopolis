@@ -1,26 +1,15 @@
 package com.benbenlaw.roomopolis.integration.jei;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.roomopolis.block.RoomopolisBlocks;
-import com.benbenlaw.roomopolis.item.KeyItem;
-import com.benbenlaw.roomopolis.item.KeyItemPaletteCache;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @JeiPlugin
 public class JEIRoomopolisPlugin implements IModPlugin {
@@ -40,6 +29,7 @@ public class JEIRoomopolisPlugin implements IModPlugin {
 
         List<RoomRecipe> recipes = new ArrayList<>();
 
+        /*
         for (Item item : BuiltInRegistries.ITEM) {
             if (item instanceof KeyItem keyItem) {
                 Map<Block, Integer> palette = KeyItemPaletteCache.getTemplatePalette(keyItem.definition().templateId());
@@ -55,11 +45,13 @@ public class JEIRoomopolisPlugin implements IModPlugin {
                             keyItem.definition().templateId(),
                             keyItem.asItem().getDefaultInstance(),
                             requiredItems,
-                            keyItem.definition().blocksRequired(),
+                            keyItem.definition().flags().blocksRequired(),
                             keyItem.definition().blockTarget()));
                 }
             }
         }
+
+         */
 
         registration.addRecipes(RoomCategory.RECIPE_TYPE, recipes);
 

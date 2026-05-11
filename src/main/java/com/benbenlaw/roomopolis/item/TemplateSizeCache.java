@@ -6,16 +6,18 @@ import net.minecraft.resources.Identifier;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class KeyItemSizeCache {
+public class TemplateSizeCache {
     public static final Map<Identifier, Vec3i> templateSizes = new ConcurrentHashMap<>();
 
     public static Vec3i getTemplateSize(Identifier templateId) {
-     //   System.out.println("templateSizes: " + templateSizes);
         return templateSizes.get(templateId);
-
     }
 
     public static void setTemplateSize(Identifier templateId, Vec3i size) {
         templateSizes.put(templateId, size);
+    }
+
+    public static void clear() {
+        templateSizes.clear();
     }
 }

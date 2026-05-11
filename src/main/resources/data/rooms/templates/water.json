@@ -1,0 +1,30 @@
+{
+  "template_id": "rooms:water",
+
+  "block_target": {
+    "Name": "minecraft:oak_planks"
+  },
+
+  "placement": {
+    "height_adjustment": 2,
+    "front_adjustment": 2,
+    "max_height": 256,
+    "rotation": "none"
+  },
+
+  "door": {
+    "left": 0,
+    "right": 0,
+    "up": 0,
+    "down": 0
+  },
+
+  "flags": {
+    "remove_door_area": false,
+    "side_only_placement": false,
+    "top_only_placement": false,
+    "blocks_required": false,
+    "override_existing_blocks": true,
+    "replace_waterlogged_blocks": false
+  }
+}

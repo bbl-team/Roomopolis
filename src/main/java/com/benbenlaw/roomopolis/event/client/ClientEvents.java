@@ -12,7 +12,7 @@ public class ClientEvents {
 
     @SubscribeEvent
     public static void onRenderLevel(RenderLevelStageEvent.AfterOpaqueBlocks event) {
-        KeyPreviewRenderer.onRenderLevel(event);
+        PlacerPreviewRenderer.onRenderLevel(event);
     }
 }
 
