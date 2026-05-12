@@ -76,6 +76,12 @@ dependencies {
 
     //JEI
     implementation("mezz.jei:jei-${jei_mc_version}-neoforge:${jei_version}")
+    //Connectivity
+    runtimeOnly("curse.maven:connectivity-470193:7866655")
+    //Cupboard
+    runtimeOnly("curse.maven:cupboard-326652:7904113")
+
+
 }
 
 tasks.withType(ProcessResources).configureEach {

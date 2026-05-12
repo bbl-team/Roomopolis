@@ -1,0 +1,54 @@
+{
+  "template_id": "rooms:move",
+  "name": "Submerged Sphere",
+  "block_target": "*",
+
+  "placement": {
+    "height_adjustment": 0,
+    "front_adjustment": -1,
+    "max_height": 256,
+    "rotation": "none",
+    "side_only_placement": true
+  },
+  "door": {
+    "left": 1,
+    "right": 1,
+    "up": 1,
+    "down": 1
+  },
+  "flags": {
+
+    "blocks_required": true,
+    "override_existing_blocks": true,
+    "replace_waterlogged_blocks": true
+  },
+  "pallets": {
+    "minecraft:gold_block": [
+      "minecraft:gold_block",
+      "minecraft:diamond_block"
+    ],
+    "minecraft:glass": [
+      "minecraft:blue_stained_glass",
+        "minecraft:light_blue_stained_glass",
+        "minecraft:cyan_stained_glass",
+        "minecraft:gray_stained_glass",
+        "minecraft:light_gray_stained_glass",
+        "minecraft:white_stained_glass",
+        "minecraft:blue_stained_glass"
+    ],
+    "minecraft:black_terracotta": [
+        "minecraft:black_terracotta",
+        "minecraft:blue_terracotta",
+        "minecraft:brown_terracotta",
+        "minecraft:cyan_terracotta",
+        "minecraft:gray_terracotta",
+        "minecraft:green_terracotta",
+        "minecraft:light_blue_terracotta",
+        "minecraft:light_gray_terracotta",
+        "minecraft:lime_terracotta",
+        "minecraft:magenta_terracotta",
+        "minecraft:orange_terracotta",
+        "minecraft:pink_terracotta"
+    ]
+  }
+}

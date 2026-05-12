@@ -8,6 +8,7 @@ import com.benbenlaw.roomopolis.loader.options.BlockTarget;
 import com.benbenlaw.roomopolis.util.DirectionUtil;
 import com.benbenlaw.roomopolis.util.RoomopolisTags;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
@@ -32,10 +33,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 public class PlacerItem extends Item {
 
@@ -91,7 +89,7 @@ public class PlacerItem extends Item {
         }
 
         BlockTarget target = definition.blockTarget();
-        if (target != null && !target.matches(state)) {
+        if (target != null && !(target instanceof BlockTarget.Any) && !target.matches(state)) {
 
             player.sendOverlayMessage(Component.translatable("item.key.requires_key_block").withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
@@ -103,13 +101,13 @@ public class PlacerItem extends Item {
             return InteractionResult.FAIL;
         }
 
-        if (definition.flags().topOnlyPlacement() && face != Direction.UP) {
+        if (definition.placement().topOnlyPlacement() && face != Direction.UP) {
 
             player.sendOverlayMessage(Component.translatable("item.key.top_only").withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
 
-        if (definition.flags().sideOnlyPlacement() && face.getAxis().isVertical()) {
+        if (definition.placement().sideOnlyPlacement() && face.getAxis().isVertical()) {
 
             player.sendOverlayMessage(Component.translatable("item.key.side_only").withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
@@ -182,17 +180,59 @@ public class PlacerItem extends Item {
         Map<Block, Integer> counts = new HashMap<>();
         Map<Block, Integer> half = new HashMap<>();
 
-        StructureTemplateManager manager = Objects.requireNonNull(level.getServer()).getStructureManager();
-        Optional<StructureTemplate> template = manager.get(definition.templateId());
+        StructureTemplate.Palette palette;
 
-        if (template.isEmpty()) return counts;
-        if (template.get().palettes.isEmpty()) return counts;
+        if (level.isClientSide()) {
 
-        StructureTemplate.Palette palette = template.get().palettes.getFirst();
+            var optional =
+                    FakeStructureTemplateManager.INSTANCE.get(definition.templateId());
+
+            if (optional.isEmpty()) {
+                return counts;
+            }
+
+            StructureTemplate template = optional.get();
+
+            if (template.palettes.isEmpty()) {
+                return counts;
+            }
+
+            palette = template.palettes.getFirst();
+
+        } else {
+
+            StructureTemplateManager manager =
+                    Objects.requireNonNull(level.getServer())
+                            .getStructureManager();
+
+            Optional<StructureTemplate> optional =
+                    manager.get(definition.templateId());
+
+            if (optional.isEmpty()) {
+                return counts;
+            }
+
+            StructureTemplate template = optional.get();
+
+            if (template.palettes.isEmpty()) {
+                return counts;
+            }
+
+            palette = template.palettes.getFirst();
+        }
 
         for (StructureTemplate.StructureBlockInfo info : palette.blocks()) {
 
             Block block = info.state().getBlock();
+
+            Map<Block, Block> activePalette =
+                    TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), definition.templateId());
+
+            Block replacement = activePalette.get(block);
+
+            if (replacement != null) {
+                block = replacement;
+            }
 
             if (block == Blocks.AIR) continue;
             if (block.defaultBlockState().typeHolder().is(RoomopolisTags.Blocks.NOT_NEEDED_FOR_BLOCK_REQUIREMENTS)) continue;
@@ -290,6 +330,33 @@ public class PlacerItem extends Item {
         }
 
         template.placeInWorld((ServerLevelAccessor) level, finalPos, finalPos, settings, level.getRandom(), Block.UPDATE_ALL);
+
+        Map<Block, Block> palette = TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), definition.templateId());
+
+        if (!palette.isEmpty()) {
+
+            for (int x = 0; x < size.getX(); x++) {
+                for (int y = 0; y < size.getY(); y++) {
+                    for (int z = 0; z < size.getZ(); z++) {
+
+                        BlockPos rel = new BlockPos(x, y, z);
+                        BlockPos rotated = StructureTemplate.calculateRelativePosition(settings, rel);
+                        BlockPos worldPos = finalPos.offset(rotated);
+
+                        BlockState state = level.getBlockState(worldPos);
+                        Block block = state.getBlock();
+
+                        Block replacement = palette.get(block);
+
+                        if (replacement != null && replacement != block) {
+                            level.setBlock(worldPos,
+                                    replacement.defaultBlockState(),
+                                    Block.UPDATE_ALL);
+                        }
+                    }
+                }
+            }
+        }
 
         if (definition.flags().replaceWaterLoggedBlocks()) {
             unWaterLogPlacedBlocks(level,finalPos,settings,definition);

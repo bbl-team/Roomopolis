@@ -10,7 +10,9 @@
   "tooptip.rooms.template.override_existing": "Overrides all blocks",
   "tooptip.rooms.template.un_waterlog": "Un Waterlog blocks",
 
-  "tooptip.rooms.blocklist.blocklist": "Block List",
+  "tooptip.rooms.blocklist": "Block List",
+  "tooptip.rooms.apply": "Apply",
+  "tooptip.rooms.palette_preview": "Edit palette",
 
   "item.rooms.placer": "Placer",
 

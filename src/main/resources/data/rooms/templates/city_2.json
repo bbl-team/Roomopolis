@@ -1,15 +1,15 @@
 {
   "template_id": "minecraft:ancient_city/city/entrance/entrance_path_1",
   "name": "test.test.2",
-  "block_target": {
-    "Name": "minecraft:oak_planks"
-  },
+  "block_target": "minecraft:oak_planks",
 
   "placement": {
     "height_adjustment": 2,
     "front_adjustment": 2,
     "max_height": 256,
-    "rotation": "none"
+    "rotation": "none",
+    "side_only_placement": false,
+    "top_only_placement": false
   },
 
   "door": {
@@ -20,9 +20,6 @@
   },
 
   "flags": {
-    "remove_door_area": false,
-    "side_only_placement": false,
-    "top_only_placement": false,
     "blocks_required": false,
     "override_existing_blocks": true,
     "replace_waterlogged_blocks": false

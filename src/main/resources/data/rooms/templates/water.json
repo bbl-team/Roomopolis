@@ -1,9 +1,8 @@
 {
   "template_id": "rooms:water",
   "name": "test.test.w",
-  "block_target": {
-    "Name": "minecraft:oak_planks"
-  },
+  "block_target": "#minecraft:logs",
+
 
   "placement": {
     "height_adjustment": 2,
@@ -20,11 +19,27 @@
   },
 
   "flags": {
-    "remove_door_area": false,
-    "side_only_placement": false,
-    "top_only_placement": false,
-    "blocks_required": false,
+    "blocks_required": true,
     "override_existing_blocks": true,
     "replace_waterlogged_blocks": false
+  },
+  "pallets": {
+    "minecraft:terracotta": [
+      "minecraft:terracotta",
+      "minecraft:spruce_planks"
+    ],
+    "minecraft:glass": [
+      "minecraft:glass",
+      "minecraft:glass_pane",
+      "minecraft:blue_wool",
+      "minecraft:light_blue_wool",
+      "minecraft:cyan_wool",
+      "minecraft:gray_wool",
+      "minecraft:light_gray_wool",
+      "minecraft:white_wool",
+      "minecraft:blue_stained_glass",
+      "minecraft:light_blue_stained_glass",
+      "minecraft:cyan_stained_glass"
+    ]
   }
 }

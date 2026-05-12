@@ -21,6 +21,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -32,10 +33,11 @@ import java.util.Optional;
 @EventBusSubscriber(modid = Roomopolis.MOD_ID)
 public class UpdateKeyCache {
 
-    @SubscribeEvent
-    public static void updateKeyCache(PlayerEvent.PlayerLoggedInEvent event) {
 
-        if (!(event.getEntity() instanceof ServerPlayer serverPlayer)) return;
+    @SubscribeEvent
+    public static void onDatapackSync(OnDatapackSyncEvent event) {
+
+        if (!(event.getPlayer() instanceof ServerPlayer serverPlayer)) return;
 
         Objects.requireNonNull(serverPlayer.level().getServer()).execute(() -> {
 

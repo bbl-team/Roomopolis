@@ -18,5 +18,6 @@ public class RoomopolisMessages {
 
         //Client -> Server
         registrar.playToServer(SyncPlacerStack.TYPE, SyncPlacerStack.STREAM_CODEC, SyncPlacerStack.HANDLER);
+        registrar.playToServer(SyncPaletteSelection.TYPE, SyncPaletteSelection.STREAM_CODEC, SyncPaletteSelection.HANDLER);
     }
 }

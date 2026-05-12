@@ -7,13 +7,15 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.level.block.Rotation;
 
-public record TemplatePlacementOptions(int heightAdjustment, int frontAdjustment, int maxHeight, Rotation rotation) {
+public record TemplatePlacementOptions(int heightAdjustment, int frontAdjustment, int maxHeight, Rotation rotation, boolean sideOnlyPlacement, boolean topOnlyPlacement) {
 
     public static final Codec<TemplatePlacementOptions> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.INT.optionalFieldOf("height_adjustment", 0).forGetter(TemplatePlacementOptions::heightAdjustment),
             Codec.INT.optionalFieldOf("front_adjustment", 0).forGetter(TemplatePlacementOptions::frontAdjustment),
             Codec.INT.optionalFieldOf("max_height", 256).forGetter(TemplatePlacementOptions::maxHeight),
-            Rotation.CODEC.optionalFieldOf("rotation", Rotation.NONE).forGetter(TemplatePlacementOptions::rotation)
+            Rotation.CODEC.optionalFieldOf("rotation", Rotation.NONE).forGetter(TemplatePlacementOptions::rotation),
+            Codec.BOOL.optionalFieldOf("side_only_placement", false).forGetter(TemplatePlacementOptions::sideOnlyPlacement),
+            Codec.BOOL.optionalFieldOf("top_only_placement", false).forGetter(TemplatePlacementOptions::topOnlyPlacement)
     ).apply(instance, TemplatePlacementOptions::new));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, TemplatePlacementOptions> STREAM_CODEC = StreamCodec.composite(
@@ -21,6 +23,8 @@ public record TemplatePlacementOptions(int heightAdjustment, int frontAdjustment
             ByteBufCodecs.INT, TemplatePlacementOptions::frontAdjustment,
             ByteBufCodecs.INT, TemplatePlacementOptions::maxHeight,
             Rotation.STREAM_CODEC, TemplatePlacementOptions::rotation,
+            ByteBufCodecs.BOOL, TemplatePlacementOptions::sideOnlyPlacement,
+            ByteBufCodecs.BOOL, TemplatePlacementOptions::topOnlyPlacement,
             TemplatePlacementOptions::new
     );
 }

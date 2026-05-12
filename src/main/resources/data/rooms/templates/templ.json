@@ -1,6 +1,6 @@
 {
-  "template_id": "minecraft:ancient_city/city/entrance/entrance_connector",
-  "name": "test.test.1",
+  "template_id": "minecraft:desert_pyramid",
+  "name": "Temple",
   "block_target": "*",
 
   "placement": {
@@ -23,12 +23,10 @@
     "replace_waterlogged_blocks": true
   },
   "pallets": {
-    "minecraft:deepslate": [
-      "minecraft:deepslate",
-      "minecraft:cobbled_deepslate",
-      "minecraft:polished_deepslate",
-      "minecraft:deepslate_bricks",
-      "minecraft:deepslate_tiles"
+    "minecraft:sandstone": [
+      "minecraft:stone",
+      "minecraft:cobblestone",
+      "minecraft:stone_bricks"
     ]
   }
 }

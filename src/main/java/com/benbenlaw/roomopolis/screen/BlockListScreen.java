@@ -1,6 +1,7 @@
 package com.benbenlaw.roomopolis.screen;
 
 import com.benbenlaw.Roomopolis;
+import com.benbenlaw.roomopolis.item.PlacerItem;
 import com.benbenlaw.roomopolis.item.TemplatePaletteCache;
 import com.benbenlaw.roomopolis.loader.TemplateData;
 import com.benbenlaw.roomopolis.loader.TemplateDefinition;
@@ -80,7 +81,7 @@ public class BlockListScreen extends Screen {
         int y = (height - imageHeight) / 2;
 
         // Title
-        graphics.text(Minecraft.getInstance().font, Component.translatable("tooptip.rooms.blocklist.blocklist")
+        graphics.text(Minecraft.getInstance().font, Component.translatable("tooptip.rooms.blocklist")
                         .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.UNDERLINE),
                 x + 8, y + 6, 0xFFFFFFFF, false);
 
@@ -93,7 +94,11 @@ public class BlockListScreen extends Screen {
             }
         }
 
-        Map<Block, Integer> requiredBlocksMap = TemplatePaletteCache.getTemplatePalette(templateId);
+        TemplateDefinition definition = TemplateData.DATA.get(templateId);
+        if (definition == null) return;
+        ItemStack held =Minecraft.getInstance().player.getMainHandItem();
+        if (!(held.getItem() instanceof PlacerItem placerItem)) return;
+        Map<Block, Integer> requiredBlocksMap = placerItem.getRequiredBlocks(Minecraft.getInstance().player.level(), definition);
         List<Map.Entry<Block, Integer>> fullList = new ArrayList<>(requiredBlocksMap.entrySet());
 
         int maxPages = (int) Math.ceil((double) fullList.size() / ENTRIES_PER_PAGE);

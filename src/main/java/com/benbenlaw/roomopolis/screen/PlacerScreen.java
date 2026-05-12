@@ -1,6 +1,8 @@
 package com.benbenlaw.roomopolis.screen;
 
 import com.benbenlaw.Roomopolis;
+import com.benbenlaw.roomopolis.item.TemplatePaletteCache;
+import com.benbenlaw.roomopolis.item.TemplateSizeCache;
 import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.item.FakeStructureTemplateManager;
 import com.benbenlaw.roomopolis.loader.TemplateData;
@@ -15,6 +17,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -102,6 +105,14 @@ public class PlacerScreen extends Screen {
                     Identifier id = entry.getKey();
                     StructureTemplate template = entry.getValue();
 
+                    /*
+                    if (TemplatePaletteCache.getTemplatePalette(id).size() > 1000) {
+                        graphics.fill(areaX, areaY, areaX + 52, areaY + 52, 0x55FF0000);
+                        graphics.text(Minecraft.getInstance().font, Component.literal("Too many palettes!"), areaX + 2, areaY + 2, 0xFFFFFFFF, false);
+                        continue;
+                    }
+                     */
+
                     GuiStructureRenderState state = GuiStructureRenderState.simpleGuiRenderState(
                             template.getSize(),
                             rotationTime,
@@ -127,6 +138,7 @@ public class PlacerScreen extends Screen {
                     if (id.equals(selectedTemplateId)) {
                         graphics.fill(areaX, areaY, areaX + 52, areaY + 52, 0x55FFFF00);
                     }
+
                 }
 
                 index++;

@@ -1,9 +1,8 @@
 {
   "template_id": "rooms:plank",
   "name": "test.test.7",
-  "block_target": {
-    "Name": "minecraft:oak_planks"
-  },
+  "block_target": "minecraft:oak_planks",
+
 
   "placement": {
     "height_adjustment": 2,
@@ -20,11 +19,13 @@
   },
 
   "flags": {
-    "remove_door_area": false,
-    "side_only_placement": false,
-    "top_only_placement": false,
     "blocks_required": false,
     "override_existing_blocks": true,
     "replace_waterlogged_blocks": false
+  },
+  "pallets": {
+    "minecraft:jungle_planks": [
+      "minecraft:spruce_planks"
+    ]
   }
 }

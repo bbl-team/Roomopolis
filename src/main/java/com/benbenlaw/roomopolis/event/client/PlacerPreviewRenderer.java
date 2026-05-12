@@ -27,6 +27,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -141,7 +142,18 @@ public class PlacerPreviewRenderer {
             if (info.state().isAir()) continue;
 
             BlockPos rotatedPos = StructureTemplate.calculateRelativePosition(settings, info.pos());
-            BlockState rotatedState = info.state().rotate(level, placementPos, finalRotation);
+            BlockState baseState = info.state().rotate(level, placementPos, finalRotation);
+
+            Block block = baseState.getBlock();
+
+            Block replacement = TemplateData
+                    .getActivePalette(Minecraft.getInstance().player.getUUID(), definition.templateId())
+                    .get(block);
+
+            BlockState rotatedState =
+                    (replacement != null)
+                            ? replacement.defaultBlockState()
+                            : baseState;
 
             poseStack.pushPose();
 
@@ -182,8 +194,8 @@ public class PlacerPreviewRenderer {
         BlockState state = player.level().getBlockState(lookPos);
 
         if (!definition.blockTarget().matches(state)) return false;
-        if (definition.flags().topOnlyPlacement()&& face != Direction.UP) return false;
-        if (definition.flags().sideOnlyPlacement() && face.getAxis().isVertical()) return false;
+        if (definition.placement().topOnlyPlacement()&& face != Direction.UP) return false;
+        if (definition.placement().sideOnlyPlacement() && face.getAxis().isVertical()) return false;
 
         return true;
     }

@@ -3,6 +3,7 @@ package com.benbenlaw.roomopolis.item;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
 import java.util.ArrayList;
@@ -36,7 +37,10 @@ public class TemplatePaletteCache {
     }
 
     // Record to store block + position
-    public record BlockPosWithState(Block block, BlockPos pos) {}
+    public record BlockPosWithState(
+            BlockState state,
+            BlockPos pos
+    ) {}
 
     // ✅ Utility method to populate both caches
     public static void cacheTemplate(Identifier templateId, StructureTemplate template) {
@@ -44,10 +48,13 @@ public class TemplatePaletteCache {
         List<BlockPosWithState> renderPalette = new ArrayList<>();
 
         template.palettes.getFirst().blocks().forEach(blockInfo -> {
-            Block block = blockInfo.state().getBlock();
-            if (!blockInfo.state().isAir()) {
+            BlockState state = blockInfo.state();
+            Block block = state.getBlock();
+
+            if (!state.isAir()) {
                 countPalette.put(block, countPalette.getOrDefault(block, 0) + 1);
-                renderPalette.add(new BlockPosWithState(block, blockInfo.pos()));
+                renderPalette.add(new BlockPosWithState(state, blockInfo.pos())
+                );
             }
         });
 

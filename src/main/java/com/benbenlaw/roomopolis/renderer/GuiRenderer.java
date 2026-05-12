@@ -3,6 +3,7 @@ package com.benbenlaw.roomopolis.renderer;
 import com.benbenlaw.roomopolis.item.FakeStructureTemplateManager;
 import com.benbenlaw.roomopolis.item.TemplatePaletteCache;
 import com.benbenlaw.roomopolis.item.TemplateSizeCache;
+import com.benbenlaw.roomopolis.loader.TemplateData;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -17,6 +18,7 @@ import net.minecraft.client.renderer.block.dispatch.BlockStateModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
@@ -59,7 +61,6 @@ public class GuiRenderer extends PictureInPictureRenderer<GuiStructureRenderStat
         List<TemplatePaletteCache.BlockPosWithState> blocks =
                 TemplatePaletteCache.getRenderPalette(id);
 
-        // Auto-cache template if needed
         if (blocks == null || size == null) {
 
             var template = FakeStructureTemplateManager.INSTANCE.templates.get(id);
@@ -71,12 +72,6 @@ public class GuiRenderer extends PictureInPictureRenderer<GuiStructureRenderStat
 
                 size = template.getSize();
                 blocks = TemplatePaletteCache.getRenderPalette(id);
-
-                System.out.println(
-                        "Cached template " + id +
-                                " size=" + size +
-                                " blocks=" + blocks.size()
-                );
             }
         }
 
@@ -92,55 +87,22 @@ public class GuiRenderer extends PictureInPictureRenderer<GuiStructureRenderStat
         float scale = state.inViewScale() / Math.max(1.0f, maxDim);
 
         poseStack.pushPose();
-
-        /*
-         * Center texture
-         */
         poseStack.translate(0, 0, 100.0f);
-
-        /*
-         * Scale into slot
-         */
         poseStack.scale(scale, scale, scale);
-
-        /*
-         * Isometric rotation
-         */
         poseStack.mulPose(Axis.XP.rotationDegrees(210f));
         poseStack.mulPose(Axis.YP.rotationDegrees(state.rotationTime() / 3));
+        poseStack.translate(-size.getX() / 2.0f, -size.getY() / 2.0f, -size.getZ() / 2.0f);
 
-        /*
-         * Center structure pivot
-         */
-        poseStack.translate(
-                -size.getX() / 2.0f,
-                -size.getY() / 2.0f,
-                -size.getZ() / 2.0f
-        );
-
-        /*
-         * Render blocks
-         */
         for (var blockEntry : blocks) {
 
-            // IMPORTANT:
-            // Use ACTUAL STORED BLOCK STATE
-            // NOT defaultBlockState()
-            BlockState blockState = blockEntry.block().defaultBlockState();
+            BlockState baseState = blockEntry.state();
+            assert Minecraft.getInstance().player != null;
+            Block replacement = TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), id).get(baseState.getBlock());
+            BlockState finalState = (replacement != null) ? replacement.defaultBlockState(): baseState;
 
-            this.renderBlock(
-                    mc.level,
-                    blockState,
-                    blockEntry.pos(),
-                    poseStack
-            );
+            this.renderBlock(mc.level, finalState, blockEntry.pos(), poseStack);
         }
-
         poseStack.popPose();
-
-        /*
-         * Flush buffers to texture
-         */
         this.bufferSource.endBatch();
     }
 

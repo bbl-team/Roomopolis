@@ -21,7 +21,7 @@ public record TemplateDefinitionPacket(Map<Identifier, TemplateDefinition> data)
 
             for (var entry : packet.data.entrySet()) {
                 TemplateDefinition definition = entry.getValue();
-                TemplateData.addTemplateDefinition(entry.getKey(), definition);
+                TemplateData.setActiveTemplate(entry.getKey(), definition);
             }
     };
 

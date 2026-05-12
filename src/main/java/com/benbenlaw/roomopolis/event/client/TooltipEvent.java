@@ -91,11 +91,11 @@ public class TooltipEvent {
             ).withStyle(ChatFormatting.GRAY));
         }
 
-        if (definition.flags().sideOnlyPlacement()) {
+        if (definition.placement().sideOnlyPlacement()) {
             tooltips.add(Component.translatable("tooltips.key.side_only").withStyle(ChatFormatting.GRAY));
         }
 
-        if (definition.flags().topOnlyPlacement()) {
+        if (definition.placement().topOnlyPlacement()) {
             tooltips.add(Component.translatable("tooltips.key.top_only").withStyle(ChatFormatting.GRAY));
         }
 
@@ -108,9 +108,13 @@ public class TooltipEvent {
             return;
         }
 
-        Map<Block, Integer> requiredBlocks = TemplatePaletteCache.getTemplatePalette(templateId);
+        if (player == null) return;
 
-        if (requiredBlocks == null || player == null) return;
+        Map<Block, Integer> requiredBlocks =
+                ((PlacerItem) stack.getItem())
+                        .getRequiredBlocks(player.level(), definition);
+
+        if (requiredBlocks == null || requiredBlocks.isEmpty()) return;
 
         Map<Block, Integer> playerBlocks = new HashMap<>();
 
