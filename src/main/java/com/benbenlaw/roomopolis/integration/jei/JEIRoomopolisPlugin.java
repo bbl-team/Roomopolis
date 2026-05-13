@@ -45,7 +45,7 @@ public class JEIRoomopolisPlugin implements IModPlugin {
                             keyItem.definition().templateId(),
                             keyItem.asItem().getDefaultInstance(),
                             requiredItems,
-                            keyItem.definition().flags().blocksRequired(),
+                            keyItem.definition().restrictions().blocksRequired(),
                             keyItem.definition().blockTarget()));
                 }
             }

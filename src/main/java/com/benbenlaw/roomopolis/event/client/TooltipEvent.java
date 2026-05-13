@@ -3,7 +3,6 @@ package com.benbenlaw.roomopolis.event.client;
 import com.benbenlaw.Roomopolis;
 import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.compoment.RoomsDataComponents;
-import com.benbenlaw.roomopolis.item.TemplatePaletteCache;
 import com.benbenlaw.roomopolis.item.TemplateSizeCache;
 import com.benbenlaw.roomopolis.item.PlacerItem;
 import com.benbenlaw.roomopolis.loader.TemplateData;
@@ -75,7 +74,7 @@ public class TooltipEvent {
                 BlockTarget.toString(blockTarget)
         ).withStyle(ChatFormatting.RED));
 
-        if (definition.flags().overrideExistingBlocks()) {
+        if (definition.restrictions().overrideExistingBlocks()) {
             tooltips.add(Component.translatable("tooltips.key.override_existing_blocks").withStyle(ChatFormatting.GRAY));
         } else {
             tooltips.add(Component.translatable("tooltips.key.normal_checks").withStyle(ChatFormatting.GRAY));
@@ -99,7 +98,7 @@ public class TooltipEvent {
             tooltips.add(Component.translatable("tooltips.key.top_only").withStyle(ChatFormatting.GRAY));
         }
 
-        if (!definition.flags().blocksRequired()) {
+        if (!definition.restrictions().blocksRequired()) {
             return;
         }
 

@@ -9,6 +9,7 @@
   "tooptip.rooms.template.side_only": "Use on Side",
   "tooptip.rooms.template.override_existing": "Overrides all blocks",
   "tooptip.rooms.template.un_waterlog": "Un Waterlog blocks",
+  "tooptip.rooms.template.needs_item_consumed": "Must have %s in inventory to use",
 
   "tooptip.rooms.blocklist": "Block List",
   "tooptip.rooms.apply": "Apply",

@@ -5,7 +5,6 @@ import com.benbenlaw.roomopolis.compoment.RoomsDataComponents;
 import com.benbenlaw.roomopolis.loader.TemplateData;
 import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.mixin.GuiGraphicsExtractorAccessor;
-import com.benbenlaw.roomopolis.network.packet.SyncPaletteSelection;
 import com.benbenlaw.roomopolis.network.packet.SyncPlacerStack;
 import com.benbenlaw.roomopolis.renderer.GuiRenderer;
 import com.benbenlaw.roomopolis.renderer.GuiStructureRenderState;
@@ -14,7 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.network.chat.Component;
@@ -24,8 +22,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-
-import java.util.*;
 
 public class TemplateScreen extends Screen {
 
@@ -141,6 +137,15 @@ public class TemplateScreen extends Screen {
             index += 12;
         }
 
+        if (definition.restrictions().itemRequiredAndConsumed().isPresent()) {
+            graphics.text(Minecraft.getInstance().font,
+                    Component.translatable("tooptip.rooms.template.needs_item_consumed", definition.restrictions().itemRequiredAndConsumed().get().create().getDisplayName())
+                            .withStyle(ChatFormatting.DARK_GRAY),
+                    x + 94, y + 18 + index,
+                    0xFFFFFFFF, false);
+            index += 12;
+        }
+
         if (definition.door().isValid()) {
             graphics.text(Minecraft.getInstance().font,
                     Component.translatable("tooptip.rooms.template.door")
@@ -150,7 +155,7 @@ public class TemplateScreen extends Screen {
             index += 12;
         }
 
-        if (definition.flags().blocksRequired()) {
+        if (definition.restrictions().blocksRequired()) {
             graphics.text(Minecraft.getInstance().font,
                     Component.translatable("tooptip.rooms.template.blocks_required")
                             .withStyle(ChatFormatting.DARK_GRAY),
@@ -177,7 +182,7 @@ public class TemplateScreen extends Screen {
             index += 12;
         }
 
-        if (definition.flags().overrideExistingBlocks()) {
+        if (definition.restrictions().overrideExistingBlocks()) {
             graphics.text(Minecraft.getInstance().font,
                     Component.translatable("tooptip.rooms.template.override_existing")
                             .withStyle(ChatFormatting.DARK_GRAY),
@@ -186,7 +191,7 @@ public class TemplateScreen extends Screen {
             index += 12;
         }
 
-        if (definition.flags().replaceWaterLoggedBlocks()) {
+        if (definition.restrictions().replaceWaterLoggedBlocks()) {
             graphics.text(Minecraft.getInstance().font,
                     Component.translatable("tooptip.rooms.template.un_waterlog")
                             .withStyle(ChatFormatting.DARK_GRAY),

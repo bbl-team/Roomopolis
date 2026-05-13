@@ -122,6 +122,25 @@ public class PlacerItem extends Item {
             rotation = combineRotation(baseRotation, definition.placement().rotation());
         }
 
+        if (definition.restrictions().itemRequiredAndConsumed().isPresent()) {
+
+            ItemStack required = definition.restrictions().itemRequiredAndConsumed().get().create();
+            boolean found = false;
+
+            for (ItemStack invStack : player.getInventory().getNonEquipmentItems()) {
+                if (ItemStack.isSameItem(invStack, required) && invStack.getCount() >= required.getCount()) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                player.sendOverlayMessage(Component.translatable("item.key.requires_item", required.getDisplayName()).withStyle(ChatFormatting.RED));
+                return InteractionResult.FAIL;
+            }
+        }
+
+
         boolean placed = createTemplate(level, rotation, facing, placePosition, definition);
 
         if (!placed) {
@@ -149,7 +168,7 @@ public class PlacerItem extends Item {
 
     public boolean hasEnoughBlocks(Player player, Level level, TemplateDefinition definition) {
 
-        if (!definition.flags().blocksRequired()) return true;
+        if (!definition.restrictions().blocksRequired()) return true;
         if (player.isCreative()) return true;
 
         Map<Block, Integer> required = getRequiredBlocks(level, definition);
@@ -255,7 +274,7 @@ public class PlacerItem extends Item {
     public void consumeBlocks(Player player, Level level, TemplateDefinition definition) {
 
         if (player.isCreative()) return;
-        if (!definition.flags().blocksRequired()) return;
+        if (!definition.restrictions().blocksRequired()) return;
 
         Map<Block, Integer> required = getRequiredBlocks(level, definition);
 
@@ -310,7 +329,7 @@ public class PlacerItem extends Item {
         BlockPos finalPos = pos.relative(facing, forward).offset(adjusted).above(definition.placement().heightAdjustment());
         boolean canPlace = true;
 
-        if (!definition.flags().overrideExistingBlocks()) {
+        if (!definition.restrictions().overrideExistingBlocks()) {
 
             StructurePlaceSettings testSettings = new StructurePlaceSettings()
                             .setRotation(rotation)
@@ -358,8 +377,19 @@ public class PlacerItem extends Item {
             }
         }
 
-        if (definition.flags().replaceWaterLoggedBlocks()) {
+        if (definition.restrictions().replaceWaterLoggedBlocks()) {
             unWaterLogPlacedBlocks(level,finalPos,settings,definition);
+        }
+
+        if (definition.restrictions().itemRequiredAndConsumed().isPresent()) {
+            ItemStack required = definition.restrictions().itemRequiredAndConsumed().get().create();
+
+            for (ItemStack invStack : Objects.requireNonNull(level.getPlayerByUUID(Minecraft.getInstance().player.getUUID())).getInventory().getNonEquipmentItems()) {
+                if (ItemStack.isSameItem(invStack, required) && invStack.getCount() >= required.getCount()) {
+                    invStack.shrink(required.getCount());
+                    break;
+                }
+            }
         }
 
         return true;

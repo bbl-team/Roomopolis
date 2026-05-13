@@ -3,7 +3,7 @@
   "name": "Submerged Sphere",
   "block_target": "*",
 
-  "placement": {
+  "placement_options": {
     "height_adjustment": 0,
     "front_adjustment": -1,
     "max_height": 256,
@@ -16,11 +16,13 @@
     "up": 1,
     "down": 1
   },
-  "flags": {
-
+  "restriction_options": {
     "blocks_required": true,
     "override_existing_blocks": true,
-    "replace_waterlogged_blocks": true
+    "replace_waterlogged_blocks": true,
+    "required_item": {
+      "id": "minecraft:diamond"
+    }
   },
   "pallets": {
     "minecraft:gold_block": [

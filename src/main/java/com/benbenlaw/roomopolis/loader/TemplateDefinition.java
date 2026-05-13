@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Rotation;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public record TemplateDefinition(
         Identifier templateId,
@@ -20,7 +21,7 @@ public record TemplateDefinition(
         BlockTarget blockTarget,
         TemplatePlacementOptions placement,
         TemplateDoorOptions door,
-        TemplateRestrictionOptions flags,
+        TemplateRestrictionOptions restrictions,
         Map<Block, List<Block>> pallets
 ) {
 
@@ -34,7 +35,7 @@ public record TemplateDefinition(
             Identifier.CODEC.fieldOf("template_id").forGetter(TemplateDefinition::templateId),
             Codec.STRING.fieldOf("name").forGetter(TemplateDefinition::translatableName),
             BlockTargetCodec.CODEC.optionalFieldOf("block_target", BlockTarget.fromString("*")).forGetter(TemplateDefinition::blockTarget),
-            TemplatePlacementOptions.CODEC.optionalFieldOf("placement",
+            TemplatePlacementOptions.CODEC.optionalFieldOf("placement_options",
                     new TemplatePlacementOptions(0, 0, 256, Rotation.NONE, false, false)
             ).forGetter(TemplateDefinition::placement),
             TemplateDoorOptions.CODEC.optionalFieldOf(
@@ -42,9 +43,9 @@ public record TemplateDefinition(
                     new TemplateDoorOptions(1, 1, 2, 0)
             ).forGetter(TemplateDefinition::door),
             TemplateRestrictionOptions.CODEC.optionalFieldOf(
-                    "flags",
-                    new TemplateRestrictionOptions(false, false, false)
-            ).forGetter(TemplateDefinition::flags),
+                    "restriction_options",
+                    new TemplateRestrictionOptions(false, false, false, Optional.empty())
+            ).forGetter(TemplateDefinition::restrictions),
             PALLET_CODEC.optionalFieldOf("pallets", Map.of()).forGetter(TemplateDefinition::pallets)
 
     ).apply(instance, TemplateDefinition::new));
@@ -56,7 +57,7 @@ public record TemplateDefinition(
             BlockTargetCodec.STREAM_CODEC, TemplateDefinition::blockTarget,
             TemplatePlacementOptions.STREAM_CODEC, TemplateDefinition::placement,
             TemplateDoorOptions.STREAM_CODEC, TemplateDefinition::door,
-            TemplateRestrictionOptions.STREAM_CODEC, TemplateDefinition::flags,
+            TemplateRestrictionOptions.STREAM_CODEC, TemplateDefinition::restrictions,
             ByteBufCodecs.fromCodec(PALLET_CODEC), TemplateDefinition::pallets,
             TemplateDefinition::new
     );
