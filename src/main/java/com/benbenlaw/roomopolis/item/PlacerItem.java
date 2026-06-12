@@ -151,7 +151,7 @@ public class PlacerItem extends Item {
         player.sendOverlayMessage(Component.translatable("item.key.placed").withStyle(ChatFormatting.GREEN));
 
         if (definition.door().isValid()) {
-
+            System.out.println("Door + " + definition.door().left() + " " + definition.door().right() + " " + definition.door().down() + " " + definition.door().up());
             Direction placementFacing = face.getAxis().isVertical() ? context.getHorizontalDirection().getOpposite(): face.getOpposite();
             removeDoor(level, pos, placementFacing, definition);
         }

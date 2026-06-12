@@ -1,0 +1,18 @@
+{
+  "template_id": "rooms:small_corridor",
+  "name": "Small Corridor",
+  "block_target": "*",
+
+  "placement_options": {
+    "height_adjustment": 0,
+    "front_adjustment": -1,
+    "rotation": "none",
+    "side_only_placement": true
+  },
+  "restriction_options": {
+    "blocks_required": true,
+    "override_existing_blocks": true,
+    "replace_waterlogged_blocks": true,
+    "show_in_placer": true
+  }
+}

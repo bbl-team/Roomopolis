@@ -40,7 +40,7 @@ public record TemplateDefinition(
             ).forGetter(TemplateDefinition::placement),
             TemplateDoorOptions.CODEC.optionalFieldOf(
                     "door",
-                    new TemplateDoorOptions(1, 1, 2, 0)
+                    new TemplateDoorOptions(0, 0, 0, 0)
             ).forGetter(TemplateDefinition::door),
             TemplateRestrictionOptions.CODEC.optionalFieldOf(
                     "restriction_options",
