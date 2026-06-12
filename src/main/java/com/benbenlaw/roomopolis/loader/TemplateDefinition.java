@@ -44,7 +44,7 @@ public record TemplateDefinition(
             ).forGetter(TemplateDefinition::door),
             TemplateRestrictionOptions.CODEC.optionalFieldOf(
                     "restriction_options",
-                    new TemplateRestrictionOptions(false, false, false, Optional.empty())
+                    new TemplateRestrictionOptions(false, false, false, Optional.empty(), true)
             ).forGetter(TemplateDefinition::restrictions),
             PALLET_CODEC.optionalFieldOf("pallets", Map.of()).forGetter(TemplateDefinition::pallets)
 

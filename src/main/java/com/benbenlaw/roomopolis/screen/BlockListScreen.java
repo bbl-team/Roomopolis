@@ -34,7 +34,6 @@ public class BlockListScreen extends Screen {
     private GuiRenderer renderer;
     private final Screen parent;
 
-    // Pagination fields
     private int currentPage = 0;
     private static final int ENTRIES_PER_PAGE = 10;
     private Button nextButton;
@@ -80,8 +79,18 @@ public class BlockListScreen extends Screen {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        // Title
-        graphics.text(Minecraft.getInstance().font, Component.translatable("tooptip.rooms.blocklist")
+        TemplateDefinition definition = TemplateData.DATA.get(templateId);
+
+        if (definition == null) return;
+        if (!definition.restrictions().blocksRequired()) {
+            graphics.text(Minecraft.getInstance().font, Component.translatable("tooltip.rooms.blocklist_not_required")
+                            .withStyle(ChatFormatting.DARK_GRAY),
+                    x + 8, y + 6, 0xFFFFFFFF, false);
+            return;
+
+        }
+
+        graphics.text(Minecraft.getInstance().font, Component.translatable("tooltip.rooms.blocklist")
                         .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.UNDERLINE),
                 x + 8, y + 6, 0xFFFFFFFF, false);
 
@@ -94,7 +103,6 @@ public class BlockListScreen extends Screen {
             }
         }
 
-        TemplateDefinition definition = TemplateData.DATA.get(templateId);
         if (definition == null) return;
         ItemStack held =Minecraft.getInstance().player.getMainHandItem();
         if (!(held.getItem() instanceof PlacerItem placerItem)) return;

@@ -25,22 +25,15 @@ import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 public class TemplateScreen extends Screen {
 
-    private static final Identifier TEXTURE =
-            Roomopolis.identifier("textures/gui/template_gui.png");
+    private static final Identifier TEXTURE = Roomopolis.identifier("textures/gui/template_gui.png");
 
     private final Identifier templateId;
     private final int imageWidth = 230;
     private final int imageHeight = 166;
 
     private GuiRenderer renderer;
-    private Rotation rotation = Rotation.NONE;
-
     private final Screen parent;
-
     private TemplateDefinition definition;
-
-    private Block selectedSource;
-    private Block selectedTarget;
 
     public TemplateScreen(Identifier templateId, Screen parent) {
         super(Component.literal("Template Config"));
@@ -62,7 +55,7 @@ public class TemplateScreen extends Screen {
                         b -> Minecraft.getInstance().setScreen(parent))
                 .bounds(x + 6, y + 140, 20, 20).build());
 
-        addRenderableWidget(Button.builder(Component.translatable("tooptip.rooms.blocklist"),
+        addRenderableWidget(Button.builder(Component.translatable("tooltip.rooms.blocklist"),
                         b -> Minecraft.getInstance().setScreen(new BlockListScreen(templateId, this)))
                 .bounds(x + 28, y + 140, 60, 20).build());
 
@@ -72,7 +65,7 @@ public class TemplateScreen extends Screen {
                 .bounds(x + 90, y + 140, 60, 20)
                 .build());
 
-        addRenderableWidget(Button.builder(Component.translatable("tooptip.rooms.apply"),
+        addRenderableWidget(Button.builder(Component.translatable("tooltip.rooms.apply"),
                         b -> applyTemplate())
                 .bounds(x + 164, y + 140, 60, 20).build());
     }
@@ -85,12 +78,7 @@ public class TemplateScreen extends Screen {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        graphics.blit(RenderPipelines.GUI_TEXTURED,
-                TEXTURE,
-                x, y,
-                0, 0,
-                imageWidth, imageHeight,
-                imageWidth, imageHeight);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0, imageWidth, imageHeight, imageWidth, imageHeight);
     }
 
     @Override
@@ -109,9 +97,8 @@ public class TemplateScreen extends Screen {
                 x + 8, y + 6,
                 0xFFFFFFFF, false);
 
-        // SETTINGS HEADER (UNCHANGED)
         graphics.text(Minecraft.getInstance().font,
-                Component.translatable("tooptip.rooms.template.settings")
+                Component.translatable("tooltip.rooms.template.settings")
                         .withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.UNDERLINE),
                 x + 94, y + 18,
                 0xFFFFFFFF, false);
@@ -121,12 +108,12 @@ public class TemplateScreen extends Screen {
         if (!definition.blockTarget().matches(Blocks.AIR.defaultBlockState())) {
 
             graphics.text(Minecraft.getInstance().font,
-                    Component.translatable("tooptip.rooms.template.block")
+                    Component.translatable("tooltip.rooms.template.block")
                             .withStyle(ChatFormatting.DARK_GRAY),
                     x + 94, y + 18 + index,
                     0xFFFFFFFF, false);
 
-            index += 10;
+            index += 8;
 
             graphics.text(Minecraft.getInstance().font,
                     Component.literal("- ").append(definition.blockTarget().getDisplayName())
@@ -139,7 +126,12 @@ public class TemplateScreen extends Screen {
 
         if (definition.restrictions().itemRequiredAndConsumed().isPresent()) {
             graphics.text(Minecraft.getInstance().font,
-                    Component.translatable("tooptip.rooms.template.needs_item_consumed", definition.restrictions().itemRequiredAndConsumed().get().create().getDisplayName())
+                    Component.translatable("tooltip.rooms.template.needs_item_consumed", definition.restrictions().itemRequiredAndConsumed().get().create().getDisplayName())
+                            .withStyle(ChatFormatting.DARK_GRAY),
+                    x + 94, y + 18 + index,
+                    0xFFFFFFFF, false);
+            index += 8;            graphics.text(Minecraft.getInstance().font,
+                    Component.translatable("tooltip.rooms.template.in_inventory_to_use")
                             .withStyle(ChatFormatting.DARK_GRAY),
                     x + 94, y + 18 + index,
                     0xFFFFFFFF, false);
@@ -148,7 +140,7 @@ public class TemplateScreen extends Screen {
 
         if (definition.door().isValid()) {
             graphics.text(Minecraft.getInstance().font,
-                    Component.translatable("tooptip.rooms.template.door")
+                    Component.translatable("tooltip.rooms.template.door")
                             .withStyle(ChatFormatting.DARK_GRAY),
                     x + 94, y + 18 + index,
                     0xFFFFFFFF, false);
@@ -157,7 +149,7 @@ public class TemplateScreen extends Screen {
 
         if (definition.restrictions().blocksRequired()) {
             graphics.text(Minecraft.getInstance().font,
-                    Component.translatable("tooptip.rooms.template.blocks_required")
+                    Component.translatable("tooltip.rooms.template.blocks_required")
                             .withStyle(ChatFormatting.DARK_GRAY),
                     x + 94, y + 18 + index,
                     0xFFFFFFFF, false);
@@ -166,7 +158,7 @@ public class TemplateScreen extends Screen {
 
         if (definition.placement().topOnlyPlacement()) {
             graphics.text(Minecraft.getInstance().font,
-                    Component.translatable("tooptip.rooms.template.top_only")
+                    Component.translatable("tooltip.rooms.template.top_only")
                             .withStyle(ChatFormatting.DARK_GRAY),
                     x + 94, y + 18 + index,
                     0xFFFFFFFF, false);
@@ -175,7 +167,7 @@ public class TemplateScreen extends Screen {
 
         if (definition.placement().sideOnlyPlacement()) {
             graphics.text(Minecraft.getInstance().font,
-                    Component.translatable("tooptip.rooms.template.side_only")
+                    Component.translatable("tooltip.rooms.template.side_only")
                             .withStyle(ChatFormatting.DARK_GRAY),
                     x + 94, y + 18 + index,
                     0xFFFFFFFF, false);
@@ -184,7 +176,7 @@ public class TemplateScreen extends Screen {
 
         if (definition.restrictions().overrideExistingBlocks()) {
             graphics.text(Minecraft.getInstance().font,
-                    Component.translatable("tooptip.rooms.template.override_existing")
+                    Component.translatable("tooltip.rooms.template.override_existing")
                             .withStyle(ChatFormatting.DARK_GRAY),
                     x + 94, y + 18 + index,
                     0xFFFFFFFF, false);
@@ -193,7 +185,7 @@ public class TemplateScreen extends Screen {
 
         if (definition.restrictions().replaceWaterLoggedBlocks()) {
             graphics.text(Minecraft.getInstance().font,
-                    Component.translatable("tooptip.rooms.template.un_waterlog")
+                    Component.translatable("tooltip.rooms.template.un_waterlog")
                             .withStyle(ChatFormatting.DARK_GRAY),
                     x + 94, y + 18 + index,
                     0xFFFFFFFF, false);
@@ -202,25 +194,28 @@ public class TemplateScreen extends Screen {
 
         float rotationTime = (System.currentTimeMillis() % 36000) / 10.0f;
 
-        GuiStructureRenderState previewState =
-                GuiStructureRenderState.simpleGuiRenderState(
-                        null,
-                        rotationTime,
-                        x + 8,
-                        y + 18,
-                        x + 90,
-                        y + 100,
-                        1.0f,
-                        templateId,
-                        50.0f
-                );
+        if (definition.restrictions().showInPlacer()) {
 
-        GuiRenderState stateObject =
-                ((GuiGraphicsExtractorAccessor) graphics).getGuiRenderState();
+            GuiStructureRenderState previewState =
+                    GuiStructureRenderState.simpleGuiRenderState(
+                            null,
+                            rotationTime,
+                            x + 8,
+                            y + 18,
+                            x + 90,
+                            y + 100,
+                            1.0f,
+                            templateId,
+                            50.0f
+                    );
 
-        renderer.prepare(previewState,
-                stateObject,
-                Minecraft.getInstance().getWindow().getGuiScale());
+            GuiRenderState stateObject = ((GuiGraphicsExtractorAccessor) graphics).getGuiRenderState();
+            renderer.prepare(previewState, stateObject, Minecraft.getInstance().getWindow().getGuiScale());
+        } else {
+            graphics.text(Minecraft.getInstance().font,
+                    Component.translatable("tooltip.rooms.placer.hidden"),
+                    x + 12, y + 22, 0xFFAAAAAA, false);
+        }
     }
 
     private void applyTemplate() {

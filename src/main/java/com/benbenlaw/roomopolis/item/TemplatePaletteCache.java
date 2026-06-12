@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TemplatePaletteCache {
 
-    // Existing cache for counts (used in JEI scroll/grid)
     public static final Map<Identifier, Map<Block, Integer>> templatePalettes = new ConcurrentHashMap<>();
 
     public static Map<Block, Integer> getTemplatePalette(Identifier templateId) {
@@ -25,7 +24,6 @@ public class TemplatePaletteCache {
         templatePalettes.put(templateId, palette);
     }
 
-    // New cache for rendering positions
     public static final Map<Identifier, List<BlockPosWithState>> renderPalettes = new ConcurrentHashMap<>();
 
     public static List<BlockPosWithState> getRenderPalette(Identifier templateId) {
@@ -42,7 +40,6 @@ public class TemplatePaletteCache {
             BlockPos pos
     ) {}
 
-    // ✅ Utility method to populate both caches
     public static void cacheTemplate(Identifier templateId, StructureTemplate template) {
         Map<Block, Integer> countPalette = new HashMap<>();
         List<BlockPosWithState> renderPalette = new ArrayList<>();

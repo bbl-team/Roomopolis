@@ -1,8 +1,6 @@
 package com.benbenlaw.roomopolis.screen;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.roomopolis.item.TemplatePaletteCache;
-import com.benbenlaw.roomopolis.item.TemplateSizeCache;
 import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.item.FakeStructureTemplateManager;
 import com.benbenlaw.roomopolis.loader.TemplateData;
@@ -17,9 +15,11 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.core.Vec3i;
+import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
 import java.util.*;
@@ -53,7 +53,7 @@ public class PlacerScreen extends Screen {
         addRenderableWidget(Button.builder(Component.literal("<"), b -> page = Math.max(0, page - 1)).bounds(x + 6, y + 140, 20, 20).build());
         addRenderableWidget(Button.builder(Component.literal(">"), b -> page++).bounds(x + 150, y + 140, 20, 20).build());
         EditBox searchBox = new EditBox(Minecraft.getInstance().font, x + 28, y + 140, 120, 20, Component.literal("Search"));
-        searchBox.setTooltip(Tooltip.create(Component.translatable("tooptip.rooms.placer.search_bar")));
+        searchBox.setTooltip(Tooltip.create(Component.translatable("tooltip.rooms.placer.search_bar")));
         searchBox.setResponder(text -> { searchQuery = text.toLowerCase(); page = 0; });
         addRenderableWidget(searchBox);
     }
@@ -89,9 +89,11 @@ public class PlacerScreen extends Screen {
                 allTemplates.stream().skip(startIndex).limit(ITEMS_PER_PAGE).toList();
 
         float rotationTime = (System.currentTimeMillis() % 36000) / 10.0f;
-        int guiScale = (int) Minecraft.getInstance().getWindow().getGuiScale();
+        int guiScale = Minecraft.getInstance().getWindow().getGuiScale();
 
         int index = 0;
+
+        TemplateDefinition hoveredData = null;
 
         for (int row = 0; row < 2; row++) {
             for (int col = 0; col < 3; col++) {
@@ -103,42 +105,69 @@ public class PlacerScreen extends Screen {
 
                     var entry = templates.get(index);
                     Identifier id = entry.getKey();
+                    TemplateDefinition data = TemplateData.getTemplateDefinition(id);
                     StructureTemplate template = entry.getValue();
+                    StructureTemplate.Palette palette = template.palettes.getFirst();
+                    int totalPos = palette.blocks().size();
+                    boolean tooLarge = totalPos > 2000;
+                    boolean showInPlacer = data.restrictions().showInPlacer();
 
-                    /*
-                    if (TemplatePaletteCache.getTemplatePalette(id).size() > 1000) {
+                    boolean isMouseHovering = mouseX >= areaX && mouseX <= areaX + 52 &&
+                            mouseY >= areaY && mouseY <= areaY + 52;
+
+                    if (!showInPlacer) {
+                        graphics.fill(areaX, areaY, areaX + 52, areaY + 52, 0x55888888);
+                        graphics.text(Minecraft.getInstance().font,
+                                Component.translatable("tooltip.rooms.placer.hidden"),
+                                areaX + 2, areaY + 2, 0xFFAAAAAA, false);
+                        graphics.text(Minecraft.getInstance().font,
+                                Component.translatable("tooltip.rooms.placer.click_for"),
+                                areaX + 2, areaY + 22, 0xFFFFFFFF, false);
+                        graphics.text(Minecraft.getInstance().font,
+                                Component.translatable("tooltip.rooms.placer.options"),
+                                areaX + 2, areaY + 32, 0xFFFFFFFF, false);
+                        if (isMouseHovering) {
+                            hoveredData = data;
+                        }
+
+                    } else if (tooLarge) {
                         graphics.fill(areaX, areaY, areaX + 52, areaY + 52, 0x55FF0000);
-                        graphics.text(Minecraft.getInstance().font, Component.literal("Too many palettes!"), areaX + 2, areaY + 2, 0xFFFFFFFF, false);
-                        continue;
+                        graphics.text(Minecraft.getInstance().font,
+                                Component.translatable("tooltip.rooms.placer.too_large"),
+                                areaX + 2, areaY + 2, 0xFFFFFFFF, false);
+                        graphics.text(Minecraft.getInstance().font,
+                                Component.translatable("tooltip.rooms.placer.click_to"),
+                                areaX + 2, areaY + 22, 0xFFFFFFFF, false);
+                        graphics.text(Minecraft.getInstance().font,
+                                Component.translatable("tooltip.rooms.placer.view"),
+                                areaX + 2, areaY + 32, 0xFFFFFFFF, false);
+
+                        if (isMouseHovering) {
+                            hoveredData = data;
+                        }
+
+                    } else {
+
+                        GuiStructureRenderState state = GuiStructureRenderState.simpleGuiRenderState(
+                                template.getSize(), rotationTime,
+                                areaX + 2, areaY + 2, areaX + 50, areaY + 50,
+                                1.0f, id, 35.0f
+                        );
+
+                        GuiRenderState stateObject = ((GuiGraphicsExtractorAccessor) graphics).getGuiRenderState();
+                        GuiRenderer renderer = renderers.computeIfAbsent(
+                                id, key -> new GuiRenderer(Minecraft.getInstance().renderBuffers().bufferSource())
+                        );
+                        renderer.prepare(state, stateObject, guiScale);
+
+                        if (id.equals(selectedTemplateId)) {
+                            graphics.fill(areaX, areaY, areaX + 52, areaY + 52, 0x55FFFF00);
+                        }
+
+                        if (isMouseHovering) {
+                            hoveredData = data;
+                        }
                     }
-                     */
-
-                    GuiStructureRenderState state = GuiStructureRenderState.simpleGuiRenderState(
-                            template.getSize(),
-                            rotationTime,
-                            areaX + 2,
-                            areaY + 2,
-                            areaX + 50,
-                            areaY + 50,
-                            1.0f,
-                            id,
-                            35.0f
-                    );
-
-                    net.minecraft.client.renderer.state.gui.GuiRenderState stateObject =
-                            ((GuiGraphicsExtractorAccessor) graphics).getGuiRenderState();
-
-                    GuiRenderer renderer = renderers.computeIfAbsent(
-                            id,
-                            key -> new GuiRenderer(Minecraft.getInstance().renderBuffers().bufferSource())
-                    );
-
-                    renderer.prepare(state, stateObject, guiScale);
-
-                    if (id.equals(selectedTemplateId)) {
-                        graphics.fill(areaX, areaY, areaX + 52, areaY + 52, 0x55FFFF00);
-                    }
-
                 }
 
                 index++;
@@ -147,6 +176,10 @@ public class PlacerScreen extends Screen {
 
         if (selectedTemplateId != null) {
             renderSelectedTemplateInfo(graphics, x, y);
+        }
+
+        if (hoveredData != null) {
+            graphics.setTooltipForNextFrame(Minecraft.getInstance().font, Component.translatable(hoveredData.translatableName()), mouseX, mouseY);
         }
     }
 
@@ -199,9 +232,7 @@ public class PlacerScreen extends Screen {
                 if (event.x() >= areaX && event.x() < areaX + 52 && event.y() >= areaY && event.y() < areaY + 52) {
 
                     if (index < templates.size()) {
-
                         var entry = templates.get(index);
-
                         Minecraft.getInstance().setScreen(new TemplateScreen(entry.getKey(), this));
                     }
 

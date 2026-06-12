@@ -1,19 +1,31 @@
 {
-  "tooptip.rooms.placer.search_bar": "Search for a room template",
+  "tooltip.rooms.placer.search_bar": "Search for a room template",
 
-  "tooptip.rooms.template.settings": "Settings",
-  "tooptip.rooms.template.door": "Creates Door",
-  "tooptip.rooms.template.block": "Target Block",
-  "tooptip.rooms.template.blocks_required": "Requires ALL Blocks",
-  "tooptip.rooms.template.top_only": "Use on TOp",
-  "tooptip.rooms.template.side_only": "Use on Side",
-  "tooptip.rooms.template.override_existing": "Overrides all blocks",
-  "tooptip.rooms.template.un_waterlog": "Un Waterlog blocks",
-  "tooptip.rooms.template.needs_item_consumed": "Must have %s in inventory to use",
+  "tooltip.rooms.template.settings": "Settings",
+  "tooltip.rooms.template.door": "Creates Door",
+  "tooltip.rooms.template.block": "Target Block",
+  "tooltip.rooms.template.blocks_required": "Requires all Blocks",
+  "tooltip.rooms.template.top_only": "Use on TOp",
+  "tooltip.rooms.template.side_only": "Use on Side",
+  "tooltip.rooms.template.override_existing": "Overrides all blocks",
+  "tooltip.rooms.template.un_waterlog": "Un Waterlog blocks",
+  "tooltip.rooms.template.needs_item_consumed": "Must have %s",
+  "tooltip.rooms.template.in_inventory_to_use": "in inventory to use",
 
-  "tooptip.rooms.blocklist": "Block List",
-  "tooptip.rooms.apply": "Apply",
-  "tooptip.rooms.palette_preview": "Edit palette",
+  "tooltip.rooms.blocklist": "Block List",
+  "tooltip.rooms.apply": "Apply",
+  "tooltip.rooms.palette_preview": "Edit Palette, Click blocks to view options",
+
+  "tooltip.rooms.placer.too_large": "To Big",
+  "tooltip.rooms.placer.click_to": "Click to",
+  "tooltip.rooms.placer.click_for": "Click for",
+  "tooltip.rooms.placer.view": "view",
+  "tooltip.rooms.placer.options": "options",
+
+  "tooltip.rooms.placer.large_forced": "Warning: This structure is large",
+
+  "tooltip.rooms.placer.hidden": "Hidden",
+  "tooltip.rooms.blocklist_not_required": "Blocks not required for this template",
 
   "item.rooms.placer": "Placer",
 
@@ -38,6 +50,7 @@
   "item.key.top_only": "This can only be used on the top of a block!",
   "item.key.too_high": "This can not be used at this height try going lower!",
   "item.key.invalid_placement": "Invalid placement",
+  "item.key.requires_item": "Needs %s in inventory to use!",
 
   "tooltips.key.loading_size": "Loading Information",
 

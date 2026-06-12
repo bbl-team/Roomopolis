@@ -21,7 +21,8 @@
   "restriction_options": {
     "blocks_required": true,
     "override_existing_blocks": true,
-    "replace_waterlogged_blocks": false
+    "replace_waterlogged_blocks": false,
+    "show_in_placer": false
   },
   "pallets": {
     "minecraft:terracotta": [

@@ -20,6 +20,7 @@
   "restriction_options": {
     "blocks_required": false,
     "override_existing_blocks": true,
-    "replace_waterlogged_blocks": false
+    "replace_waterlogged_blocks": false,
+    "show_in_placer": false
   }
 }

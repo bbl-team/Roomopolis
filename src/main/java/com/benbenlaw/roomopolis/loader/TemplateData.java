@@ -39,7 +39,7 @@ public class TemplateData extends SimpleJsonResourceReloadListener<TemplateDefin
         });
 
         ACTIVE.clear();
-        ACTIVE_PALETTES.clear(); // 🟢 reset palette overrides on reload
+        ACTIVE_PALETTES.clear();
 
         System.out.println("Loaded " + DATA.size() + " RoomKeyDefinitions");
     }
@@ -55,8 +55,6 @@ public class TemplateData extends SimpleJsonResourceReloadListener<TemplateDefin
     public static void clearActiveTemplate(Identifier id) {
         ACTIVE.remove(id);
     }
-
-    // 🟢 PALETTE API
 
     public static Map<Block, Block> getActivePalette(UUID playerUUID, Identifier templateId) {
 
