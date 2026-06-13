@@ -4,7 +4,6 @@ import com.benbenlaw.Roomopolis;
 import com.benbenlaw.roomopolis.item.TemplateSizeCache;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;

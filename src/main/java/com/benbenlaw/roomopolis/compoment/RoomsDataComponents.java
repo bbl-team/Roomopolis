@@ -1,7 +1,6 @@
 package com.benbenlaw.roomopolis.compoment;
 
 import com.benbenlaw.Roomopolis;
-import com.electronwill.nightconfig.core.file.FileNotFoundAction;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;

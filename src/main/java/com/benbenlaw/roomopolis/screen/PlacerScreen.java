@@ -1,12 +1,12 @@
 package com.benbenlaw.roomopolis.screen;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.item.FakeStructureTemplateManager;
 import com.benbenlaw.roomopolis.loader.TemplateData;
+import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.mixin.GuiGraphicsExtractorAccessor;
-import com.benbenlaw.roomopolis.renderer.GuiStructureRenderState;
 import com.benbenlaw.roomopolis.renderer.GuiRenderer;
+import com.benbenlaw.roomopolis.renderer.GuiStructureRenderState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
@@ -17,12 +17,12 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PlacerScreen extends Screen {
 

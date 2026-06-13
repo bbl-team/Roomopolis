@@ -2,7 +2,6 @@ package com.benbenlaw.roomopolis.screen;
 
 import com.benbenlaw.Roomopolis;
 import com.benbenlaw.roomopolis.item.PlacerItem;
-import com.benbenlaw.roomopolis.item.TemplatePaletteCache;
 import com.benbenlaw.roomopolis.loader.TemplateData;
 import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.renderer.GuiRenderer;
@@ -17,7 +16,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Rotation;
 
 import java.util.ArrayList;
 import java.util.HashMap;

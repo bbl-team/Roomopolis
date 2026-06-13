@@ -1,10 +1,10 @@
 package com.benbenlaw.roomopolis.item;
 
-import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.compoment.RoomsDataComponents;
 import com.benbenlaw.roomopolis.loader.TemplateData;
-import com.benbenlaw.roomopolis.screen.ClientScreens;
+import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.loader.options.BlockTarget;
+import com.benbenlaw.roomopolis.screen.ClientScreens;
 import com.benbenlaw.roomopolis.util.DirectionUtil;
 import com.benbenlaw.roomopolis.util.RoomopolisTags;
 import net.minecraft.ChatFormatting;
@@ -33,7 +33,10 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 
 public class PlacerItem extends Item {
 
@@ -354,26 +357,19 @@ public class PlacerItem extends Item {
 
         if (!palette.isEmpty()) {
 
-            for (int x = 0; x < size.getX(); x++) {
-                for (int y = 0; y < size.getY(); y++) {
-                    for (int z = 0; z < size.getZ(); z++) {
+            for (StructureTemplate.StructureBlockInfo info : template.palettes.getFirst().blocks()) {
 
-                        BlockPos rel = new BlockPos(x, y, z);
-                        BlockPos rotated = StructureTemplate.calculateRelativePosition(settings, rel);
-                        BlockPos worldPos = finalPos.offset(rotated);
+                if (info.state().isAir()) continue;
 
-                        BlockState state = level.getBlockState(worldPos);
-                        Block block = state.getBlock();
+                Block original = info.state().getBlock();
+                Block replacement = palette.get(original);
 
-                        Block replacement = palette.get(block);
+                if (replacement == null || replacement == original) continue;
 
-                        if (replacement != null && replacement != block) {
-                            level.setBlock(worldPos,
-                                    replacement.defaultBlockState(),
-                                    Block.UPDATE_ALL);
-                        }
-                    }
-                }
+                BlockPos rotated = StructureTemplate.calculateRelativePosition(settings, info.pos());
+                BlockPos worldPos = finalPos.offset(rotated);
+
+                level.setBlock(worldPos, replacement.defaultBlockState(), Block.UPDATE_ALL);
             }
         }
 

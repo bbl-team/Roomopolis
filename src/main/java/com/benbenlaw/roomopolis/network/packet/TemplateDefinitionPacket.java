@@ -1,8 +1,8 @@
 package com.benbenlaw.roomopolis.network.packet;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.loader.TemplateData;
+import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;

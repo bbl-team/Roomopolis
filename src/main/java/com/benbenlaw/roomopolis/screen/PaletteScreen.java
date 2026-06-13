@@ -1,10 +1,12 @@
 package com.benbenlaw.roomopolis.screen;
 
 import com.benbenlaw.Roomopolis;
+import com.benbenlaw.roomopolis.compoment.RoomsDataComponents;
 import com.benbenlaw.roomopolis.loader.TemplateData;
 import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.mixin.GuiGraphicsExtractorAccessor;
 import com.benbenlaw.roomopolis.network.packet.SyncPaletteSelection;
+import com.benbenlaw.roomopolis.network.packet.SyncPlacerStack;
 import com.benbenlaw.roomopolis.renderer.GuiRenderer;
 import com.benbenlaw.roomopolis.renderer.GuiStructureRenderState;
 import net.minecraft.ChatFormatting;
@@ -27,12 +29,12 @@ public class PaletteScreen extends Screen {
 
     private static final Identifier TEXTURE = Roomopolis.identifier("textures/gui/template_gui.png");
 
-    private static final int PALETTE_X = 95;
+    private static final int PALETTE_X = 92;
     private static final int PALETTE_Y = 17;
-    private static final int RESULTS_X = 130;
+    private static final int RESULTS_X = 115;
     private static final int RESULTS_Y = 17;
-    private static final int SLOT_SPACING = 20;
-    private static final int SLOT_COLUMNS = 4;
+    private static final int SLOT_SPACING = 16;
+    private static final int SLOT_COLUMNS = 7;
 
     private final Identifier templateId;
     private final Screen parent;
@@ -66,6 +68,21 @@ public class PaletteScreen extends Screen {
                         .bounds(x + 6, y + 140, 20, 20)
                         .build()
         );
+
+        addRenderableWidget(
+                Button.builder(Component.literal("Reset"), b -> {
+                            if (definition != null) {
+                                TemplateData.clearPalette(Minecraft.getInstance().player.getUUID(), templateId);
+                                ClientPacketDistributor.sendToServer(new SyncPaletteSelection(templateId, null, null));
+                            }
+                        })
+                        .bounds(x + 28, y + 140, 40, 20)
+                        .build()
+        );
+
+        addRenderableWidget(Button.builder(Component.translatable("tooltip.rooms.apply"),
+                        b -> applyTemplate())
+                .bounds(x + 164, y + 140, 60, 20).build());
     }
 
     @Override
@@ -201,7 +218,7 @@ public class PaletteScreen extends Screen {
             graphics.fakeItem(new ItemStack(source), xPos, yPos);
 
             if (source.equals(selectedSource)) {
-                graphics.text(Minecraft.getInstance().font, Component.literal("->"), xPos + 20, yPos + 4, 0xFFFFAA00, false);
+                graphics.text(Minecraft.getInstance().font, Component.literal(">"), xPos + 18, yPos + 4, 0xFFFFAA00, false);
             }
 
             i++;
@@ -238,4 +255,15 @@ public class PaletteScreen extends Screen {
 
         Minecraft.getInstance().setScreen(parent);
     }
+
+    private void applyTemplate() {
+
+        ItemStack stack = Minecraft.getInstance().player.getMainHandItem();
+        stack.set(RoomsDataComponents.TEMPLATE_ID, templateId);
+
+        ClientPacketDistributor.sendToServer(new SyncPlacerStack(stack));
+
+        onClose();
+    }
+
 }

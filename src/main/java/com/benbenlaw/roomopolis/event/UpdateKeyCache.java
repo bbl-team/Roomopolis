@@ -1,10 +1,10 @@
 package com.benbenlaw.roomopolis.event;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.item.TemplatePaletteCache;
 import com.benbenlaw.roomopolis.item.TemplateSizeCache;
 import com.benbenlaw.roomopolis.loader.TemplateData;
+import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.network.packet.GetStructurePalettePacket;
 import com.benbenlaw.roomopolis.network.packet.GetStructureSizePacket;
 import com.benbenlaw.roomopolis.network.packet.StructureTemplatePacket;
@@ -22,7 +22,6 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;

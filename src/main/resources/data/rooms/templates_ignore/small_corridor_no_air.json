@@ -1,6 +1,6 @@
 {
-  "template_id": "rooms:small_corridor",
-  "name": "Small Corridor",
+  "template_id": "rooms:small_corridor_no_air",
+  "name": "No Air Small Corridor",
   "block_target": "*",
 
   "placement_options": {

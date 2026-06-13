@@ -1,32 +1,18 @@
 package com.benbenlaw.roomopolis.screen;
 
 import com.benbenlaw.Roomopolis;
-import com.benbenlaw.roomopolis.item.FakeStructureTemplateManager;
-import com.benbenlaw.roomopolis.item.TemplatePaletteCache;
-import com.benbenlaw.roomopolis.loader.TemplateData;
-import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.mixin.GuiGraphicsExtractorAccessor;
 import com.benbenlaw.roomopolis.renderer.GuiRenderer;
 import com.benbenlaw.roomopolis.renderer.GuiStructureRenderState;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class FullScreenTemplate extends Screen {
 
