@@ -57,11 +57,13 @@ public class TemplateScreen extends Screen {
                         b -> Minecraft.getInstance().setScreen(new BlockListScreen(templateId, this)))
                 .bounds(x + 28, y + 140, 60, 20).build());
 
-        addRenderableWidget(Button.builder(Component.literal("Palette"),
-                        b -> Minecraft.getInstance()
-                                .setScreen(new PaletteScreen(templateId, this)))
-                .bounds(x + 90, y + 140, 60, 20)
-                .build());
+        if (definition.restrictions().showInPlacer()) {
+            addRenderableWidget(Button.builder(Component.literal("Palette"),
+                            b -> Minecraft.getInstance()
+                                    .setScreen(new PaletteScreen(templateId, this)))
+                    .bounds(x + 90, y + 140, 60, 20)
+                    .build());
+        }
 
         addRenderableWidget(Button.builder(Component.translatable("tooltip.rooms.apply"),
                         b -> applyTemplate())

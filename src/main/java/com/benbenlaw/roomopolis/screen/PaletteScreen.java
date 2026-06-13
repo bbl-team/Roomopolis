@@ -35,6 +35,11 @@ public class PaletteScreen extends Screen {
     private static final int RESULTS_Y = 17;
     private static final int SLOT_SPACING = 16;
     private static final int SLOT_COLUMNS = 7;
+    private static final int VISIBLE_ROWS = 7;
+    private static final int SCROLL_AREA_HEIGHT = VISIBLE_ROWS * SLOT_SPACING;
+    private static final int SCROLLBAR_WIDTH = 4;
+    private static final int SCROLLBAR_TRACK_COLOR = 0xFF444444;
+    private static final int SCROLLBAR_THUMB_COLOR = 0xFFAAAAAA;
 
     private final Identifier templateId;
     private final Screen parent;
@@ -47,18 +52,54 @@ public class PaletteScreen extends Screen {
 
     private Block selectedSource;
 
+    private int paletteScrollOffset = 0;
+    private int resultsScrollOffset = 0;
+
     public PaletteScreen(Identifier id, Screen parent) {
         super(Component.literal("Palette Editor"));
         this.templateId = id;
         this.parent = parent;
     }
 
+    private int paletteColumnCount() {
+        if (definition == null || definition.pallets() == null) return 0;
+        int total = definition.pallets().size();
+        return (int) Math.ceil((double) total / SLOT_COLUMNS);
+    }
+
+    private int maxPaletteScroll() {
+        return Math.max(0, paletteColumnCount() - 1);
+    }
+
+    private int maxResultsScroll() {
+        if (selectedSource == null || definition == null) return 0;
+        List<Block> replacements = definition.pallets().get(selectedSource);
+        if (replacements == null) return 0;
+        int rowsWithout = (int) Math.ceil((double) replacements.size() / SLOT_COLUMNS);
+        if (rowsWithout <= VISIBLE_ROWS) return 0;
+        int rowsWith = (int) Math.ceil((double) replacements.size() / (SLOT_COLUMNS - 1));
+        return Math.max(0, rowsWith - VISIBLE_ROWS);
+    }
+
+    private int visibleResultColumns() {
+        return maxResultsScroll() > 0 ? SLOT_COLUMNS - 1 : SLOT_COLUMNS;
+    }
+
+    private void scrollPalette(int delta) {
+        paletteScrollOffset = Math.clamp(paletteScrollOffset + delta, 0, maxPaletteScroll());
+    }
+
+    private void scrollResults(int delta) {
+        resultsScrollOffset = Math.clamp(resultsScrollOffset + delta, 0, maxResultsScroll());
+    }
+
     @Override
     protected void init() {
-
         this.definition = TemplateData.DATA.get(templateId);
-
         this.renderer = new GuiRenderer(Minecraft.getInstance().renderBuffers().bufferSource());
+
+        paletteScrollOffset = 0;
+        resultsScrollOffset = 0;
 
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
@@ -86,107 +127,83 @@ public class PaletteScreen extends Screen {
     }
 
     @Override
-    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        int guiX = (width - imageWidth) / 2;
+        int guiY = (height - imageHeight) / 2;
 
-        super.extractBackground(graphics, mouseX, mouseY, delta);
+        int delta = scrollY > 0 ? -1 : 1;
 
-        int x = (width - imageWidth) / 2;
-        int y = (height - imageHeight) / 2;
+        boolean overPalette = mouseX >= guiX + PALETTE_X
+                && mouseX < guiX + RESULTS_X
+                && mouseY >= guiY + PALETTE_Y
+                && mouseY < guiY + PALETTE_Y + SCROLL_AREA_HEIGHT;
 
-        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0, 230, 166,230, 166);
-    }
+        boolean overResults = mouseX >= guiX + RESULTS_X
+                && mouseX < guiX + imageWidth
+                && mouseY >= guiY + RESULTS_Y
+                && mouseY < guiY + RESULTS_Y + SCROLL_AREA_HEIGHT;
 
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
-
-        super.extractRenderState(graphics, mouseX, mouseY, delta);
-
-        if (definition == null || definition.pallets() == null) {
-            return;
+        if (overPalette) {
+            scrollPalette(delta);
+            return true;
+        } else if (overResults) {
+            scrollResults(delta);
+            return true;
         }
 
-        int x = (width - imageWidth) / 2;
-        int y = (height - imageHeight) / 2;
-
-        drawStructurePreview(graphics, x, y);
-        drawPaletteUI(graphics, x, y);
-    }
-
-    private void drawStructurePreview(GuiGraphicsExtractor graphics,
-                                      int x,
-                                      int y) {
-
-        graphics.text(Minecraft.getInstance().font, Component.translatable("tooltip.rooms.palette_preview").withStyle(ChatFormatting.DARK_GRAY),
-                x + 8, y + 6, 0xFFFFFFFF, false);
-
-        float rotationTime = (System.currentTimeMillis() % 36000) / 10.0f;
-
-        GuiStructureRenderState preview = GuiStructureRenderState.simpleGuiRenderState(null, rotationTime, x + 8, y + 18, x + 90, y + 100, 1.0f, templateId, 50.0f);
-
-        GuiRenderState state = ((GuiGraphicsExtractorAccessor) graphics).getGuiRenderState();
-
-        if (state != null) {
-            renderer.prepare(preview, state, Minecraft.getInstance().getWindow().getGuiScale());
-        }
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
     }
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-
-        if (definition == null) {
-            return super.mouseClicked(event, doubleClick);
-        }
+        if (definition == null) return super.mouseClicked(event, doubleClick);
 
         int guiX = (width - imageWidth) / 2;
         int guiY = (height - imageHeight) / 2;
 
-
         int i = 0;
-
         for (Block source : definition.pallets().keySet()) {
-
             int col = i / SLOT_COLUMNS;
             int row = i % SLOT_COLUMNS;
 
-            int xPos = guiX + PALETTE_X + (col * SLOT_SPACING);
+            int xPos = guiX + PALETTE_X + ((col - paletteScrollOffset) * SLOT_SPACING);
             int yPos = guiY + PALETTE_Y + (row * SLOT_SPACING);
 
-            if (isInside(event.x(), event.y(), xPos, yPos)) {
-                selectedSource = source;
-                return true;
+            if (xPos >= guiX + PALETTE_X && xPos < guiX + RESULTS_X) {
+                if (isInside(event.x(), event.y(), xPos, yPos)) {
+                    selectedSource = source;
+                    resultsScrollOffset = 0;
+                    return true;
+                }
             }
-
             i++;
         }
 
         if (selectedSource != null) {
-
             List<Block> replacements = definition.pallets().get(selectedSource);
-
             if (replacements != null) {
+                int visibleCols = visibleResultColumns();
 
                 int j = 0;
-
                 for (Block target : replacements) {
+                    int col = j % visibleCols;
+                    int row = j / visibleCols;
 
-                    int col = j % SLOT_COLUMNS;
-                    int row = j / SLOT_COLUMNS;
-
-                    int rx =
-                            guiX + RESULTS_X + (col * SLOT_SPACING);
-
-                    int ry =
-                            guiY + RESULTS_Y + (row * SLOT_SPACING);
-
-                    if (isInside(event.x(), event.y(), rx, ry)) {
-
-                        TemplateData.setPaletteMapping(Minecraft.getInstance().player.getUUID(), templateId, selectedSource, target);
-
-                        ClientPacketDistributor.sendToServer(new SyncPaletteSelection(templateId, selectedSource, target));
-
-                        return true;
+                    if (col >= visibleCols) {
+                        j++;
+                        continue;
                     }
 
+                    int rx = guiX + RESULTS_X + (col * SLOT_SPACING);
+                    int ry = guiY + RESULTS_Y + ((row - resultsScrollOffset) * SLOT_SPACING);
+
+                    if (ry >= guiY + RESULTS_Y && ry < guiY + RESULTS_Y + SCROLL_AREA_HEIGHT) {
+                        if (isInside(event.x(), event.y(), rx, ry)) {
+                            TemplateData.setPaletteMapping(Minecraft.getInstance().player.getUUID(), templateId, selectedSource, target);
+                            ClientPacketDistributor.sendToServer(new SyncPaletteSelection(templateId, selectedSource, target));
+                            return true;
+                        }
+                    }
                     j++;
                 }
             }
@@ -199,71 +216,133 @@ public class PaletteScreen extends Screen {
         return mx >= x && mx <= x + 16 && my >= y && my <= y + 16;
     }
 
-    private void drawPaletteUI(GuiGraphicsExtractor graphics, int x, int y) {
+    @Override
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractBackground(graphics, mouseX, mouseY, delta);
 
-        if (definition == null) {
-            return;
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
+
+        graphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0, 230, 166, 230, 166);
+    }
+
+    @Override
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(graphics, mouseX, mouseY, delta);
+
+        if (definition == null || definition.pallets() == null) return;
+
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
+
+        drawStructurePreview(graphics, x, y);
+        drawPaletteUI(graphics, x, y);
+        drawScrollbars(graphics, x, y);
+    }
+
+    private void drawStructurePreview(GuiGraphicsExtractor graphics, int x, int y) {
+        graphics.text(Minecraft.getInstance().font,
+                Component.translatable("tooltip.rooms.palette_preview").withStyle(ChatFormatting.DARK_GRAY),
+                x + 8, y + 6, 0xFFFFFFFF, false);
+
+        float rotationTime = (System.currentTimeMillis() % 36000) / 10.0f;
+
+        GuiStructureRenderState preview = GuiStructureRenderState.simpleGuiRenderState(
+                null, rotationTime, x + 8, y + 18, x + 90, y + 100, 1.0f, templateId, 50.0f);
+
+        GuiRenderState state = ((GuiGraphicsExtractorAccessor) graphics).getGuiRenderState();
+        if (state != null) {
+            renderer.prepare(preview, state, Minecraft.getInstance().getWindow().getGuiScale());
         }
+    }
+
+    private void drawPaletteUI(GuiGraphicsExtractor graphics, int x, int y) {
+        if (definition == null) return;
 
         int i = 0;
-
         for (Block source : definition.pallets().keySet()) {
-
             int col = i / SLOT_COLUMNS;
             int row = i % SLOT_COLUMNS;
 
-            int xPos = x + PALETTE_X + (col * SLOT_SPACING);
+            int xPos = x + PALETTE_X + ((col - paletteScrollOffset) * SLOT_SPACING);
             int yPos = y + PALETTE_Y + (row * SLOT_SPACING);
 
-            graphics.fakeItem(new ItemStack(source), xPos, yPos);
+            if (xPos >= x + PALETTE_X && xPos < x + RESULTS_X) {
+                graphics.fakeItem(new ItemStack(source), xPos, yPos);
 
-            if (source.equals(selectedSource)) {
-                graphics.text(Minecraft.getInstance().font, Component.literal(">"), xPos + 18, yPos + 4, 0xFFFFAA00, false);
+                if (source.equals(selectedSource)) {
+                    graphics.text(Minecraft.getInstance().font,
+                            Component.literal(">"), xPos + 18, yPos + 4, 0xFFFFAA00, false);
+                }
             }
-
             i++;
         }
 
         if (selectedSource != null) {
-
             List<Block> list = definition.pallets().get(selectedSource);
-
             if (list != null) {
+                int visibleCols = visibleResultColumns();
 
                 int j = 0;
-
                 for (Block target : list) {
+                    int col = j % visibleCols;
+                    int row = j / visibleCols;
 
-                    int col = j % SLOT_COLUMNS;
-                    int row = j / SLOT_COLUMNS;
                     int rx = x + RESULTS_X + (col * SLOT_SPACING);
-                    int ry = y + RESULTS_Y + (row * SLOT_SPACING);
+                    int ry = y + RESULTS_Y + ((row - resultsScrollOffset) * SLOT_SPACING);
 
-                    graphics.fakeItem(new ItemStack(target), rx, ry );
+                    if (ry >= y + RESULTS_Y && ry < y + RESULTS_Y + SCROLL_AREA_HEIGHT) {
+                        graphics.fakeItem(new ItemStack(target), rx, ry);
+                    }
                     j++;
                 }
             }
         }
     }
 
-    @Override
-    public void onClose() {
+    private void drawScrollbars(GuiGraphicsExtractor graphics, int x, int y) {
 
-        if (renderer != null) {
-            renderer.close();
+        int paletteMax = maxPaletteScroll();
+        if (paletteMax > 0) {
+            int trackX = x + PALETTE_X;
+            int trackY = y + PALETTE_Y + SCROLL_AREA_HEIGHT + 2;
+            int trackW = RESULTS_X - PALETTE_X - 1;
+            int trackH = SCROLLBAR_WIDTH;
+
+            graphics.fill(trackX, trackY, trackX + trackW, trackY + trackH, SCROLLBAR_TRACK_COLOR);
+
+            int thumbW = Math.max(4, trackW / (paletteMax + 1));
+            int thumbX = trackX + (int) ((trackW - thumbW) * ((float) paletteScrollOffset / paletteMax));
+
+            graphics.fill(thumbX, trackY, thumbX + thumbW, trackY + trackH, SCROLLBAR_THUMB_COLOR);
         }
 
+        int resultsMax = maxResultsScroll();
+        if (resultsMax > 0) {
+            int trackX = x + imageWidth - 8;
+            int trackY = y + RESULTS_Y;
+            int trackW = SCROLLBAR_WIDTH;
+            int trackH = SCROLL_AREA_HEIGHT;
+
+            graphics.fill(trackX, trackY, trackX + trackW, trackY + trackH, SCROLLBAR_TRACK_COLOR);
+
+            int thumbH = Math.max(4, trackH / (resultsMax + 1));
+            int thumbY = trackY + (int) ((trackH - thumbH) * ((float) resultsScrollOffset / resultsMax));
+
+            graphics.fill(trackX, thumbY, trackX + trackW, thumbY + thumbH, SCROLLBAR_THUMB_COLOR);
+        }
+    }
+
+    @Override
+    public void onClose() {
+        if (renderer != null) renderer.close();
         Minecraft.getInstance().setScreen(parent);
     }
 
     private void applyTemplate() {
-
         ItemStack stack = Minecraft.getInstance().player.getMainHandItem();
         stack.set(RoomsDataComponents.TEMPLATE_ID, templateId);
-
         ClientPacketDistributor.sendToServer(new SyncPlacerStack(stack));
-
         onClose();
     }
-
 }

@@ -20,6 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -250,6 +251,10 @@ public class PlacerScreen extends Screen {
         return FakeStructureTemplateManager.INSTANCE.templates.entrySet()
                 .stream()
                 .filter(e -> e.getKey().getPath().toLowerCase().contains(searchQuery))
+                .sorted(Comparator.comparingInt(e -> {
+                    TemplateDefinition data = TemplateData.getTemplateDefinition(e.getKey());
+                    return data.restrictions().placerPosition();
+                }))
                 .toList();
     }
 }
