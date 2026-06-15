@@ -63,9 +63,13 @@ public class PlacerItem extends Item {
         Level level = context.getLevel();
         Player player = context.getPlayer();
 
-        if (player == null) {
-            return InteractionResult.FAIL;
+        if (player == null) return InteractionResult.FAIL;
+
+        if (!player.isShiftKeyDown()) {
+            ClientScreens.openPlacerScreen();
+            return InteractionResult.PASS;
         }
+
 
         ItemStack stack = context.getItemInHand();
 
