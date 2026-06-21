@@ -11,6 +11,7 @@
   "tooltip.rooms.template.un_waterlog": "Un Waterlog blocks",
   "tooltip.rooms.template.needs_item_consumed": "Must have %s",
   "tooltip.rooms.template.in_inventory_to_use": "in inventory to use",
+  "tooltip.rooms.missing_template": "Shift Right Click to open Placer",
 
   "tooltip.rooms.blocklist": "Block List",
   "tooltip.rooms.apply": "Apply",

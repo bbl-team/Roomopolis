@@ -65,7 +65,7 @@ public class PlacerItem extends Item {
 
         if (player == null) return InteractionResult.FAIL;
 
-        if (!player.isShiftKeyDown()) {
+        if (player.isShiftKeyDown()) {
             ClientScreens.openPlacerScreen();
             return InteractionResult.PASS;
         }
@@ -76,7 +76,7 @@ public class PlacerItem extends Item {
         TemplateDefinition definition = getDefinition(stack);
 
         if (definition == null) {
-            player.sendOverlayMessage(Component.translatable("tooltip.rooms.missing_tempalte").withStyle(ChatFormatting.RED));
+            player.sendOverlayMessage(Component.translatable("tooltip.rooms.missing_template").withStyle(ChatFormatting.RED));
             return InteractionResult.FAIL;
         }
 
