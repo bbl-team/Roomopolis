@@ -16,7 +16,7 @@ public class RoomopolisCreativeTab {
 
     public static final Supplier<CreativeModeTab> ROOMS_TAB = CREATIVE_MODE_TABS.register(Roomopolis.MOD_ID, () -> CreativeModeTab.builder()
             .icon(() -> RoomopolisItems.PLACER.get().asItem().getDefaultInstance())
-            .title(Component.translatable("itemGroup.roomopolis"))
+            .title(Component.translatable("itemGroup.rooms"))
             .displayItems((parameters, output) -> {
 
                 output.accept(RoomopolisItems.PLACER.get());
