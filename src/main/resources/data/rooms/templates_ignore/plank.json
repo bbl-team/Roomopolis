@@ -23,7 +23,7 @@
     "override_existing_blocks": true,
     "replace_waterlogged_blocks": false
   },
-  "pallets": {
+  "palettes": {
     "minecraft:jungle_planks": [
       "minecraft:spruce_planks"
     ]

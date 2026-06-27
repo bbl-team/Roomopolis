@@ -24,7 +24,7 @@
     "replace_waterlogged_blocks": false,
     "show_in_placer": false
   },
-  "pallets": {
+  "palettes": {
     "minecraft:terracotta": [
       "minecraft:terracotta",
       "minecraft:spruce_planks"

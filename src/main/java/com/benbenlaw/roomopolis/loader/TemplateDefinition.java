@@ -22,7 +22,7 @@ public record TemplateDefinition(
         TemplatePlacementOptions placement,
         TemplateDoorOptions door,
         TemplateRestrictionOptions restrictions,
-        Map<Block, List<Block>> pallets
+        Map<Block, List<Block>> palettes
 ) {
 
     public static final Codec<Map<Block, List<Block>>> PALLET_CODEC =
@@ -46,7 +46,7 @@ public record TemplateDefinition(
                     "restriction_options",
                     new TemplateRestrictionOptions(false, false, false, Optional.empty(), true, 1)
             ).forGetter(TemplateDefinition::restrictions),
-            PALLET_CODEC.optionalFieldOf("pallets", Map.of()).forGetter(TemplateDefinition::pallets)
+            PALLET_CODEC.optionalFieldOf("palettes", Map.of()).forGetter(TemplateDefinition::palettes)
 
     ).apply(instance, TemplateDefinition::new));
 
@@ -58,7 +58,7 @@ public record TemplateDefinition(
             TemplatePlacementOptions.STREAM_CODEC, TemplateDefinition::placement,
             TemplateDoorOptions.STREAM_CODEC, TemplateDefinition::door,
             TemplateRestrictionOptions.STREAM_CODEC, TemplateDefinition::restrictions,
-            ByteBufCodecs.fromCodec(PALLET_CODEC), TemplateDefinition::pallets,
+            ByteBufCodecs.fromCodec(PALLET_CODEC), TemplateDefinition::palettes,
             TemplateDefinition::new
     );
 }

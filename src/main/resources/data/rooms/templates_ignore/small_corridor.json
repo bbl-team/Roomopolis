@@ -15,7 +15,7 @@
     "replace_waterlogged_blocks": true,
     "show_in_placer": false
   },
-  "pallets": {
+  "palettes": {
     "minecraft:cobblestone": [
       "minecraft:red_terracotta",
       "minecraft:orange_terracotta",

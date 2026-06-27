@@ -62,8 +62,8 @@ public class PaletteScreen extends Screen {
     }
 
     private int paletteColumnCount() {
-        if (definition == null || definition.pallets() == null) return 0;
-        int total = definition.pallets().size();
+        if (definition == null || definition.palettes() == null) return 0;
+        int total = definition.palettes().size();
         return (int) Math.ceil((double) total / SLOT_COLUMNS);
     }
 
@@ -73,7 +73,7 @@ public class PaletteScreen extends Screen {
 
     private int maxResultsScroll() {
         if (selectedSource == null || definition == null) return 0;
-        List<Block> replacements = definition.pallets().get(selectedSource);
+        List<Block> replacements = definition.palettes().get(selectedSource);
         if (replacements == null) return 0;
         int rowsWithout = (int) Math.ceil((double) replacements.size() / SLOT_COLUMNS);
         if (rowsWithout <= VISIBLE_ROWS) return 0;
@@ -162,7 +162,7 @@ public class PaletteScreen extends Screen {
         int guiY = (height - imageHeight) / 2;
 
         int i = 0;
-        for (Block source : definition.pallets().keySet()) {
+        for (Block source : definition.palettes().keySet()) {
             int col = i / SLOT_COLUMNS;
             int row = i % SLOT_COLUMNS;
 
@@ -180,7 +180,7 @@ public class PaletteScreen extends Screen {
         }
 
         if (selectedSource != null) {
-            List<Block> replacements = definition.pallets().get(selectedSource);
+            List<Block> replacements = definition.palettes().get(selectedSource);
             if (replacements != null) {
                 int visibleCols = visibleResultColumns();
 
@@ -230,7 +230,7 @@ public class PaletteScreen extends Screen {
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         super.extractRenderState(graphics, mouseX, mouseY, delta);
 
-        if (definition == null || definition.pallets() == null) return;
+        if (definition == null || definition.palettes() == null) return;
 
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
@@ -260,7 +260,7 @@ public class PaletteScreen extends Screen {
         if (definition == null) return;
 
         int i = 0;
-        for (Block source : definition.pallets().keySet()) {
+        for (Block source : definition.palettes().keySet()) {
             int col = i / SLOT_COLUMNS;
             int row = i % SLOT_COLUMNS;
 
@@ -279,7 +279,7 @@ public class PaletteScreen extends Screen {
         }
 
         if (selectedSource != null) {
-            List<Block> list = definition.pallets().get(selectedSource);
+            List<Block> list = definition.palettes().get(selectedSource);
             if (list != null) {
                 int visibleCols = visibleResultColumns();
 

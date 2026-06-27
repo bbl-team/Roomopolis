@@ -22,7 +22,7 @@
     "override_existing_blocks": true,
     "replace_waterlogged_blocks": true
   },
-  "pallets": {
+  "palettes": {
     "minecraft:sandstone": [
       "minecraft:stone",
       "minecraft:cobblestone",
