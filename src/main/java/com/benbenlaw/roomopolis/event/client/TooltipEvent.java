@@ -39,7 +39,7 @@ public class TooltipEvent {
         Identifier templateId = stack.get(RoomsDataComponents.TEMPLATE_ID);
 
         if (templateId == null) {
-            tooltips.add(Component.literal("Missing template ID").withStyle(ChatFormatting.RED));
+            tooltips.add(Component.literal("Shift Right Click to open!").withStyle(ChatFormatting.YELLOW));
             return;
         }
 
