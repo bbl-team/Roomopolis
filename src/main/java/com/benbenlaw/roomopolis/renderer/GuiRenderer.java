@@ -20,7 +20,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
 import java.util.List;
 
@@ -88,23 +92,33 @@ public class GuiRenderer extends PictureInPictureRenderer<GuiStructureRenderStat
 
         float scale = state.inViewScale() / Math.max(1.0f, maxDim);
 
+        Rotation rotation = state.facingRotation();
+        StructurePlaceSettings rotationSettings = new StructurePlaceSettings().setRotation(rotation).setMirror(Mirror.NONE);
+
+        boolean swapXZ = rotation == Rotation.CLOCKWISE_90 || rotation == Rotation.COUNTERCLOCKWISE_90;
+        float centerX = (swapXZ ? size.getZ() : size.getX()) / 2.0f;
+        float centerZ = (swapXZ ? size.getX() : size.getZ()) / 2.0f;
+
         poseStack.pushPose();
         poseStack.translate(0, 0, 100.0f);
         poseStack.scale(scale, scale, scale);
         poseStack.mulPose(Axis.XP.rotationDegrees(210f));
         poseStack.mulPose(Axis.YP.rotationDegrees(state.rotationTime() / 3));
-        poseStack.translate(-size.getX() / 2.0f, -size.getY() / 2.0f, -size.getZ() / 2.0f);
+        poseStack.translate(-centerX, -size.getY() / 2.0f, -centerZ);
 
         for (var blockEntry : blocks) {
 
             BlockState baseState = blockEntry.state();
-            assert Minecraft.getInstance().player != null;
-            Block replacement = TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), definitionId).get(baseState.getBlock());
-            BlockState finalState = (replacement != null)
-                    ? BlockStateUtil.copyProperties(baseState, replacement.defaultBlockState())
-                    : baseState;
+            BlockPos rotatedPos = StructureTemplate.calculateRelativePosition(rotationSettings, blockEntry.pos());
+            BlockState rotatedBaseState = baseState.rotate(mc.level, blockEntry.pos(), rotation);
 
-            this.renderBlock(mc.level, finalState, blockEntry.pos(), poseStack);
+            assert Minecraft.getInstance().player != null;
+            Block replacement = TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), definitionId).get(rotatedBaseState.getBlock());
+            BlockState finalState = (replacement != null)
+                    ? BlockStateUtil.copyProperties(rotatedBaseState, replacement.defaultBlockState())
+                    : rotatedBaseState;
+
+            this.renderBlock(mc.level, finalState, rotatedPos, poseStack);
         }
         poseStack.popPose();
         this.bufferSource.endBatch();

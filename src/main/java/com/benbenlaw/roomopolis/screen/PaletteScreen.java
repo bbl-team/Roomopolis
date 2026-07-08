@@ -248,7 +248,7 @@ public class PaletteScreen extends Screen {
         float rotationTime = (System.currentTimeMillis() % 36000) / 10.0f;
 
         GuiStructureRenderState preview = GuiStructureRenderState.simpleGuiRenderState(
-                null, rotationTime, x + 8, y + 18, x + 90, y + 100, 1.0f, definition.templateId(), templateId, 50.0f);
+                null, rotationTime, x + 8, y + 18, x + 90, y + 100, 1.0f, definition.templateId(), templateId, definition.placement().rotation(), 50.0f);
 
         GuiRenderState state = ((GuiGraphicsExtractorAccessor) graphics).getGuiRenderState();
         if (state != null) {

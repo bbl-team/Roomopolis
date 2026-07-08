@@ -160,7 +160,7 @@ public class PlacerScreen extends Screen {
                         GuiStructureRenderState state = GuiStructureRenderState.simpleGuiRenderState(
                                 template.getSize(), rotationTime,
                                 areaX + 2, areaY + 2, areaX + 50, areaY + 50,
-                                1.0f, structureId, definitionId, 35.0f
+                                1.0f, structureId, definitionId, data.placement().rotation(), 35.0f
                         );
 
                         GuiRenderState stateObject = ((GuiGraphicsExtractorAccessor) graphics).getGuiRenderState();

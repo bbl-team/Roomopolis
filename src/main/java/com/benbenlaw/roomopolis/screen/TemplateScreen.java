@@ -205,8 +205,9 @@ public class TemplateScreen extends Screen {
                             x + 90,
                             y + 100,
                             1.0f,
-                            templateId,
                             definition.templateId(),
+                            templateId,
+                            definition.placement().rotation(),
                             50.0f
                     );
 

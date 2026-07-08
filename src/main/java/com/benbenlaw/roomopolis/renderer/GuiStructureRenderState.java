@@ -27,7 +27,7 @@ public record GuiStructureRenderState(Vec3i size, float rotationTime, Rotation f
     }
 
 
-    public static GuiStructureRenderState simpleGuiRenderState(Vec3i size, float rotationTime, int x0, int y0, int x1, int y1, float scale, @Nullable Identifier templateId, @Nullable Identifier definitionId, float inViewScale) {
-        return new GuiStructureRenderState(size, rotationTime, Rotation.NONE, null, Map.of(), Set.of(), RandomSource.create(), x0, y0, x1, y1, scale, null, templateId, definitionId, inViewScale);
+    public static GuiStructureRenderState simpleGuiRenderState(Vec3i size, float rotationTime, int x0, int y0, int x1, int y1, float scale, @Nullable Identifier templateId, @Nullable Identifier definitionId, Rotation facingRotation, float inViewScale) {
+        return new GuiStructureRenderState(size, rotationTime, facingRotation, null, Map.of(), Set.of(), RandomSource.create(), x0, y0, x1, y1, scale, null, templateId, definitionId, inViewScale);
     }
 }

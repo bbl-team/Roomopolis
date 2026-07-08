@@ -114,7 +114,8 @@ public class PlacerPreviewRenderer {
             baseRotation = DirectionUtil.getRotationFromDirection(player.getDirection().getOpposite());
         }
 
-        Rotation finalRotation = baseRotation;
+        Rotation finalRotation = PlacerItem.combineRotation(baseRotation, definition.placement().rotation());
+
         Direction facing = lastValidFace.getOpposite();
 
         StructurePlaceSettings settings = new StructurePlaceSettings()
