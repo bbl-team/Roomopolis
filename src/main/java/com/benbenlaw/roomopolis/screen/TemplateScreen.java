@@ -206,6 +206,7 @@ public class TemplateScreen extends Screen {
                             y + 100,
                             1.0f,
                             templateId,
+                            definition.templateId(),
                             50.0f
                     );
 

@@ -1,6 +1,7 @@
 package com.benbenlaw.roomopolis.event;
 
 import com.benbenlaw.Roomopolis;
+import com.benbenlaw.roomopolis.item.FakeStructureTemplateManager;
 import com.benbenlaw.roomopolis.item.TemplatePaletteCache;
 import com.benbenlaw.roomopolis.item.TemplateSizeCache;
 import com.benbenlaw.roomopolis.loader.TemplateData;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashMap;
@@ -32,6 +34,10 @@ import java.util.Optional;
 @EventBusSubscriber(modid = Roomopolis.MOD_ID)
 public class UpdateKeyCache {
 
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post  event) {
+        System.out.println(FakeStructureTemplateManager.INSTANCE.getAll());
+    }
 
     @SubscribeEvent
     public static void onDatapackSync(OnDatapackSyncEvent event) {

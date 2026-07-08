@@ -104,7 +104,7 @@ public class BlockListScreen extends Screen {
         if (definition == null) return;
         ItemStack held =Minecraft.getInstance().player.getMainHandItem();
         if (!(held.getItem() instanceof PlacerItem placerItem)) return;
-        Map<Block, Integer> requiredBlocksMap = placerItem.getRequiredBlocks(Minecraft.getInstance().player.level(), definition);
+        Map<Block, Integer> requiredBlocksMap = placerItem.getRequiredBlocks(Minecraft.getInstance().player.level(), definition, templateId);
         List<Map.Entry<Block, Integer>> fullList = new ArrayList<>(requiredBlocksMap.entrySet());
 
         int maxPages = (int) Math.ceil((double) fullList.size() / ENTRIES_PER_PAGE);

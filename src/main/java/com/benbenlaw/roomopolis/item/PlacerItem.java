@@ -74,6 +74,7 @@ public class PlacerItem extends Item {
 
         ItemStack stack = context.getItemInHand();
 
+        Identifier definitionId = stack.get(RoomsDataComponents.TEMPLATE_ID);
         TemplateDefinition definition = getDefinition(stack);
 
         if (definition == null) {
@@ -92,7 +93,7 @@ public class PlacerItem extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        if (!hasEnoughBlocks(player, level, definition)) {
+        if (!hasEnoughBlocks(player, level, definition, definitionId)) {
             return InteractionResult.FAIL;
         }
 
@@ -149,7 +150,7 @@ public class PlacerItem extends Item {
         }
 
 
-        boolean placed = createTemplate(level, rotation, facing, placePosition, definition);
+        boolean placed = createTemplate(level, rotation, facing, placePosition, definition, definitionId);
 
         if (!placed) {
             player.sendOverlayMessage(Component.translatable("item.key.area_not_empty").withStyle(ChatFormatting.RED));
@@ -164,7 +165,7 @@ public class PlacerItem extends Item {
             removeDoor(level, pos, placementFacing, definition);
         }
 
-        consumeBlocks(player, level, definition);
+        consumeBlocks(player, level, definition, definitionId);
         return InteractionResult.SUCCESS;
     }
 
@@ -174,12 +175,12 @@ public class PlacerItem extends Item {
         return TemplateData.DATA.get(id);
     }
 
-    public boolean hasEnoughBlocks(Player player, Level level, TemplateDefinition definition) {
+    public boolean hasEnoughBlocks(Player player, Level level, TemplateDefinition definition, Identifier definitionId) {
 
         if (!definition.restrictions().blocksRequired()) return true;
         if (player.isCreative()) return true;
 
-        Map<Block, Integer> required = getRequiredBlocks(level, definition);
+        Map<Block, Integer> required = getRequiredBlocks(level, definition, definitionId);
 
         Map<Block, Integer> playerBlocks = new HashMap<>();
 
@@ -202,7 +203,7 @@ public class PlacerItem extends Item {
         return true;
     }
 
-    public Map<Block, Integer> getRequiredBlocks(Level level, TemplateDefinition definition) {
+    public Map<Block, Integer> getRequiredBlocks(Level level, TemplateDefinition definition, Identifier definitionId) {
 
         Map<Block, Integer> counts = new HashMap<>();
         Map<Block, Integer> half = new HashMap<>();
@@ -253,7 +254,7 @@ public class PlacerItem extends Item {
             Block block = info.state().getBlock();
 
             Map<Block, Block> activePalette =
-                    TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), definition.templateId());
+                    TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), definitionId);
 
             Block replacement = activePalette.get(block);
 
@@ -279,12 +280,12 @@ public class PlacerItem extends Item {
         return counts;
     }
 
-    public void consumeBlocks(Player player, Level level, TemplateDefinition definition) {
+    public void consumeBlocks(Player player, Level level, TemplateDefinition definition, Identifier definitionId) {
 
         if (player.isCreative()) return;
         if (!definition.restrictions().blocksRequired()) return;
 
-        Map<Block, Integer> required = getRequiredBlocks(level, definition);
+        Map<Block, Integer> required = getRequiredBlocks(level, definition, definitionId);
 
         for (Map.Entry<Block, Integer> entry : required.entrySet()) {
 
@@ -314,7 +315,7 @@ public class PlacerItem extends Item {
         }
     }
 
-    public boolean createTemplate(Level level, Rotation rotation, Direction facing, BlockPos pos, TemplateDefinition definition) {
+    public boolean createTemplate(Level level, Rotation rotation, Direction facing, BlockPos pos, TemplateDefinition definition, Identifier definitionId) {
 
         StructureTemplateManager manager = Objects.requireNonNull(level.getServer()).getStructureManager();
         Optional<StructureTemplate> optional = manager.get(definition.templateId());
@@ -325,9 +326,9 @@ public class PlacerItem extends Item {
         if (template.palettes.isEmpty()) return false;
 
         StructurePlaceSettings settings = new StructurePlaceSettings()
-                        .setRotation(rotation)
-                        .setMirror(Mirror.NONE)
-                        .setIgnoreEntities(false);
+                .setRotation(rotation)
+                .setMirror(Mirror.NONE)
+                .setIgnoreEntities(false);
 
         Vec3i size = template.getSize();
 
@@ -340,8 +341,8 @@ public class PlacerItem extends Item {
         if (!definition.restrictions().overrideExistingBlocks()) {
 
             StructurePlaceSettings testSettings = new StructurePlaceSettings()
-                            .setRotation(rotation)
-                            .setMirror(Mirror.NONE);
+                    .setRotation(rotation)
+                    .setMirror(Mirror.NONE);
 
             for (StructureTemplate.StructureBlockInfo info : template.palettes.getFirst().blocks()) {
 
@@ -358,7 +359,7 @@ public class PlacerItem extends Item {
 
         template.placeInWorld((ServerLevelAccessor) level, finalPos, finalPos, settings, level.getRandom(), Block.UPDATE_ALL);
 
-        Map<Block, Block> palette = TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), definition.templateId());
+        Map<Block, Block> palette = TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), definitionId);
 
         if (!palette.isEmpty()) {
 
@@ -374,9 +375,11 @@ public class PlacerItem extends Item {
                 BlockPos rotated = StructureTemplate.calculateRelativePosition(settings, info.pos());
                 BlockPos worldPos = finalPos.offset(rotated);
 
-                BlockState rotatedOriginalState = info.state().rotate(rotation);
+                BlockState rotatedOriginalState = info.state().rotate(level, worldPos, rotation);
                 BlockState newState = BlockStateUtil.copyProperties(rotatedOriginalState, replacement.defaultBlockState());
-                level.setBlock(worldPos, newState, Block.UPDATE_ALL);            }
+
+                level.setBlock(worldPos, newState, Block.UPDATE_ALL);
+            }
         }
 
         if (definition.restrictions().replaceWaterLoggedBlocks()) {

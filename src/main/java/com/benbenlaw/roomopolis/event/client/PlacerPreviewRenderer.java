@@ -148,10 +148,13 @@ public class PlacerPreviewRenderer {
             Block block = baseState.getBlock();
 
             Block replacement = TemplateData
-                    .getActivePalette(Minecraft.getInstance().player.getUUID(), definition.templateId())
+                    .getActivePalette(Minecraft.getInstance().player.getUUID(), definitionId)
                     .get(block);
 
-            BlockState rotatedState = (replacement != null) ? BlockStateUtil.copyProperties(baseState, replacement.defaultBlockState()) : baseState;
+            BlockState rotatedState =
+                    (replacement != null)
+                            ? BlockStateUtil.copyProperties(baseState, replacement.defaultBlockState())
+                            : baseState;
 
             poseStack.pushPose();
 
@@ -177,11 +180,11 @@ public class PlacerPreviewRenderer {
         poseStack.translate(x, y, z);
 
         VertexConsumer buffer = bufferSource.getBuffer(switch (layer) {
-                            case SOLID -> RenderTypes.solidMovingBlock();
-                            case CUTOUT -> RenderTypes.cutoutMovingBlock();
-                            case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
-                        }
-                );
+                    case SOLID -> RenderTypes.solidMovingBlock();
+                    case CUTOUT -> RenderTypes.cutoutMovingBlock();
+                    case TRANSLUCENT -> RenderTypes.translucentMovingBlock();
+                }
+        );
 
         buffer.putBakedQuad(poseStack.last(), quad, instance);
         poseStack.popPose();

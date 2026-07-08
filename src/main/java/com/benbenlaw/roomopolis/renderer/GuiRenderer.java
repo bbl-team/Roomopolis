@@ -57,6 +57,7 @@ public class GuiRenderer extends PictureInPictureRenderer<GuiStructureRenderStat
         }
 
         Identifier id = state.templateId();
+        Identifier definitionId = state.definitionId();
 
         Vec3i size = TemplateSizeCache.getTemplateSize(id);
         List<TemplatePaletteCache.BlockPosWithState> blocks =
@@ -98,9 +99,10 @@ public class GuiRenderer extends PictureInPictureRenderer<GuiStructureRenderStat
 
             BlockState baseState = blockEntry.state();
             assert Minecraft.getInstance().player != null;
-            Block replacement = TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), id).get(baseState.getBlock());
-
-            BlockState finalState = (replacement != null) ? BlockStateUtil.copyProperties(baseState, replacement.defaultBlockState()) : baseState;
+            Block replacement = TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), definitionId).get(baseState.getBlock());
+            BlockState finalState = (replacement != null)
+                    ? BlockStateUtil.copyProperties(baseState, replacement.defaultBlockState())
+                    : baseState;
 
             this.renderBlock(mc.level, finalState, blockEntry.pos(), poseStack);
         }

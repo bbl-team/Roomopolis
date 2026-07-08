@@ -15,24 +15,19 @@ import java.util.Set;
 
 public record GuiStructureRenderState(Vec3i size, float rotationTime, Rotation facingRotation, @Nullable BlockPos highlightPos, Map<BlockPos, BlockEntity> blockEntityCache,
                                       Set<BlockEntity> erroredBlockEntities, RandomSource randomSource, int x0, int y0, int x1, int y1, float scale, @Nullable ScreenRectangle scissorArea,
-                                      @Nullable ScreenRectangle bounds, Identifier templateId, float inViewScale) implements PictureInPictureRenderState {
+                                      @Nullable ScreenRectangle bounds, Identifier templateId, Identifier definitionId, float inViewScale) implements PictureInPictureRenderState {
 
     public GuiStructureRenderState(Vec3i size, float rotationTime, Rotation facingRotation, @Nullable BlockPos highlightPos, Map<BlockPos, BlockEntity> blockEntityCache,
                                    Set<BlockEntity> erroredBlockEntities, RandomSource randomSource, int x0, int y0, int x1, int y1, float scale, @Nullable ScreenRectangle scissorArea,
-                                   @Nullable Identifier templateId, float inViewScale) {
+                                   @Nullable Identifier templateId, @Nullable Identifier definitionId, float inViewScale) {
 
         this(size, rotationTime, facingRotation, highlightPos, blockEntityCache, erroredBlockEntities, randomSource,
                 x0, y0, x1, y1, scale, scissorArea,
-                PictureInPictureRenderState.getBounds(x0, y0, x1, y1, scissorArea), templateId, inViewScale);
+                PictureInPictureRenderState.getBounds(x0, y0, x1, y1, scissorArea), templateId, definitionId, inViewScale);
     }
 
 
-    public static GuiStructureRenderState simpleGuiRenderState(Vec3i size, float rotationTime, int x0, int y0, int x1, int y1, float scale, @Nullable Identifier templateId, float inViewScale) {
-        return new GuiStructureRenderState(size, rotationTime, Rotation.NONE, null, Map.of(), Set.of(), RandomSource.create(), x0, y0, x1, y1, scale, null, templateId, inViewScale);
-
-
-
+    public static GuiStructureRenderState simpleGuiRenderState(Vec3i size, float rotationTime, int x0, int y0, int x1, int y1, float scale, @Nullable Identifier templateId, @Nullable Identifier definitionId, float inViewScale) {
+        return new GuiStructureRenderState(size, rotationTime, Rotation.NONE, null, Map.of(), Set.of(), RandomSource.create(), x0, y0, x1, y1, scale, null, templateId, definitionId, inViewScale);
     }
-
-
 }

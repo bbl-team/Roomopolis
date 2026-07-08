@@ -35,7 +35,7 @@ public class TemplateData extends SimpleJsonResourceReloadListener<TemplateDefin
         DATA.clear();
 
         prepared.forEach((jsonId, definition) -> {
-            DATA.put(definition.templateId(), definition);
+            DATA.put(jsonId, definition);
         });
 
         ACTIVE.clear();

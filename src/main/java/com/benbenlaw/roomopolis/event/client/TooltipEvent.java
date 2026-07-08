@@ -111,7 +111,7 @@ public class TooltipEvent {
 
         Map<Block, Integer> requiredBlocks =
                 ((PlacerItem) stack.getItem())
-                        .getRequiredBlocks(player.level(), definition);
+                        .getRequiredBlocks(player.level(), definition, templateId);
 
         if (requiredBlocks == null || requiredBlocks.isEmpty()) return;
 

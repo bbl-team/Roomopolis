@@ -79,14 +79,14 @@ public class PlacerScreen extends Screen {
         int startX = x + 8;
         int startY = y + 18;
 
-        List<Map.Entry<Identifier, StructureTemplate>> allTemplates = getFilteredTemplates();
+        List<Map.Entry<Identifier, TemplateDefinition>> allTemplates = getFilteredTemplates();
 
         int maxPage = Math.max(0, (allTemplates.size() - 1) / ITEMS_PER_PAGE);
         page = Math.min(page, maxPage);
 
         int startIndex = page * ITEMS_PER_PAGE;
 
-        List<Map.Entry<Identifier, StructureTemplate>> templates =
+        List<Map.Entry<Identifier, TemplateDefinition>> templates =
                 allTemplates.stream().skip(startIndex).limit(ITEMS_PER_PAGE).toList();
 
         float rotationTime = (System.currentTimeMillis() % 36000) / 10.0f;
@@ -105,9 +105,17 @@ public class PlacerScreen extends Screen {
                 if (index < templates.size()) {
 
                     var entry = templates.get(index);
-                    Identifier id = entry.getKey();
-                    TemplateDefinition data = TemplateData.getTemplateDefinition(id);
-                    StructureTemplate template = entry.getValue();
+                    Identifier definitionId = entry.getKey();
+                    TemplateDefinition data = entry.getValue();
+                    Identifier structureId = data.templateId();
+
+                    StructureTemplate template = FakeStructureTemplateManager.INSTANCE.templates.get(structureId);
+
+                    if (template == null) {
+                        index++;
+                        continue;
+                    }
+
                     StructureTemplate.Palette palette = template.palettes.getFirst();
                     int totalPos = palette.blocks().size();
                     boolean tooLarge = totalPos > 2000;
@@ -152,16 +160,16 @@ public class PlacerScreen extends Screen {
                         GuiStructureRenderState state = GuiStructureRenderState.simpleGuiRenderState(
                                 template.getSize(), rotationTime,
                                 areaX + 2, areaY + 2, areaX + 50, areaY + 50,
-                                1.0f, id, 35.0f
+                                1.0f, structureId, definitionId, 35.0f
                         );
 
                         GuiRenderState stateObject = ((GuiGraphicsExtractorAccessor) graphics).getGuiRenderState();
                         GuiRenderer renderer = renderers.computeIfAbsent(
-                                id, key -> new GuiRenderer(Minecraft.getInstance().renderBuffers().bufferSource())
+                                definitionId, key -> new GuiRenderer(Minecraft.getInstance().renderBuffers().bufferSource())
                         );
                         renderer.prepare(state, stateObject, guiScale);
 
-                        if (id.equals(selectedTemplateId)) {
+                        if (definitionId.equals(selectedTemplateId)) {
                             graphics.fill(areaX, areaY, areaX + 52, areaY + 52, 0x55FFFF00);
                         }
 
@@ -218,9 +226,9 @@ public class PlacerScreen extends Screen {
         int startX = x + 8;
         int startY = y + 18;
 
-        List<Map.Entry<Identifier, StructureTemplate>> allTemplates = getFilteredTemplates();
+        List<Map.Entry<Identifier, TemplateDefinition>> allTemplates = getFilteredTemplates();
         int startIndex = page * ITEMS_PER_PAGE;
-        List<Map.Entry<Identifier, StructureTemplate>> templates = allTemplates.stream().skip(startIndex).limit(ITEMS_PER_PAGE).toList();
+        List<Map.Entry<Identifier, TemplateDefinition>> templates = allTemplates.stream().skip(startIndex).limit(ITEMS_PER_PAGE).toList();
 
         int index = 0;
 
@@ -247,14 +255,11 @@ public class PlacerScreen extends Screen {
         return super.mouseClicked(event, doubleClick);
     }
 
-    private List<Map.Entry<Identifier, StructureTemplate>> getFilteredTemplates() {
-        return FakeStructureTemplateManager.INSTANCE.templates.entrySet()
+    private List<Map.Entry<Identifier, TemplateDefinition>> getFilteredTemplates() {
+        return TemplateData.DATA.entrySet()
                 .stream()
                 .filter(e -> e.getKey().getPath().toLowerCase().contains(searchQuery))
-                .sorted(Comparator.comparingInt(e -> {
-                    TemplateDefinition data = TemplateData.getTemplateDefinition(e.getKey());
-                    return data.restrictions().placerPosition();
-                }))
+                .sorted(Comparator.comparingInt(e -> e.getValue().restrictions().placerPosition()))
                 .toList();
     }
 }
