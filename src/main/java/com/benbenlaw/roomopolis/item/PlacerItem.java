@@ -5,6 +5,7 @@ import com.benbenlaw.roomopolis.loader.TemplateData;
 import com.benbenlaw.roomopolis.loader.TemplateDefinition;
 import com.benbenlaw.roomopolis.loader.options.BlockTarget;
 import com.benbenlaw.roomopolis.screen.ClientScreens;
+import com.benbenlaw.roomopolis.util.BlockStateUtil;
 import com.benbenlaw.roomopolis.util.DirectionUtil;
 import com.benbenlaw.roomopolis.util.RoomopolisTags;
 import net.minecraft.ChatFormatting;
@@ -373,8 +374,9 @@ public class PlacerItem extends Item {
                 BlockPos rotated = StructureTemplate.calculateRelativePosition(settings, info.pos());
                 BlockPos worldPos = finalPos.offset(rotated);
 
-                level.setBlock(worldPos, replacement.defaultBlockState(), Block.UPDATE_ALL);
-            }
+                BlockState rotatedOriginalState = info.state().rotate(rotation);
+                BlockState newState = BlockStateUtil.copyProperties(rotatedOriginalState, replacement.defaultBlockState());
+                level.setBlock(worldPos, newState, Block.UPDATE_ALL);            }
         }
 
         if (definition.restrictions().replaceWaterLoggedBlocks()) {

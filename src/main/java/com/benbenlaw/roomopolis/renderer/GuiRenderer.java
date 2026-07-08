@@ -4,6 +4,7 @@ import com.benbenlaw.roomopolis.item.FakeStructureTemplateManager;
 import com.benbenlaw.roomopolis.item.TemplatePaletteCache;
 import com.benbenlaw.roomopolis.item.TemplateSizeCache;
 import com.benbenlaw.roomopolis.loader.TemplateData;
+import com.benbenlaw.roomopolis.util.BlockStateUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -98,7 +99,8 @@ public class GuiRenderer extends PictureInPictureRenderer<GuiStructureRenderStat
             BlockState baseState = blockEntry.state();
             assert Minecraft.getInstance().player != null;
             Block replacement = TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), id).get(baseState.getBlock());
-            BlockState finalState = (replacement != null) ? replacement.defaultBlockState(): baseState;
+
+            BlockState finalState = (replacement != null) ? BlockStateUtil.copyProperties(baseState, replacement.defaultBlockState()) : baseState;
 
             this.renderBlock(mc.level, finalState, blockEntry.pos(), poseStack);
         }

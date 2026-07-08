@@ -6,6 +6,7 @@ import com.benbenlaw.roomopolis.item.PlacerItem;
 import com.benbenlaw.roomopolis.item.TemplateSizeCache;
 import com.benbenlaw.roomopolis.loader.TemplateData;
 import com.benbenlaw.roomopolis.loader.TemplateDefinition;
+import com.benbenlaw.roomopolis.util.BlockStateUtil;
 import com.benbenlaw.roomopolis.util.DirectionUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.QuadInstance;
@@ -150,10 +151,7 @@ public class PlacerPreviewRenderer {
                     .getActivePalette(Minecraft.getInstance().player.getUUID(), definition.templateId())
                     .get(block);
 
-            BlockState rotatedState =
-                    (replacement != null)
-                            ? replacement.defaultBlockState()
-                            : baseState;
+            BlockState rotatedState = (replacement != null) ? BlockStateUtil.copyProperties(baseState, replacement.defaultBlockState()) : baseState;
 
             poseStack.pushPose();
 
