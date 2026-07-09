@@ -35,11 +35,6 @@ import java.util.Optional;
 public class UpdateKeyCache {
 
     @SubscribeEvent
-    public static void onPlayerTick(PlayerTickEvent.Post  event) {
-        System.out.println(FakeStructureTemplateManager.INSTANCE.getAll());
-    }
-
-    @SubscribeEvent
     public static void onDatapackSync(OnDatapackSyncEvent event) {
 
         if (!(event.getPlayer() instanceof ServerPlayer serverPlayer)) return;
