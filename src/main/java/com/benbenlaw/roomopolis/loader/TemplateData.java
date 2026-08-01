@@ -11,6 +11,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.event.TagsUpdatedEvent;
 
 import java.util.*;
 
@@ -115,6 +116,13 @@ public class TemplateData extends SimpleJsonResourceReloadListener<TemplateDefin
 
         if (playerPalettes.isEmpty()) {
             ACTIVE_PALETTES.remove(playerUUID);
+        }
+    }
+
+    public static void onTagsUpdated(TagsUpdatedEvent event) {
+        RESOLVED_PALETTES.clear();
+        for (Map.Entry<Identifier, TemplateDefinition> entry : DATA.entrySet()) {
+            RESOLVED_PALETTES.put(entry.getKey(), resolvePalettes(entry.getValue().palettes()));
         }
     }
 }

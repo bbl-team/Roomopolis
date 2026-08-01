@@ -44,6 +44,9 @@ public class Roomopolis {
         }
 
         eventBus.addListener(this::networkingSetup);
+
+        NeoForge.EVENT_BUS.addListener(TemplateData::onTagsUpdated);
+
     }
 
     public void networkingSetup(RegisterPayloadHandlersEvent event) {

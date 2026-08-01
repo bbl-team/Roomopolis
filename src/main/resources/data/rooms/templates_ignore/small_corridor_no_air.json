@@ -17,6 +17,7 @@
   },
   "palettes": {
     "minecraft:cobblestone": [
+      "#minecraft:planks",
       "minecraft:red_terracotta",
       "minecraft:orange_terracotta",
       "minecraft:yellow_terracotta",

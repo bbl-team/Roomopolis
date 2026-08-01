@@ -13,10 +13,12 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
@@ -56,6 +58,8 @@ public class PaletteScreen extends Screen {
     private int paletteScrollOffset = 0;
     private int resultsScrollOffset = 0;
 
+    private String searchQuery = "";
+
     public PaletteScreen(Identifier id, Screen parent) {
         super(Component.literal("Palette Editor"));
         this.templateId = id;
@@ -64,6 +68,20 @@ public class PaletteScreen extends Screen {
 
     private Map<Block, List<Block>> resolvedPalettes() {
         return TemplateData.getResolvedPalettes(templateId);
+    }
+
+    private List<Block> filteredReplacements() {
+        if (selectedSource == null) return List.of();
+        List<Block> replacements = resolvedPalettes().get(selectedSource);
+        if (replacements == null) return List.of();
+        if (searchQuery.isEmpty()) return replacements;
+        return replacements.stream()
+                .filter(block -> {
+                    String id = BuiltInRegistries.BLOCK.getKey(block).toString();
+                    String name = block.getName().getString().toLowerCase();
+                    return id.contains(searchQuery) || name.contains(searchQuery);
+                })
+                .toList();
     }
 
     private int paletteColumnCount() {
@@ -76,8 +94,8 @@ public class PaletteScreen extends Screen {
 
     private int maxResultsScroll() {
         if (selectedSource == null) return 0;
-        List<Block> replacements = resolvedPalettes().get(selectedSource);
-        if (replacements == null) return 0;
+        List<Block> replacements = filteredReplacements();
+        if (replacements.isEmpty()) return 0;
         int rowsWithout = (int) Math.ceil((double) replacements.size() / SLOT_COLUMNS);
         if (rowsWithout <= VISIBLE_ROWS) return 0;
         int rowsWith = (int) Math.ceil((double) replacements.size() / (SLOT_COLUMNS - 1));
@@ -121,6 +139,15 @@ public class PaletteScreen extends Screen {
                         .bounds(x + 28, y + 140, 40, 20)
                         .build()
         );
+
+        EditBox searchBox = new EditBox(Minecraft.getInstance().font, x + 92, y + 140, 70, 20, Component.literal("Search"));
+        searchBox.setMaxLength(32);
+        searchBox.setHint(Component.literal("Search...").withStyle(ChatFormatting.DARK_GRAY));
+        searchBox.setResponder(text -> {
+            searchQuery = text.toLowerCase();
+            resultsScrollOffset = 0;
+        });
+        addRenderableWidget(searchBox);
 
         addRenderableWidget(Button.builder(Component.translatable("tooltip.rooms.apply"),
                         b -> applyTemplate())
@@ -175,6 +202,7 @@ public class PaletteScreen extends Screen {
                 if (isInside(event.x(), event.y(), xPos, yPos)) {
                     selectedSource = source;
                     resultsScrollOffset = 0;
+                    searchQuery = "";
                     return true;
                 }
             }
@@ -182,8 +210,8 @@ public class PaletteScreen extends Screen {
         }
 
         if (selectedSource != null) {
-            List<Block> replacements = palettes.get(selectedSource);
-            if (replacements != null) {
+            List<Block> replacements = filteredReplacements();
+            if (!replacements.isEmpty()) {
                 int visibleCols = visibleResultColumns();
 
                 int j = 0;
@@ -282,23 +310,21 @@ public class PaletteScreen extends Screen {
         }
 
         if (selectedSource != null) {
-            List<Block> list = palettes.get(selectedSource);
-            if (list != null) {
-                int visibleCols = visibleResultColumns();
+            List<Block> list = filteredReplacements();
+            int visibleCols = visibleResultColumns();
 
-                int j = 0;
-                for (Block target : list) {
-                    int col = j % visibleCols;
-                    int row = j / visibleCols;
+            int j = 0;
+            for (Block target : list) {
+                int col = j % visibleCols;
+                int row = j / visibleCols;
 
-                    int rx = x + RESULTS_X + (col * SLOT_SPACING);
-                    int ry = y + RESULTS_Y + ((row - resultsScrollOffset) * SLOT_SPACING);
+                int rx = x + RESULTS_X + (col * SLOT_SPACING);
+                int ry = y + RESULTS_Y + ((row - resultsScrollOffset) * SLOT_SPACING);
 
-                    if (ry >= y + RESULTS_Y && ry < y + RESULTS_Y + SCROLL_AREA_HEIGHT) {
-                        graphics.fakeItem(new ItemStack(target), rx, ry);
-                    }
-                    j++;
+                if (ry >= y + RESULTS_Y && ry < y + RESULTS_Y + SCROLL_AREA_HEIGHT) {
+                    graphics.fakeItem(new ItemStack(target), rx, ry);
                 }
+                j++;
             }
         }
     }
