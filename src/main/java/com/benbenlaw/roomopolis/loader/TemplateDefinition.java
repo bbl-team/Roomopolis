@@ -22,14 +22,12 @@ public record TemplateDefinition(
         TemplatePlacementOptions placement,
         TemplateDoorOptions door,
         TemplateRestrictionOptions restrictions,
-        Map<Block, List<Block>> palettes
+        Map<String, List<String>> palettes  // changed from Map<Block, List<Block>>
 ) {
 
-    public static final Codec<Map<Block, List<Block>>> PALLET_CODEC =
-            Codec.unboundedMap(
-                    BuiltInRegistries.BLOCK.byNameCodec(),
-                    BuiltInRegistries.BLOCK.byNameCodec().listOf()
-            );
+    public static final Codec<Map<String, List<String>>> PALLET_CODEC =
+            Codec.unboundedMap(Codec.STRING, Codec.STRING.listOf());
+
     public static final Codec<TemplateDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 
             Identifier.CODEC.fieldOf("template_id").forGetter(TemplateDefinition::templateId),

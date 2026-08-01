@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 
 import java.util.List;
+import java.util.Map;
 
 public class PaletteScreen extends Screen {
 
@@ -61,10 +62,12 @@ public class PaletteScreen extends Screen {
         this.parent = parent;
     }
 
+    private Map<Block, List<Block>> resolvedPalettes() {
+        return TemplateData.getResolvedPalettes(templateId);
+    }
+
     private int paletteColumnCount() {
-        if (definition == null || definition.palettes() == null) return 0;
-        int total = definition.palettes().size();
-        return (int) Math.ceil((double) total / SLOT_COLUMNS);
+        return (int) Math.ceil((double) resolvedPalettes().size() / SLOT_COLUMNS);
     }
 
     private int maxPaletteScroll() {
@@ -72,8 +75,8 @@ public class PaletteScreen extends Screen {
     }
 
     private int maxResultsScroll() {
-        if (selectedSource == null || definition == null) return 0;
-        List<Block> replacements = definition.palettes().get(selectedSource);
+        if (selectedSource == null) return 0;
+        List<Block> replacements = resolvedPalettes().get(selectedSource);
         if (replacements == null) return 0;
         int rowsWithout = (int) Math.ceil((double) replacements.size() / SLOT_COLUMNS);
         if (rowsWithout <= VISIBLE_ROWS) return 0;
@@ -112,10 +115,8 @@ public class PaletteScreen extends Screen {
 
         addRenderableWidget(
                 Button.builder(Component.literal("Reset"), b -> {
-                            if (definition != null) {
-                                TemplateData.clearPalette(Minecraft.getInstance().player.getUUID(), templateId);
-                                ClientPacketDistributor.sendToServer(new SyncPaletteSelection(templateId, null, null));
-                            }
+                            TemplateData.clearPalette(Minecraft.getInstance().player.getUUID(), templateId);
+                            ClientPacketDistributor.sendToServer(new SyncPaletteSelection(templateId, null, null));
                         })
                         .bounds(x + 28, y + 140, 40, 20)
                         .build()
@@ -156,13 +157,14 @@ public class PaletteScreen extends Screen {
 
     @Override
     public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-        if (definition == null) return super.mouseClicked(event, doubleClick);
+        Map<Block, List<Block>> palettes = resolvedPalettes();
+        if (palettes.isEmpty()) return super.mouseClicked(event, doubleClick);
 
         int guiX = (width - imageWidth) / 2;
         int guiY = (height - imageHeight) / 2;
 
         int i = 0;
-        for (Block source : definition.palettes().keySet()) {
+        for (Block source : palettes.keySet()) {
             int col = i / SLOT_COLUMNS;
             int row = i % SLOT_COLUMNS;
 
@@ -180,7 +182,7 @@ public class PaletteScreen extends Screen {
         }
 
         if (selectedSource != null) {
-            List<Block> replacements = definition.palettes().get(selectedSource);
+            List<Block> replacements = palettes.get(selectedSource);
             if (replacements != null) {
                 int visibleCols = visibleResultColumns();
 
@@ -230,7 +232,7 @@ public class PaletteScreen extends Screen {
     public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float delta) {
         super.extractRenderState(graphics, mouseX, mouseY, delta);
 
-        if (definition == null || definition.palettes() == null) return;
+        if (definition == null || resolvedPalettes().isEmpty()) return;
 
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
@@ -248,7 +250,8 @@ public class PaletteScreen extends Screen {
         float rotationTime = (System.currentTimeMillis() % 36000) / 10.0f;
 
         GuiStructureRenderState preview = GuiStructureRenderState.simpleGuiRenderState(
-                null, rotationTime, x + 8, y + 18, x + 90, y + 100, 1.0f, definition.templateId(), templateId, definition.placement().rotation(), 50.0f);
+                null, rotationTime, x + 8, y + 18, x + 90, y + 100, 1.0f,
+                definition.templateId(), templateId, definition.placement().rotation(), 50.0f);
 
         GuiRenderState state = ((GuiGraphicsExtractorAccessor) graphics).getGuiRenderState();
         if (state != null) {
@@ -257,10 +260,10 @@ public class PaletteScreen extends Screen {
     }
 
     private void drawPaletteUI(GuiGraphicsExtractor graphics, int x, int y) {
-        if (definition == null) return;
+        Map<Block, List<Block>> palettes = resolvedPalettes();
 
         int i = 0;
-        for (Block source : definition.palettes().keySet()) {
+        for (Block source : palettes.keySet()) {
             int col = i / SLOT_COLUMNS;
             int row = i % SLOT_COLUMNS;
 
@@ -279,7 +282,7 @@ public class PaletteScreen extends Screen {
         }
 
         if (selectedSource != null) {
-            List<Block> list = definition.palettes().get(selectedSource);
+            List<Block> list = palettes.get(selectedSource);
             if (list != null) {
                 int visibleCols = visibleResultColumns();
 
@@ -301,7 +304,6 @@ public class PaletteScreen extends Screen {
     }
 
     private void drawScrollbars(GuiGraphicsExtractor graphics, int x, int y) {
-
         int paletteMax = maxPaletteScroll();
         if (paletteMax > 0) {
             int trackX = x + PALETTE_X;
