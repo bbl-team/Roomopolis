@@ -1,0 +1,51 @@
+{
+  "block.roomopolis.room_block": "Блок комнаты",
+  "block.roomopolis.room_key_block": "Замок комнаты",
+
+  "item.roomopolis.tiny_room_key": "Малый ключ к комнате",
+  "item.roomopolis.small_room_key": "Небольшой ключ к комнате",
+  "item.roomopolis.medium_room_key": "Средний ключ к комнате",
+  "item.roomopolis.large_room_key": "Большой ключ к комнате",
+  "item.roomopolis.interconnected_wall_removing_key": "INTERCONNECTED_WALL_REMOVING_KEY",
+
+  "item.key.placed": "Комната размещена",
+  "item.key.area_not_empty": "Что-то мешает!",
+  "item.key.requires_key_block": "Этим ключом необходимо взаимодействовать с блоком %s.",
+  "item.key.too_large": "Структура слишком большая для размещения!",
+  "item.key.side_only": "Можно использовать только на боковой грани блока.",
+  "item.key.top_only": "Можно использовать только на верхней грани блока.",
+  "item.key.too_high": "Невзможно использовать на данной высоте. Спуститесь ниже.",
+  "item.key.invalid_placement": "Неверное размещение",
+
+  "tooltips.key.loading_size": "Информация о загрузке",
+
+  "tooltips.key.shift_held": "Разместить замок можно, удерживая SHIFT",
+  "tooltips.key.template_size": "Размер комнаты: %sх%sх%s",
+  "tooltips.key.consume_key": "Ключ пропадёт после использования!",
+  "tooltips.key.retain_key": "Ключ не пропадёт после использования.",
+  "tooltips.key.requires_key_block": "Для использования необходим блок %s.",
+  "tooltips.key.override_existing_blocks": "Разрушает ранее поставленные блоки в зоне комнаты. Будьте осторожны!",
+  "tooltips.key.normal_checks": "Для размещения комнаты необходимо свободное пространство.",
+  "tooltips.key.wall_remover": "Убирает стенку между уже размещёнными комнатами.",
+  "tooltips.key.required_blocks": "Необходимые блоки:",
+  "tooltips.key.remove_door_area": "Убирает дверь.",
+  "tooltips.key.side_only": "Можно использовать только на боковой грани блока.",
+  "tooltips.key.top_only": "Можно использовать только на верхней грани блока.",
+
+  "tooltips.roomopolis.shift": "SHIFT для доп. информации",
+  "tooltips.roomopolis.alt": "SHIFT для доп. информации",
+  "tooltips.roomopolis.ctrl": "SHIFT для доп. информации",
+
+
+  "message.key.overrides_blocks": "Разрушает ранее поставленные блоки в зоне комнаты.",
+
+  "roomopolis.jei.tooltip.rotate": "Размер комнаты: %sх%sх%s",
+
+  "category.roomopolis.room_category": "Комнаты",
+
+  "itemGroup.roomopolis": "Roomopolis",
+  "item.key.not_enough_blocks": "Для использования ключа недостаточно блоков!",
+  "item.key.missing_blocks": "Недостающие блоки"
+
+
+}
