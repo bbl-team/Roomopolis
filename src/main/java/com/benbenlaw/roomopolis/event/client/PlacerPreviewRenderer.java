@@ -63,7 +63,7 @@ public class PlacerPreviewRenderer {
 
         if (definitionId == null) return;
 
-        TemplateDefinition definition = TemplateData.DATA.get(definitionId);
+        TemplateDefinition definition = TemplateData.getTemplateDefinition(definitionId);
 
         if (definition == null) return;
         Identifier templateId = definition.templateId();

@@ -194,7 +194,7 @@ public class PlacerScreen extends Screen {
 
     private void renderSelectedTemplateInfo(GuiGraphicsExtractor graphics, int x, int y) {
 
-        TemplateDefinition def = TemplateData.DATA.get(selectedTemplateId);
+        TemplateDefinition def = TemplateData.getTemplateDefinition(selectedTemplateId);
         if (def == null) return;
 
         int panelX = x + 8;
@@ -256,7 +256,7 @@ public class PlacerScreen extends Screen {
     }
 
     private List<Map.Entry<Identifier, TemplateDefinition>> getFilteredTemplates() {
-        return TemplateData.DATA.entrySet()
+        return TemplateData.getAllTemplates().entrySet()
                 .stream()
                 .filter(e -> e.getKey().getPath().toLowerCase().contains(searchQuery))
                 .sorted(Comparator.comparingInt(e -> e.getValue().restrictions().placerPosition()))

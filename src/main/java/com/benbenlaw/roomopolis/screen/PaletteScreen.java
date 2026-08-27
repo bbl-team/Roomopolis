@@ -116,7 +116,7 @@ public class PaletteScreen extends Screen {
 
     @Override
     protected void init() {
-        this.definition = TemplateData.DATA.get(templateId);
+        this.definition = TemplateData.getTemplateDefinition(templateId);
         this.renderer = new GuiRenderer(Minecraft.getInstance().renderBuffers().bufferSource());
 
         paletteScrollOffset = 0;

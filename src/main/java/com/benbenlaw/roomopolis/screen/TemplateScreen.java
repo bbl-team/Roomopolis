@@ -47,7 +47,7 @@ public class TemplateScreen extends Screen {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        definition = TemplateData.DATA.get(templateId);
+        definition = TemplateData.getTemplateDefinition(templateId);
 
         addRenderableWidget(Button.builder(Component.literal("<"),
                         b -> Minecraft.getInstance().setScreen(parent))

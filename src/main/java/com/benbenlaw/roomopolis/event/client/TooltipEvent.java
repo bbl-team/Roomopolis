@@ -43,7 +43,7 @@ public class TooltipEvent {
             return;
         }
 
-        TemplateDefinition definition = TemplateData.DATA.get(templateId);
+        TemplateDefinition definition = TemplateData.getTemplateDefinition(templateId);
 
         if (definition == null) {
             tooltips.add(Component.literal("Invalid template").withStyle(ChatFormatting.RED));
@@ -111,7 +111,7 @@ public class TooltipEvent {
 
         Map<Block, Integer> requiredBlocks =
                 ((PlacerItem) stack.getItem())
-                        .getRequiredBlocks(player.level(), definition, templateId);
+                        .getRequiredBlocks(player, player.level(), definition, templateId);
 
         if (requiredBlocks == null || requiredBlocks.isEmpty()) return;
 

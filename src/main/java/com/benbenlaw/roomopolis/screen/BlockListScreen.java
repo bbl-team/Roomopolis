@@ -77,7 +77,7 @@ public class BlockListScreen extends Screen {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
 
-        TemplateDefinition definition = TemplateData.DATA.get(templateId);
+        TemplateDefinition definition = TemplateData.getTemplateDefinition(templateId);
 
         if (definition == null) return;
         if (!definition.restrictions().blocksRequired()) {
@@ -102,9 +102,9 @@ public class BlockListScreen extends Screen {
         }
 
         if (definition == null) return;
-        ItemStack held =Minecraft.getInstance().player.getMainHandItem();
+        ItemStack held = Minecraft.getInstance().player.getMainHandItem();
         if (!(held.getItem() instanceof PlacerItem placerItem)) return;
-        Map<Block, Integer> requiredBlocksMap = placerItem.getRequiredBlocks(Minecraft.getInstance().player.level(), definition, templateId);
+        Map<Block, Integer> requiredBlocksMap = placerItem.getRequiredBlocks(Minecraft.getInstance().player, Minecraft.getInstance().player.level(), definition, templateId);
         List<Map.Entry<Block, Integer>> fullList = new ArrayList<>(requiredBlocksMap.entrySet());
 
         int maxPages = (int) Math.ceil((double) fullList.size() / ENTRIES_PER_PAGE);

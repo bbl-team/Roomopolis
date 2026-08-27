@@ -6,10 +6,7 @@ import com.benbenlaw.roomopolis.item.TemplatePaletteCache;
 import com.benbenlaw.roomopolis.item.TemplateSizeCache;
 import com.benbenlaw.roomopolis.loader.TemplateData;
 import com.benbenlaw.roomopolis.loader.TemplateDefinition;
-import com.benbenlaw.roomopolis.network.packet.GetStructurePalettePacket;
-import com.benbenlaw.roomopolis.network.packet.GetStructureSizePacket;
-import com.benbenlaw.roomopolis.network.packet.StructureTemplatePacket;
-import com.benbenlaw.roomopolis.network.packet.TemplateDefinitionPacket;
+import com.benbenlaw.roomopolis.network.packet.*;
 import com.benbenlaw.roomopolis.util.RoomopolisTags;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
@@ -26,10 +23,7 @@ import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @EventBusSubscriber(modid = Roomopolis.MOD_ID)
 public class UpdateKeyCache {
@@ -102,6 +96,9 @@ public class UpdateKeyCache {
                 Map<Identifier, TemplateDefinition> currentTemplate = new HashMap<>();
                 currentTemplate.put(templateId, def);
                 PacketDistributor.sendToPlayer(serverPlayer, new TemplateDefinitionPacket(currentTemplate));
+
+                Map<Block, List<Block>> resolvedPalette = TemplateData.getResolvedPalettes(templateId);
+                PacketDistributor.sendToPlayer(serverPlayer, new SyncResolvedPalettePacket(templateId, resolvedPalette));
             });
         });
     }

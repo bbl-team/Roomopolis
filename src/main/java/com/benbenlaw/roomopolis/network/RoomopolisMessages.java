@@ -15,6 +15,7 @@ public class RoomopolisMessages {
         registrar.playToClient(GetStructurePalettePacket.TYPE, GetStructurePalettePacket.STREAM_CODEC, GetStructurePalettePacket.HANDLER);
         registrar.playToClient(StructureTemplatePacket.TYPE, StructureTemplatePacket.STREAM_CODEC, StructureTemplatePacket.HANDLER);
         registrar.playToClient(TemplateDefinitionPacket.TYPE, TemplateDefinitionPacket.STREAM_CODEC, TemplateDefinitionPacket.HANDLER);
+        registrar.playToClient(SyncResolvedPalettePacket.TYPE, SyncResolvedPalettePacket.STREAM_CODEC, SyncResolvedPalettePacket.HANDLER);
 
         //Client -> Server
         registrar.playToServer(SyncPlacerStack.TYPE, SyncPlacerStack.STREAM_CODEC, SyncPlacerStack.HANDLER);

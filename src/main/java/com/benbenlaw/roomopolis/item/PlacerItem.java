@@ -64,13 +64,15 @@ public class PlacerItem extends Item {
         Level level = context.getLevel();
         Player player = context.getPlayer();
 
+
         if (player == null) return InteractionResult.FAIL;
 
         if (player.isShiftKeyDown()) {
-            ClientScreens.openPlacerScreen();
+            if (level.isClientSide()) {
+                ClientScreens.openPlacerScreen();
+            }
             return InteractionResult.PASS;
         }
-
 
         ItemStack stack = context.getItemInHand();
 
@@ -150,7 +152,7 @@ public class PlacerItem extends Item {
         }
 
 
-        boolean placed = createTemplate(level, rotation, facing, placePosition, definition, definitionId);
+        boolean placed = createTemplate(player, level, rotation, facing, placePosition, definition, definitionId);
 
         if (!placed) {
             player.sendOverlayMessage(Component.translatable("item.key.area_not_empty").withStyle(ChatFormatting.RED));
@@ -172,7 +174,7 @@ public class PlacerItem extends Item {
     private TemplateDefinition getDefinition(ItemStack stack) {
         Identifier id = stack.get(RoomsDataComponents.TEMPLATE_ID);
         if (id == null) return null;
-        return TemplateData.DATA.get(id);
+        return TemplateData.getTemplateDefinition(id);
     }
 
     public boolean hasEnoughBlocks(Player player, Level level, TemplateDefinition definition, Identifier definitionId) {
@@ -180,7 +182,7 @@ public class PlacerItem extends Item {
         if (!definition.restrictions().blocksRequired()) return true;
         if (player.isCreative()) return true;
 
-        Map<Block, Integer> required = getRequiredBlocks(level, definition, definitionId);
+        Map<Block, Integer> required = getRequiredBlocks(player, level, definition, definitionId);
 
         Map<Block, Integer> playerBlocks = new HashMap<>();
 
@@ -203,7 +205,7 @@ public class PlacerItem extends Item {
         return true;
     }
 
-    public Map<Block, Integer> getRequiredBlocks(Level level, TemplateDefinition definition, Identifier definitionId) {
+    public Map<Block, Integer> getRequiredBlocks(Player player, Level level, TemplateDefinition definition, Identifier definitionId) {
 
         Map<Block, Integer> counts = new HashMap<>();
         Map<Block, Integer> half = new HashMap<>();
@@ -253,8 +255,7 @@ public class PlacerItem extends Item {
 
             Block block = info.state().getBlock();
 
-            Map<Block, Block> activePalette =
-                    TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), definitionId);
+            Map<Block, Block> activePalette = TemplateData.getActivePalette(player.getUUID(), definitionId);
 
             Block replacement = activePalette.get(block);
 
@@ -285,7 +286,7 @@ public class PlacerItem extends Item {
         if (player.isCreative()) return;
         if (!definition.restrictions().blocksRequired()) return;
 
-        Map<Block, Integer> required = getRequiredBlocks(level, definition, definitionId);
+        Map<Block, Integer> required = getRequiredBlocks(player, level, definition, definitionId);
 
         for (Map.Entry<Block, Integer> entry : required.entrySet()) {
 
@@ -315,7 +316,7 @@ public class PlacerItem extends Item {
         }
     }
 
-    public boolean createTemplate(Level level, Rotation rotation, Direction facing, BlockPos pos, TemplateDefinition definition, Identifier definitionId) {
+    public boolean createTemplate(Player player, Level level, Rotation rotation, Direction facing, BlockPos pos, TemplateDefinition definition, Identifier definitionId) {
 
         StructureTemplateManager manager = Objects.requireNonNull(level.getServer()).getStructureManager();
         Optional<StructureTemplate> optional = manager.get(definition.templateId());
@@ -359,7 +360,7 @@ public class PlacerItem extends Item {
 
         template.placeInWorld((ServerLevelAccessor) level, finalPos, finalPos, settings, level.getRandom(), Block.UPDATE_ALL);
 
-        Map<Block, Block> palette = TemplateData.getActivePalette(Minecraft.getInstance().player.getUUID(), definitionId);
+        Map<Block, Block> palette = TemplateData.getActivePalette(player.getUUID(), definitionId);
 
         if (!palette.isEmpty()) {
 
@@ -389,7 +390,7 @@ public class PlacerItem extends Item {
         if (definition.restrictions().itemRequiredAndConsumed().isPresent()) {
             ItemStack required = definition.restrictions().itemRequiredAndConsumed().get().create();
 
-            for (ItemStack invStack : Objects.requireNonNull(level.getPlayerByUUID(Minecraft.getInstance().player.getUUID())).getInventory().getNonEquipmentItems()) {
+            for (ItemStack invStack : Objects.requireNonNull(level.getPlayerByUUID(player.getUUID())).getInventory().getNonEquipmentItems()) {
                 if (ItemStack.isSameItem(invStack, required) && invStack.getCount() >= required.getCount()) {
                     invStack.shrink(required.getCount());
                     break;

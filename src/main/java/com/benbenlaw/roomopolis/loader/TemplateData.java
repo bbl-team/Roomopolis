@@ -119,6 +119,16 @@ public class TemplateData extends SimpleJsonResourceReloadListener<TemplateDefin
         }
     }
 
+    public static Map<Identifier, TemplateDefinition> getAllTemplates() {
+        Map<Identifier, TemplateDefinition> merged = new HashMap<>(DATA);
+        merged.putAll(ACTIVE);
+        return merged;
+    }
+
+    public static void setResolvedPalette(Identifier templateId, Map<Block, List<Block>> resolved) {
+        RESOLVED_PALETTES.put(templateId, resolved);
+    }
+
     public static void onTagsUpdated(TagsUpdatedEvent event) {
         RESOLVED_PALETTES.clear();
         for (Map.Entry<Identifier, TemplateDefinition> entry : DATA.entrySet()) {
